@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>0lympe — Migration des données vers Supabase</title>
+<style>
+  :root{--bleu:#003189;--jaune:#FFD100;--vert:#00D68F;--rouge:#FF4D55;--orange:#FFB347}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:15px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+       background:radial-gradient(ellipse at 50% -10%,#0a3f9e,#001a4d 60%,#000c26);
+       color:rgba(255,255,255,.9);min-height:100vh;padding:26px 16px}
+  .wrap{max-width:760px;margin:0 auto}
+  h1{font-size:23px;font-weight:900;letter-spacing:1px;margin-bottom:4px}
+  h1 span{color:var(--jaune)}
+  .lead{color:rgba(255,255,255,.5);font-size:13px;margin-bottom:22px}
+  .box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+       border-radius:14px;padding:20px;margin-bottom:14px}
+  .box h2{font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;
+          color:var(--jaune);margin-bottom:13px;display:flex;align-items:center;gap:8px}
+  .box h2 .n{width:21px;height:21px;border-radius:50%;background:var(--jaune);color:var(--bleu);
+             display:grid;place-items:center;font-size:11px;font-weight:900;flex:none}
+  .box.done{border-color:rgba(0,214,143,.4);background:rgba(0,214,143,.06)}
+  .box.done h2{color:var(--vert)} .box.done h2 .n{background:var(--vert)}
+  label{display:block;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+        color:rgba(255,255,255,.45);margin:0 0 5px}
+  input[type=text],input[type=password]{width:100%;padding:11px 13px;font:inherit;font-size:14px;color:#fff;
+        background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:9px;outline:none}
+  input:focus{border-color:var(--jaune)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:13px}
+  button{padding:11px 20px;border:0;border-radius:9px;background:linear-gradient(135deg,var(--jaune),#FFA500);
+         color:var(--bleu);font:800 13px/1 inherit;letter-spacing:.8px;cursor:pointer}
+  button:disabled{filter:grayscale(.65);cursor:not-allowed}
+  button.ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+  input[type=file]{width:100%;padding:16px;border:2px dashed rgba(255,255,255,.22);border-radius:11px;
+        background:rgba(0,0,0,.2);color:rgba(255,255,255,.6);font-size:13px;cursor:pointer}
+  .note{font-size:12px;color:rgba(255,255,255,.5);line-height:1.65;margin-top:11px}
+  .note b{color:var(--jaune)}
+  .warn{background:rgba(255,179,71,.1);border:1px solid rgba(255,179,71,.32);border-radius:10px;
+        padding:12px 14px;font-size:12.5px;color:#ffd9a8;line-height:1.6;margin-bottom:14px}
+  .bar{height:9px;background:rgba(0,0,0,.4);border-radius:5px;overflow:hidden;margin:13px 0 8px}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--jaune),var(--vert));
+         transition:width .25s}
+  pre{background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.09);border-radius:9px;padding:13px;
+      font:12px/1.65 ui-monospace,Menlo,Consolas,monospace;max-height:290px;overflow:auto;white-space:pre-wrap}
+  .st{font-size:12.5px;font-weight:700} .st.ok{color:var(--vert)} .st.err{color:var(--rouge)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:11px}
+  td,th{padding:6px 9px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+  th{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+  td.n{text-align:right;font-weight:800;color:var(--jaune);font-variant-numeric:tabular-nums}
+  @media(max-width:560px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Migration <span>0lympe</span> &rarr; Supabase</h1>
+  <p class="lead">Reprend l'historique de l'ancienne version (IndexedDB / XAMPP) et le pousse dans Supabase, éclaté en lignes.</p>
+
+  <div class="warn">
+    <b>&#9888; Export sans mot de passe.</b> Dans l'ancien Olympe : <b>Sauvegarder</b> &rarr; laisse le champ
+    mot de passe <b>vide</b> et valide. Un backup chiffré (<code>.enc.json</code>) n'est pas lisible ici.
+  </div>
+
+  <!-- ── 1. Connexion ─────────────────────────────────────────────── -->
+  <div class="box" id="b1">
+    <h2><span class="n">1</span> Connexion administrateur</h2>
+    <div class="row">
+      <div><label for="uid">Identifiant</label><input id="uid" type="text" value="dev" autocomplete="username"></div>
+      <div><label for="pw">Mot de passe</label><input id="pw" type="password" autocomplete="current-password"></div>
+    </div>
+    <button id="btn-login">Se connecter</button>
+    <span class="st" id="st1" style="margin-left:11px"></span>
+    <p class="note">Seul un compte <b>admin</b> peut écrire dans <code>olympe_entry</code> — c'est le RLS qui décide, pas cette page.</p>
+  </div>
+
+  <!-- ── 2. Fichier ───────────────────────────────────────────────── -->
+  <div class="box" id="b2">
+    <h2><span class="n">2</span> Fichier de sauvegarde</h2>
+    <input type="file" id="file" accept=".json,application/json" disabled>
+    <div id="preview"></div>
+  </div>
+
+  <!-- ── 3. Envoi ─────────────────────────────────────────────────── -->
+  <div class="box" id="b3">
+    <h2><span class="n">3</span> Envoi vers Supabase</h2>
+    <label style="display:flex;align-items:center;gap:9px;text-transform:none;letter-spacing:0;font-size:13px;color:rgba(255,255,255,.75);font-weight:600;margin-bottom:13px;cursor:pointer">
+      <input type="checkbox" id="dry" checked style="width:16px;height:16px;accent-color:#FFD100;cursor:pointer">
+      Simulation (aucune écriture) — décoche pour envoyer réellement
+    </label>
+    <button id="btn-go" disabled>Lancer</button>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="st" id="st3"></div>
+    <pre id="log">En attente…</pre>
+  </div>
+
+</div>
+
+<script src="supabase.js"></script>
+<script src="olympe-config.js"></script>
+<script src="olympe-auth.js"></script>
+<script src="olympe-store.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (i) { return document.getElementById(i); };
+  var bundle = null, SB = null, me = null;
+
+  function log(m) { var l = $('log'); if (l.textContent === 'En attente…') l.textContent = ''; l.textContent += m + '\n'; l.scrollTop = l.scrollHeight; }
+
+  // ── 1. Connexion ───────────────────────────────────────────────────
+  $('btn-login').onclick = function () {
+    var b = this; b.disabled = true; $('st1').textContent = 'Vérification…'; $('st1').className = 'st';
+    OlympeAuth.signIn($('uid').value.trim(), $('pw').value)
+      .then(function () { return OlympeAuth.profile(true); })
+      .then(function (p) {
+        if (!p) throw new Error('Profil introuvable ou compte désactivé.');
+        if (p.role !== 'admin') throw new Error('Compte "' + p.uid + '" : rôle ' + p.role + '. Un admin est requis.');
+        me = p; SB = OlympeAuth.client();
+        $('b1').classList.add('done');
+        $('st1').textContent = '✔ ' + p.nom + ' (admin)'; $('st1').className = 'st ok';
+        $('file').disabled = false;
+      })
+      .catch(function (e) {
+        $('st1').textContent = '✖ ' + OlympeAuth.humanError(e); $('st1').className = 'st err';
+        b.disabled = false;
+      });
+  };
+
+  // ── 2. Lecture du fichier ──────────────────────────────────────────
+  $('file').onchange = function (e) {
+    var f = e.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      var j;
+      try { j = JSON.parse(r.result); }
+      catch (x) { $('preview').innerHTML = '<div class="st err" style="margin-top:11px">✖ JSON illisible.</div>'; return; }
+
+      if (j.encrypted) {
+        $('preview').innerHTML = '<div class="st err" style="margin-top:11px">✖ Sauvegarde chiffrée. '
+          + 'Refais un export en laissant le mot de passe vide.</div>';
+        return;
+      }
+      var data = j.data || j;            // tolère {data:{…}} et {…}
+      bundle = {};
+      var rows = '', total = 0;
+      OlympeStore.scopes.forEach(function (scope) {
+        var v = data[scope]; if (v === undefined || v === null) return;
+        if (typeof v === 'string') { try { v = JSON.parse(v); } catch (x) { return; } }
+        var parts = OlympeStore.splitFor(scope, v);
+        var n = Object.keys(parts).length;
+        if (!n) return;
+        bundle[scope] = parts; total += n;
+        rows += '<tr><td>' + scope + '</td><td class="n">' + n + '</td></tr>';
+      });
+      if (!total) {
+        $('preview').innerHTML = '<div class="st err" style="margin-top:11px">✖ Aucune donnée Olympe reconnue dans ce fichier.</div>';
+        return;
+      }
+      $('preview').innerHTML = '<table><thead><tr><th>Clé</th><th style="text-align:right">Lignes</th></tr></thead><tbody>'
+        + rows + '</tbody><tfoot><tr><td style="font-weight:800">TOTAL</td><td class="n">' + total + '</td></tr></tfoot></table>'
+        + '<p class="note">Exporté le <b>' + (j.exported_at || '?') + '</b> — chaque ligne devient une entrée '
+        + '<code>olympe_entry</code>. Les <b>' + total + '</b> lignes ne s\'écrasent jamais entre elles.</p>';
+      $('b2').classList.add('done');
+      $('btn-go').disabled = false;
+      window.__total = total;
+    };
+    r.readAsText(f);
+  };
+
+  // ── 3. Envoi ───────────────────────────────────────────────────────
+  $('btn-go').onclick = function () {
+    var dry = $('dry').checked;
+    if (!dry && !confirm('Envoi RÉEL vers Supabase.\n\n' + window.__total + ' ligne(s).\n\n'
+        + 'Une entrée déjà présente sera écrasée par celle du fichier (upsert). Continuer ?')) return;
+
+    this.disabled = true; $('file').disabled = true;
+    $('log').textContent = ''; $('st3').textContent = ''; $('st3').className = 'st';
+    log(dry ? '── SIMULATION — aucune écriture ──' : '── ENVOI RÉEL ──');
+
+    var ops = [];
+    Object.keys(bundle).forEach(function (scope) {
+      Object.keys(bundle[scope]).forEach(function (id) {
+        ops.push({ scope: scope, entry_id: id, payload: bundle[scope][id],
+                   deleted: false, updated_by: 'migration/' + me.uid });
+      });
+    });
+
+    var done = 0, ko = 0, i = 0, CH = 100;
+    function step() {
+      if (i >= ops.length) {
+        $('bar').style.width = '100%';
+        var ok = ko === 0;
+        $('st3').textContent = (ok ? '✔ ' : '⚠ ') + done + ' / ' + ops.length + ' ligne(s)'
+                             + (ko ? ' — ' + ko + ' en échec' : '') + (dry ? ' (simulation)' : '');
+        $('st3').className = 'st ' + (ok ? 'ok' : 'err');
+        log('\nTerminé : ' + done + ' envoyée(s)' + (ko ? ', ' + ko + ' en échec' : ''));
+        if (ok && !dry) { $('b3').classList.add('done'); log('\n➜ Recharge Olympe : tout l\'historique doit être là.'); }
+        $('btn-go').disabled = false; $('file').disabled = false;
+        return;
+      }
+      var chunk = ops.slice(i, i + CH); i += CH;
+      var p = dry ? Promise.resolve({ error: null })
+                  : SB.from('olympe_entry').upsert(chunk, { onConflict: 'scope,entry_id' });
+      Promise.resolve(p).then(function (r) {
+        if (r.error) { ko += chunk.length; log('✖ ' + chunk[0].scope + ' … ' + r.error.message); }
+        else { done += chunk.length; log('✔ ' + chunk.length + ' ligne(s) — ' + chunk[0].scope + ' …'); }
+        $('bar').style.width = Math.round(i / ops.length * 100) + '%';
+        setTimeout(step, 40);   // respire : évite le rate limit
+      }).catch(function (e) {
+        ko += chunk.length; log('✖ ' + e.message); setTimeout(step, 40);
+      });
+    }
+    step();
+  };
+})();
+</script>
+</body>
+</html>

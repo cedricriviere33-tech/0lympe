@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#001a4d">
+<title>0lympe — Connexion</title>
+<style>
+  :root{
+    --bleu:#003189; --bleu-fonce:#001a4d; --jaune:#FFD100;
+    --vert:#00D68F; --rouge:#FF4D55; --orange:#FFB347;
+    --txt:rgba(255,255,255,.92); --txt-2:rgba(255,255,255,.5);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    min-height:100vh;min-height:100dvh;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+    background:radial-gradient(ellipse at 50% -20%,#0a3f9e 0%,var(--bleu-fonce) 55%,#000c26 100%);
+    color:var(--txt);
+  }
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(circle at 50% 0%,rgba(255,209,0,.10),transparent 60%),
+      repeating-linear-gradient(90deg,transparent 0 38px,rgba(255,255,255,.02) 38px 40px)}
+  .card{
+    position:relative;z-index:1;width:100%;max-width:410px;
+    background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.11);
+    border-radius:20px;padding:32px 30px 26px;
+    backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+    box-shadow:0 28px 70px rgba(0,0,0,.5);
+    animation:in .5s cubic-bezier(.16,1,.3,1) both;
+  }
+  @keyframes in{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+
+  .board{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);
+    border-radius:11px;padding:9px 13px;margin-bottom:22px;
+    font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace}
+  .live{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:700;letter-spacing:1.4px;color:var(--vert)}
+  .live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--vert);
+    box-shadow:0 0 9px var(--vert);animation:blink 1.4s infinite}
+  @keyframes blink{50%{opacity:.25}}
+  .clock{font-size:19px;font-weight:700;color:var(--jaune);letter-spacing:1.5px;text-shadow:0 0 16px rgba(255,209,0,.35)}
+  .clock .s{animation:blink 1s steps(1) infinite}
+  .date{font-size:9px;color:var(--txt-2);letter-spacing:.6px;text-align:right}
+
+  .logo{width:60px;height:60px;margin:0 auto 14px;border-radius:16px;
+    background:linear-gradient(135deg,var(--jaune),#FFA500);display:flex;align-items:center;justify-content:center;
+    font-size:29px;font-weight:900;color:var(--bleu);box-shadow:0 10px 30px rgba(255,209,0,.32)}
+  h1{text-align:center;font-size:26px;font-weight:900;letter-spacing:5px;margin-bottom:5px}
+  .sub{text-align:center;font-size:10px;letter-spacing:2.2px;color:var(--txt-2);text-transform:uppercase;margin-bottom:6px}
+  .runway{height:3px;width:76%;margin:16px auto 22px;border-radius:2px;position:relative;
+    background:linear-gradient(90deg,transparent,rgba(255,209,0,.5),transparent)}
+  .runway::after{content:'';position:absolute;inset:1px 8%;height:1px;
+    background:repeating-linear-gradient(90deg,rgba(255,255,255,.45) 0 7px,transparent 7px 15px)}
+
+  .field{margin-bottom:14px}
+  label{display:block;font-size:9.5px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--txt-2);margin-bottom:6px}
+  input{width:100%;padding:13px 15px;font-size:15px;color:#fff;font-family:inherit;
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+    border-radius:11px;outline:none;transition:border-color .18s,background .18s}
+  input::placeholder{color:rgba(255,255,255,.26)}
+  input:focus{border-color:var(--jaune);background:rgba(255,255,255,.1);box-shadow:0 0 0 3px rgba(255,209,0,.12)}
+  input:disabled{opacity:.5}
+  input.code{text-align:center;font-size:30px;font-weight:800;letter-spacing:11px;padding:15px 8px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;text-indent:11px}
+
+  .btn{width:100%;margin-top:8px;padding:14px;border:0;border-radius:11px;font-family:inherit;
+    background:linear-gradient(135deg,var(--jaune),#FFA500);color:var(--bleu);
+    font-size:14px;font-weight:900;letter-spacing:1.2px;cursor:pointer;
+    transition:transform .12s,box-shadow .18s,filter .18s}
+  .btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 10px 26px rgba(255,209,0,.4)}
+  .btn:disabled{filter:grayscale(.6);cursor:progress}
+  .btn.ghost{background:rgba(255,255,255,.09);color:rgba(255,255,255,.7);
+    border:1px solid rgba(255,255,255,.16);font-weight:700;letter-spacing:.6px;font-size:12px;padding:11px}
+  .btn.ghost:hover{box-shadow:none;background:rgba(255,255,255,.14)}
+
+  .msg{display:none;margin-top:14px;padding:11px 13px;border-radius:9px;font-size:12px;font-weight:600;line-height:1.45}
+  .msg.show{display:block;animation:shake .3s}
+  .msg.err{background:rgba(255,77,85,.13);border:1px solid rgba(255,77,85,.35);color:#ff9aa0}
+  .msg.ok {background:rgba(0,214,143,.13);border:1px solid rgba(0,214,143,.35);color:#7df0c6}
+  @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+  .foot{margin-top:22px;text-align:center;font-size:9.5px;color:rgba(255,255,255,.32);line-height:1.7}
+  .foot b{color:rgba(255,255,255,.55);font-weight:700}
+
+  .step-h{text-align:center;margin-bottom:18px}
+  .step-h .ico{font-size:38px;margin-bottom:9px;display:block}
+  .step-h h2{font-size:18px;font-weight:900;letter-spacing:.4px;margin-bottom:6px}
+  .step-h p{font-size:12.5px;color:var(--txt-2);line-height:1.6}
+  .step-h p b{color:var(--jaune)}
+
+  .qr{background:#fff;border-radius:13px;padding:11px;width:190px;margin:0 auto 14px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .qr img{width:100%;display:block}
+  .secret{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.11);border-radius:9px;
+    padding:9px 11px;margin-bottom:15px;text-align:center;cursor:pointer}
+  .secret .l{font-size:8.5px;letter-spacing:1.2px;color:rgba(255,255,255,.35);text-transform:uppercase;margin-bottom:3px}
+  .secret code{font:700 12px/1.5 ui-monospace,Menlo,Consolas,monospace;color:var(--jaune);word-break:break-all}
+  .secret:hover{border-color:rgba(255,209,0,.4)}
+
+  .warn{background:rgba(255,179,71,.1);border:1px solid rgba(255,179,71,.3);border-radius:9px;
+    padding:10px 12px;font-size:11.5px;line-height:1.6;color:#ffd9a8;margin-bottom:14px}
+  .warn b{color:var(--orange)}
+  .dev{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.09);border-radius:9px;
+    padding:10px 12px;margin-bottom:15px;font-size:11.5px;color:rgba(255,255,255,.6);line-height:1.75}
+  .dev b{color:rgba(255,255,255,.9);font-weight:700}
+  .hide{display:none}
+  @media(max-width:400px){.card{padding:26px 20px 22px}h1{font-size:22px;letter-spacing:3px}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* 7e — bulles agents */
+.bubbles{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px 12px; margin:2px 0 18px; }
+.bubble{ display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;
+  background:none; border:none; padding:0; width:66px; font:inherit; }
+.bubble .circle{ width:54px; height:54px; border-radius:50%; display:grid; place-items:center;
+  font-size:23px; font-weight:800; color:#fff; background:linear-gradient(155deg,#0a4bbf,#00246b);
+  border:2px solid rgba(255,255,255,.28); box-shadow:0 6px 16px rgba(0,15,45,.45); transition:transform .16s, border-color .16s; }
+.bubble:hover .circle, .bubble:focus-visible .circle{ transform:translateY(-3px); border-color:#ffd100; outline:none; }
+.bubble .nm{ font-size:12px; font-weight:600; color:#cfe0ff; max-width:66px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+</style>
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("/sw.js", {scope:"/"}).catch(function(e){ console.warn("SW KO", e); });
+  });
+}
+</script>
+</head>
+<body>
+
+<main class="card">
+  <div class="board" aria-hidden="true">
+    <span class="live">EN LIGNE</span>
+    <span class="clock" id="clock">--<span class="s">:</span>--<span class="s">:</span>--</span>
+    <span class="date" id="date"></span>
+  </div>
+
+  <!-- ══ 1. Identifiant + mot de passe ══════════════════════════════ -->
+  <section id="s-login">
+    <div class="logo" aria-hidden="true">0</div>
+    <h1>0LYMPE</h1>
+    <div class="sub">PIC Gillot Import &middot; La R&eacute;union</div>
+    <div class="runway" aria-hidden="true"></div>
+    <div id="agent-bubbles" class="bubbles" role="group" aria-label="Choisir un agent"></div>
+    <form id="form" novalidate>
+      <div class="field">
+        <label for="uid">Identifiant agent</label>
+        <input id="uid" name="username" type="text" placeholder="ex : cedric"
+               autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+      </div>
+      <div class="field">
+        <label for="pw">Mot de passe</label>
+        <input id="pw" name="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;"
+               autocomplete="current-password" required>
+      </div>
+      <button class="btn" id="go" type="submit">EMBARQUEMENT &rarr;</button>
+    </form>
+  </section>
+
+  <!-- ══ 2. Code Authenticator ══════════════════════════════════════ -->
+  <section id="s-mfa" class="hide">
+    <div class="step-h">
+      <span class="ico" aria-hidden="true">&#128274;</span>
+      <h2>V&eacute;rification en 2 &eacute;tapes</h2>
+      <p>Ouvre <b>Google Authenticator</b> et saisis le code &agrave; 6 chiffres.<br>Il change toutes les 30 secondes.</p>
+    </div>
+    <form id="form-mfa" novalidate>
+      <input id="code" class="code" type="text" inputmode="numeric" pattern="[0-9]*"
+             maxlength="6" placeholder="000000" autocomplete="one-time-code" aria-label="Code &agrave; 6 chiffres">
+      <button class="btn" id="go-mfa" type="submit" style="margin-top:14px">VALIDER</button>
+      <button class="btn ghost" id="back-mfa" type="button" style="margin-top:9px">&larr; Changer de compte</button>
+    </form>
+  </section>
+
+  <!-- ══ Mot de passe à changer (1er login) ══ -->
+  <section id="s-pwc" class="hide">
+    <div class="step-h">
+      <span class="ico" aria-hidden="true">&#128273;</span>
+      <h2>Choisis ton mot de passe</h2>
+      <p>Premi&egrave;re connexion : remplace le mot de passe par d&eacute;faut par un mot de passe personnel (6 caract&egrave;res minimum).</p>
+    </div>
+    <form id="form-pwc" novalidate>
+      <input id="pwc1" type="password" placeholder="Nouveau mot de passe" autocomplete="new-password" aria-label="Nouveau mot de passe">
+      <input id="pwc2" type="password" placeholder="Confirmer" autocomplete="new-password" aria-label="Confirmer" style="margin-top:9px">
+      <button class="btn" id="go-pwc" type="submit" style="margin-top:14px">VALIDER</button>
+    </form>
+  </section>
+
+  <!-- ══ 3. Enrôlement Authenticator ════════════════════════════════ -->
+  <section id="s-enroll" class="hide">
+    <div class="step-h">
+      <span class="ico" aria-hidden="true">&#128241;</span>
+      <h2>Autoriser ce poste</h2>
+      <p>Ce poste n'est pas encore approuv&eacute;.<br>Scanne ce QR code avec <b>Google Authenticator</b>.</p>
+    </div>
+    <div class="qr" id="qr"></div>
+    <div class="secret" id="secret" title="Cliquer pour copier">
+      <div class="l">Ou saisie manuelle</div><code id="secret-v">&hellip;</code>
+    </div>
+    <div class="warn">
+      <b>&#9888; Garde ce t&eacute;l&eacute;phone.</b> Supabase ne fournit
+      <b>aucun code de secours</b>. T&eacute;l&eacute;phone perdu = compte bloqu&eacute;,
+      seul un admin peut d&eacute;bloquer depuis Supabase.
+    </div>
+    <form id="form-enroll" novalidate>
+      <input id="code2" class="code" type="text" inputmode="numeric" pattern="[0-9]*"
+             maxlength="6" placeholder="000000" autocomplete="one-time-code" aria-label="Code &agrave; 6 chiffres">
+      <button class="btn" id="go-enroll" type="submit" style="margin-top:14px">ACTIVER ET AUTORISER</button>
+      <button class="btn ghost" id="back-enroll" type="button" style="margin-top:9px">&larr; Annuler</button>
+    </form>
+  </section>
+
+  <!-- ══ 4. Poste bloqué ════════════════════════════════════════════ -->
+  <section id="s-blocked" class="hide">
+    <div class="step-h">
+      <span class="ico" aria-hidden="true">&#9940;</span>
+      <h2 id="bl-t">Poste non autoris&eacute;</h2>
+      <p id="bl-p"></p>
+    </div>
+    <div class="dev" id="bl-dev"></div>
+    <button class="btn ghost" id="back-bl" type="button">&larr; Retour</button>
+  </section>
+
+  <div class="msg" id="msg" role="alert" aria-live="assertive"></div>
+
+  <div class="foot">
+    <b>Rivi&egrave;re C&eacute;dric</b> &middot; PXRA993<br>
+    Poste Gillot &mdash; Import Op&eacute;rations &middot; Usage interne
+    <div style="margin-top:10px;">
+      <button id="test-btn" type="button" style="background:none;border:0;color:rgba(255,255,255,.28);
+        font:600 10px/1 inherit;letter-spacing:1px;cursor:pointer;padding:4px 8px;border-radius:6px;">
+        &#129514; MODE TEST
+      </button>
+    </div>
+  </div>
+</main>
+
+<script src="supabase.js"></script>
+<script src="olympe-config.js"></script>
+<script src="olympe-auth.js"></script>
+<script src="olympe-mfa.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (i) { return document.getElementById(i); };
+  var SECTIONS = ['s-login', 's-mfa', 's-enroll', 's-blocked'];
+  var _factorId = null, _prof = null;
+
+  // ── Horloge ────────────────────────────────────────────────────────
+  var J = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  var M = ['Janv.','F\u00e9vr.','Mars','Avril','Mai','Juin','Juil.','Ao\u00fbt','Sept.','Oct.','Nov.','D\u00e9c.'];
+  var pad = function (n) { return String(n).padStart(2, '0'); };
+  (function tick() {
+    var n = new Date();
+    $('clock').innerHTML = pad(n.getHours()) + '<span class="s">:</span>' + pad(n.getMinutes())
+                         + '<span class="s">:</span>' + pad(n.getSeconds());
+    $('date').textContent = J[n.getDay()] + ' ' + n.getDate() + ' ' + M[n.getMonth()];
+    setTimeout(tick, 1000);
+  })();
+
+  function show(id) { SECTIONS.forEach(function (s) { $(s).classList.toggle('hide', s !== id); }); }
+  function msg(t, k) { $('msg').textContent = t; $('msg').className = 'msg show ' + (k || 'err'); }
+  function clr() { $('msg').className = 'msg'; }
+  function busy(btn, on, txt) { btn.disabled = on; if (txt) btn.textContent = txt; }
+
+  var e = new URLSearchParams(location.search).get('e');
+  if (e === 'session') msg('Session expir\u00e9e \u2014 reconnecte-toi.');
+  else if (e === 'profil') msg('Compte sans profil actif. Pr\u00e9viens l\'administrateur.');
+  else if (e === 'device') msg('Poste non autoris\u00e9 \u2014 revalide-le ci-dessous.');
+  else if (e === 'out') msg('D\u00e9connexion effectu\u00e9e.', 'ok');
+
+  // ══ Aiguillage ═══════════════════════════════════════════════════
+  // On ne décide rien ici : on demande à Supabase où on en est. Même en
+  // réécrivant ce fichier, le RLS refuse ce qui n'a pas été validé.
+  function route() {
+    return OlympeMFA.gate().then(function (g) {
+      _factorId = g.factorId || _factorId;
+      switch (g.action) {
+
+        case 'ok':
+          // Pas de logAccess ici : c'est le boot de l'app qui journalise
+          // (moment qui fait foi). Sinon chaque connexion compte double.
+          msg('Bienvenue ' + (_prof ? _prof.nom : '') + ' \u2014 embarquement\u2026', 'ok');
+          setTimeout(function () { location.replace('index2.html'); }, 400);
+          return;
+
+        case 'mfa':
+          show('s-mfa'); clr(); $('code').value = ''; $('code').focus();
+          return;
+
+        case 'approve':
+          // Session aal2 : le serveur acceptera l'approbation de ce poste.
+          return (g.device ? Promise.resolve(g.device) : OlympeMFA.register(OlympeMFA.guessLabel()))
+            .then(function (d) { return OlympeMFA.approve(d.id); })
+            .then(function () { return route(); })
+            .catch(function (err) { msg(OlympeAuth.humanError(err)); show('s-login'); });
+
+        case 'enroll':
+          return startEnroll();
+
+        case 'pending':
+          return blocked('Poste en attente de validation',
+            'Ce poste est enregistr\u00e9 mais pas encore approuv\u00e9. Un administrateur doit le valider '
+            + 'dans Olympe \u2192 Panneau admin \u2192 Postes.', g.device);
+
+        case 'revoked':
+          return blocked('Poste r\u00e9voqu\u00e9',
+            'L\'acc\u00e8s depuis ce poste a \u00e9t\u00e9 retir\u00e9 par un administrateur.', g.device);
+      }
+    });
+  }
+
+  function blocked(t, p, d) {
+    $('bl-t').textContent = t; $('bl-p').textContent = p;
+    $('bl-dev').innerHTML = '<b>Poste :</b> ' + (d && d.label ? d.label : OlympeMFA.guessLabel())
+      + '<br><b>Enregistr\u00e9 :</b> ' + (d && d.created_at ? new Date(d.created_at).toLocaleString('fr-FR') : '\u2014')
+      + '<br><b>IP :</b> ' + (d && d.ip_last ? d.ip_last : '\u2014');
+    show('s-blocked'); clr();
+  }
+
+  // ── Enrôlement : QR + code ─────────────────────────────────────────
+  function startEnroll() {
+    show('s-enroll'); clr();
+    $('qr').innerHTML = '<div style="height:168px;display:grid;place-items:center;color:#888;font-size:12px">G\u00e9n\u00e9ration\u2026</div>';
+    return OlympeMFA.enroll().then(function (f) {
+      _factorId = f.factorId;
+      $('qr').innerHTML = '<img alt="QR code Authenticator" src="' + f.qr + '">';
+      $('secret-v').textContent = f.secret;
+      $('secret').onclick = function () {
+        navigator.clipboard.writeText(f.secret).then(function () { msg('Cl\u00e9 copi\u00e9e.', 'ok'); });
+      };
+      $('code2').value = ''; $('code2').focus();
+    }).catch(function (err) { msg(OlympeAuth.humanError(err)); show('s-login'); });
+  }
+
+  // ── 1. Connexion ───────────────────────────────────────────────────
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault(); clr();
+    var u = $('uid').value.trim().toLowerCase(), p = $('pw').value;
+    if (!u) { msg('Entre ton identifiant.'); return $('uid').focus(); }
+    if (!p) { msg('Entre ton mot de passe.'); return $('pw').focus(); }
+    busy($('go'), true, 'V\u00c9RIFICATION\u2026');
+    $('uid').disabled = $('pw').disabled = true;
+
+    OlympeAuth.signIn(u, p)
+      .then(function () { return OlympeAuth.profile(true); })
+      .then(function (prof) {
+        if (!prof) return OlympeAuth.signOut().then(function () {
+          throw new Error('Compte d\u00e9sactiv\u00e9 ou sans profil. Pr\u00e9viens l\'administrateur.');
+        });
+        _prof = prof;
+        return route();
+      })
+      .catch(function (err) {
+        msg(OlympeAuth.humanError(err));
+        busy($('go'), false, 'EMBARQUEMENT \u2192');
+        $('uid').disabled = $('pw').disabled = false;
+        $('pw').value = ''; $('pw').focus();
+      });
+  });
+
+  // ── 2. Code Authenticator ──────────────────────────────────────────
+  $('form-mfa').addEventListener('submit', function (ev) {
+    ev.preventDefault(); clr();
+    var c = $('code').value.replace(/\D/g, '');
+    if (c.length !== 6) return msg('Le code fait 6 chiffres.');
+    busy($('go-mfa'), true, 'V\u00c9RIFICATION\u2026');
+    // Succès → la session passe aal2 : c'est ce JWT qui débloque le RLS.
+    OlympeMFA.verify(_factorId, c)
+      .then(function () { busy($('go-mfa'), false, 'VALIDER'); return route(); })
+      .catch(function (err) {
+        msg(OlympeAuth.humanError(err));
+        busy($('go-mfa'), false, 'VALIDER');
+        $('code').value = ''; $('code').focus();
+      });
+  });
+
+  // ── Mot de passe forcé (1er login) ──
+  $('form-pwc').addEventListener('submit', function (ev) {
+    ev.preventDefault(); clr();
+    var a = $('pwc1').value, b = $('pwc2').value;
+    if (a.length < 6) return msg('6 caractères minimum.');
+    if (a !== b) return msg('Les deux mots de passe diffèrent.');
+    if (a === '123456' || a === '000000' || a === 'gillot') return msg('Choisis un mot de passe moins courant.');
+    busy($('go-pwc'), true, 'ENREGISTREMENT…');
+    OlympeAuth.changePassword(a)
+      .then(function () { return OlympeAuth.markPasswordChanged(); })
+      .then(function () {
+        msg('Mot de passe enregistré — embarquement…', 'ok');
+        setTimeout(function () { location.replace('index2.html'); }, 500);
+      })
+      .catch(function (err) { msg(OlympeAuth.humanError(err)); busy($('go-pwc'), false, 'VALIDER'); });
+  });
+
+  // ── 3. Enrôlement ──────────────────────────────────────────────────
+  $('form-enroll').addEventListener('submit', function (ev) {
+    ev.preventDefault(); clr();
+    var c = $('code2').value.replace(/\D/g, '');
+    if (c.length !== 6) return msg('Le code fait 6 chiffres.');
+    busy($('go-enroll'), true, 'ACTIVATION\u2026');
+    OlympeMFA.verify(_factorId, c)
+      .then(function () { busy($('go-enroll'), false, 'ACTIVER ET AUTORISER'); return route(); })
+      .catch(function (err) {
+        msg(OlympeAuth.humanError(err));
+        busy($('go-enroll'), false, 'ACTIVER ET AUTORISER');
+        $('code2').value = ''; $('code2').focus();
+      });
+  });
+
+  // ── Retours ────────────────────────────────────────────────────────
+  function reset() {
+    OlympeAuth.signOut().then(function () {
+      show('s-login'); clr();
+      busy($('go'), false, 'EMBARQUEMENT \u2192');
+      $('uid').disabled = $('pw').disabled = false;
+      $('pw').value = ''; $('uid').focus();
+    });
+  }
+  $('back-mfa').onclick = reset;
+  $('back-enroll').onclick = reset;
+  $('back-bl').onclick = reset;
+
+  // Chiffres uniquement + validation automatique à 6
+  ['code', 'code2'].forEach(function (id) {
+    $(id).addEventListener('input', function () {
+      this.value = this.value.replace(/\D/g, '').slice(0, 6);
+      if (this.value.length === 6) this.form.requestSubmit();
+    });
+  });
+
+  // ══ MODE TEST ═══════════════════════════════════════════════════
+  // Bascule Olympe en 100 % IndexedDB local : aucune connexion Supabase,
+  // aucun verrou. Permet de tout tester sur smartphone avant de déployer.
+  // Le hash évite d'écrire "24121995" en clair dans le fichier.
+  function sha256hex(str) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function (b) {
+      return Array.from(new Uint8Array(b)).map(function (x) { return x.toString(16).padStart(2, '0'); }).join('');
+    });
+  }
+  var TEST_HASH = '9bd6860fa9272ec69af06eed37b4131a1d8c92046944547a149c7f359d2688a7';
+  $('test-btn').addEventListener('click', function () {
+    var pw = prompt('Mot de passe du mode test :');
+    if (pw === null) return;
+    sha256hex(pw).then(function (h) {
+      if (h !== TEST_HASH) { msg('Mot de passe du mode test incorrect.'); return; }
+      try { sessionStorage.setItem('olympe.testmode', '1'); } catch (e) {}
+      msg('\uD83E\uDDEA Mode test \u2014 donn\u00e9es 100% locales (IndexedDB), rien n\'est envoy\u00e9 au serveur.', 'ok');
+      setTimeout(function () { location.replace('index2.html'); }, 700);
+    });
+  });
+
+  // ── Session déjà ouverte ? on reprend l'aiguillage où il en était ──
+  OlympeAuth.session().then(function (s) {
+    if (!s) return $('uid').focus();
+    return OlympeAuth.profile(true).then(function (p) {
+      if (!p) return OlympeAuth.signOut().then(function () { $('uid').focus(); });
+      _prof = p; return route();
+    });
+  }).catch(function () { $('uid').focus(); });
+})();
+</script>
+<script>
+/* 7e — chargement des bulles agents (client anon, RPC agent_bubbles) */
+(function(){
+  function initial(s){ s=(s||'').trim(); return s ? s.charAt(0).toUpperCase() : '?'; }
+  function prenom(nom, uid){ var n=(nom||'').trim().split(/\s+/)[0]; return n || uid || ''; }
+  function pick(uid){
+    var u=document.getElementById('uid'); if(u){ u.value=uid; }
+    var pw=document.getElementById('pw'); if(pw){ pw.focus(); }
+  }
+  function render(list){
+    var box=document.getElementById('agent-bubbles'); if(!box) return;
+    box.innerHTML='';
+    if(!list || !list.length) return;
+    list.forEach(function(a){
+      var b=document.createElement('button');
+      b.type='button'; b.className='bubble'; b.title='Se connecter : '+(a.nom||a.uid);
+      var c=document.createElement('span'); c.className='circle'; c.textContent=initial(a.nom||a.uid);
+      var n=document.createElement('span'); n.className='nm'; n.textContent=prenom(a.nom,a.uid);
+      b.appendChild(c); b.appendChild(n);
+      b.addEventListener('click', function(){ pick(a.uid); });
+      box.appendChild(b);
+    });
+  }
+  function load(){
+    return; /* bulles désactivées (compte unique) */
+    try{
+      if(!window.OlympeAuth || !OlympeAuth.client) return;
+      OlympeAuth.client().rpc('agent_bubbles').then(function(r){
+        if(r && r.error){ console.warn('[bulles]', r.error.message); return; }
+        render((r && r.data) || []);
+      }).catch(function(e){ console.warn('[bulles]', e); });
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', load);
+  else load();
+})();
+</script>
+</body>
+</html>
