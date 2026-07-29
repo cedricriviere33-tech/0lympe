@@ -77,3 +77,14 @@ function subscribe() {
 
 console.log('Olympe push-worker démarré.');
 subscribe();
+// --- Serveur HTTP factice pour maintenir le conteneur éveillé sur Coolify ---
+const http = require('http');
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Olympe Worker is running OK\n');
+});
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Worker HTTP keep-alive listening on port ${PORT}`);
+});
+
