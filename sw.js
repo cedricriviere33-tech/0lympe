@@ -44,3 +44,42 @@ self.addEventListener('fetch', (event) => {
       .catch(() => caches.match(req).then((m) => m || caches.match('/index.html')))
   );
 });
+/* ═══════════════════════════════════════════════════════════════════════
+   Olympe — handlers PUSH à AJOUTER À LA FIN de ton sw.js EXISTANT.
+   Ne remplace pas ton sw.js : ajoute juste ces deux blocs.
+   (Ton offline/cache reste intact.)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+// Réception d'un push → notification système (son + vibration gérés par l'OS)
+self.addEventListener('push', function (event) {
+  var data = {};
+  try { data = event.data ? event.data.json() : {}; } catch (e) { data = {}; }
+  var title = data.title || '☎️ Messenger';
+  var body  = data.body  || 'Nouveau message';
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: body,
+      icon: data.icon || '/apple-touch-icon.png',
+      badge: '/apple-touch-icon.png',
+      tag: 'olympe-mg',
+      renotify: true,
+      vibrate: [180, 90, 180],
+      data: { url: data.url || '/' }
+    })
+  );
+});
+
+// Clic sur la notification → ouvre / focus Olympe
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  var target = (event.notification.data && event.notification.data.url) || '/';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
+      for (var i = 0; i < list.length; i++) {
+        var c = list[i];
+        if ('focus' in c) { try { c.navigate(target); } catch (e) {} return c.focus(); }
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(target);
+    })
+  );
+});
