@@ -73,18 +73,14 @@ function subscribe() {
         setTimeout(subscribe, 3000);   // reconnexion
       }
     });
-}
-
-console.log('Olympe push-worker démarré.');
-subscribe();
-// --- Serveur HTTP factice pour maintenir le conteneur éveillé sur Coolify ---
+}// --- Serveur HTTP keep-alive pour Coolify ---
 const http = require('http');
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Olympe Worker is running OK\n');
+  res.end('Olympe Worker OK');
 });
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Worker HTTP keep-alive listening on port ${PORT}`);
 });
 
