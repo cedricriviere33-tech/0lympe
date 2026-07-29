@@ -34,3 +34,6 @@ window.OLYMPE_CFG = {
   /* Logs détaillés dans la console (à laisser false en production) */
   debug: false
 };
+ ```js
+  vapidPublicKey: 'BNNqDhvfF52-ZiZmyD_tIit2rF072cdUjXlWzhD8blt1DuRfwhr3tFVMmX-XdX4-vgRjeA-iUgbfeJeRHEVEG1k',
+  ```
