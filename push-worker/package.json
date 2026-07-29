@@ -1,0 +1,17 @@
+{
+  "name": "olympe-push-worker",
+  "version": "1.0.0",
+  "description": "Envoi des notifications push Olympe (Web Push / VAPID) sur nouveaux messages Supabase.",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "web-push": "^3.6.7"
+  }
+}
