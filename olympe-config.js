@@ -33,8 +33,6 @@ window.OLYMPE_CFG = {
 
   /* Logs détaillés dans la console (à laisser false en production) */
   debug: false
-};
- const OlympeConfig = {
-  // ... vos autres configs ...
-  vapidPublicKey: "BNNqDhvfF52-ZiZmyD_tIit2rF072cdUjXlWzhD8blt1DuRfwhr3tFVMmX-XdX4-vgRjeA-iUgbfeJeRHEVEG1k",
+  /* Ajout de la clé VAPID ici pour qu'elle soit lue correctement partout */
+  vapidPublicKey: "BNNqDhvfF52-ZiZmyD_tIit2rF072cdUjXlWzhD8blt1DuRfwhr3tFVMmX-XdX4-vgRjeA-iUgbfeJeRHEVEG1k"
 };
