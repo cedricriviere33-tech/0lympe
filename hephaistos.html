@@ -1,0 +1,2879 @@
+<!--
+  APP: HEPHAISTOS — Suivi des Travaux & Interventions
+  VERSION: 1.0
+  CONTEXT: Standalone HTML
+  DEPENDENCIES: JsBarcode (CDN), html5-qrcode (CDN)
+  USAGE: PIC de Saint-Denis — La Poste Réunion
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEPHAISTOS — HEPHAISTOS · PIC · Rivière Cédric </title>
+<script src=JsBarcode.all.min.js.txt></script>
+<style>
+/* ═══════════════════════════════════════════════
+   HEPHAISTOS — HEPHAISTOS PIC - Rivière Cédric
+   Thème : Aero Blue/Dark La Poste
+═══════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --blue:#003189; --blue2:#0047BB; --blue3:#1a4fba;
+  --blue-dark:#001f6e; --blue-deeper:#000d3d;
+  --yellow:#FFD100; --yellow2:#e6b800;
+  --green:#00C853; --red:#FF3D3D; --orange:#FF8C00; --purple:#7C3AED;
+  --glass:rgba(255,255,255,.08); --glass2:rgba(255,255,255,.13);
+  --border:rgba(255,255,255,.14); --border2:rgba(255,255,255,.06);
+  --text:#fff; --text2:rgba(255,255,255,.72); --text3:rgba(255,255,255,.45);
+  --shadow:0 4px 24px rgba(0,0,0,.28);
+  --radius:12px; --radius2:20px;
+  --font:'DM Sans',sans-serif; --mono:'Share Tech Mono',monospace;
+  --bg: linear-gradient(155deg,#000d3d 0%,#001f6e 40%,#003189 75%,#0a3fa0 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);min-height:100vh;color:var(--text);overflow-x:hidden;}
+
+/* ── ÉCRANS ── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ══════════════════════════════════════
+   LOGIN
+══════════════════════════════════════ */
+#screen-login{align-items:center;justify-content:center;padding:20px;}
+.login-wrap{
+  width:100%;max-width:420px;
+  background:rgba(0,10,50,.6);
+  backdrop-filter:blur(24px);
+  border:1px solid var(--border);
+  border-radius:28px;padding:40px 36px;
+  box-shadow:0 16px 56px rgba(0,0,0,.4);
+  animation:fadeUp .4s ease;
+}
+.login-logo{
+  width:64px;height:64px;background:var(--yellow);border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:900;color:var(--blue);
+  margin:0 auto 16px;box-shadow:0 8px 28px rgba(255,209,0,.3);
+}
+.login-title{text-align:center;font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;}
+.login-sub{text-align:center;font-size:12px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:28px;}
+.lf{margin-bottom:14px;}
+.lf label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;}
+.lf input{
+  width:100%;background:rgba(255,255,255,.08);border:1.5px solid var(--border);
+  border-radius:10px;padding:11px 14px;color:#fff;font-size:14px;font-family:var(--font);
+  outline:none;transition:.2s;
+}
+.lf input:focus{border-color:var(--yellow);background:rgba(255,255,255,.12);}
+.lf input::placeholder{color:var(--text3);}
+.login-err{
+  background:rgba(255,61,61,.15);border:1px solid rgba(255,61,61,.3);
+  color:#ff8080;font-size:12px;font-weight:600;padding:10px 14px;
+  border-radius:8px;margin-bottom:14px;display:none;
+}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 22px;border-radius:10px;font-size:13px;font-weight:700;
+  cursor:pointer;border:none;transition:all .2s;font-family:var(--font);
+}
+.btn-yellow{background:var(--yellow);color:var(--blue);}
+.btn-yellow:hover{background:var(--yellow2);transform:translateY(-1px);}
+.btn-full{width:100%;justify-content:center;}
+.btn-ghost{background:var(--glass);border:1px solid var(--border);color:#fff;}
+.btn-ghost:hover{background:var(--glass2);}
+.btn-blue{background:var(--blue2);color:#fff;}
+.btn-blue:hover{background:var(--blue3);}
+.btn-red{background:rgba(255,61,61,.15);border:1px solid rgba(255,61,61,.3);color:#ff8080;}
+.btn-red:hover{background:rgba(255,61,61,.28);}
+.btn-green{background:rgba(0,200,83,.15);border:1px solid rgba(0,200,83,.3);color:var(--green);}
+.btn-green:hover{background:rgba(0,200,83,.28);}
+.btn-sm{padding:7px 14px;font-size:11px;border-radius:8px;}
+.btn-xs{padding:4px 10px;font-size:10px;border-radius:6px;}
+
+/* ══════════════════════════════════════
+   TOPBAR
+══════════════════════════════════════ */
+.topbar{
+  background:rgba(0,10,60,.7);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;height:58px;display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:200;
+  flex-shrink:0;
+}
+.tb-brand{display:flex;align-items:center;gap:12px;}
+.tb-logo{
+  width:38px;height:38px;background:var(--yellow);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:900;color:var(--blue);flex-shrink:0;
+}
+.tb-title{font-size:17px;font-weight:800;letter-spacing:-.3px;}
+.tb-sub{font-size:10px;color:var(--text2);margin-top:1px;}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.user-badge{
+  display:flex;align-items:center;gap:8px;
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:20px;padding:5px 12px 5px 5px;cursor:pointer;
+  transition:.2s;
+}
+.user-badge:hover{background:var(--glass2);}
+.user-av{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--yellow),var(--yellow2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:900;color:var(--blue);flex-shrink:0;
+}
+.user-name{font-size:12px;font-weight:700;}
+.role-pill{
+  font-size:9px;font-weight:800;letter-spacing:1px;
+  padding:2px 7px;border-radius:20px;text-transform:uppercase;
+}
+.role-pill.admin{background:rgba(255,209,0,.2);color:var(--yellow);}
+.role-pill.agent{background:var(--glass);color:var(--text2);}
+
+/* ══════════════════════════════════════
+   NAV TABS
+══════════════════════════════════════ */
+.nav{
+  display:flex;gap:4px;padding:12px 16px;
+  background:rgba(0,0,0,.15);border-bottom:1px solid var(--border2);
+  overflow-x:auto;flex-shrink:0;
+}
+.nav::-webkit-scrollbar{height:0;}
+.nav-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:9px 16px;border-radius:10px;border:none;
+  background:transparent;color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  transition:.2s;white-space:nowrap;font-family:var(--font);
+}
+.nav-btn.active{background:rgba(255,255,255,.12);color:#fff;font-weight:700;}
+.nav-btn:hover:not(.active){background:rgba(255,255,255,.07);}
+
+/* ══════════════════════════════════════
+   CONTENU PRINCIPAL
+══════════════════════════════════════ */
+.main{flex:1;padding:18px;max-width:1100px;width:100%;margin:0 auto;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* ── Cards ── */
+.card{
+  background:rgba(255,255,255,.07);backdrop-filter:blur(12px);
+  border:1px solid var(--border);border-radius:var(--radius2);
+  padding:18px 20px;margin-bottom:16px;
+  box-shadow:var(--shadow);
+}
+.card-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;padding-bottom:12px;
+  border-bottom:1px solid var(--border2);
+  gap:10px;flex-wrap:wrap;
+}
+.card-title{
+  font-size:12px;font-weight:800;color:var(--yellow);
+  text-transform:uppercase;letter-spacing:1px;
+  display:flex;align-items:center;gap:8px;
+}
+.card-title .icon{font-size:16px;}
+
+/* ── Stats grid ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px;}
+.stat-box{
+  background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.04));
+  border:1px solid var(--border);border-radius:14px;
+  padding:16px 14px;text-align:center;
+  transition:.2s;cursor:default;
+}
+.stat-box:hover{border-color:rgba(255,209,0,.3);transform:translateY(-2px);}
+.stat-num{font-size:28px;font-weight:800;color:var(--yellow);line-height:1;}
+.stat-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-top:4px;}
+.stat-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+
+/* ── Formulaires ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-grid.cols3{grid-template-columns:1fr 1fr 1fr;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+.form-group label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;}
+.form-group input,.form-group select,.form-group textarea{
+  background:rgba(255,255,255,.08);border:1.5px solid var(--border);
+  border-radius:9px;padding:10px 13px;color:#fff;font-size:13px;
+  font-family:var(--font);outline:none;transition:.2s;width:100%;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  border-color:var(--yellow);background:rgba(255,255,255,.12);
+}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--text3);}
+.form-group select option{background:#001f6e;color:#fff;}
+.form-group textarea{resize:vertical;min-height:72px;}
+.form-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+
+/* ── Table ── */
+.tbl-wrap{overflow-x:auto;border-radius:12px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead{background:rgba(0,49,137,.6);}
+th{
+  padding:10px 12px;text-align:left;font-size:10px;font-weight:700;
+  color:var(--yellow);text-transform:uppercase;letter-spacing:.7px;
+  white-space:nowrap;
+}
+td{
+  padding:10px 12px;border-bottom:1px solid var(--border2);
+  color:var(--text);vertical-align:middle;
+}
+tr:last-child td{border-bottom:none;}
+tbody tr{transition:.15s;}
+tbody tr:hover{background:rgba(255,255,255,.05);}
+.td-code{font-family:var(--mono);font-size:11px;color:var(--yellow);}
+
+/* ── Badges statut ── */
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;
+  white-space:nowrap;
+}
+.badge::before{content:'●';font-size:8px;}
+.badge-open{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.25);}
+.badge-progress{background:rgba(255,140,0,.15);color:var(--orange);border:1px solid rgba(255,140,0,.25);}
+.badge-done{background:rgba(0,71,187,.2);color:#60a5fa;border:1px solid rgba(0,71,187,.3);}
+.badge-urgent{background:rgba(255,61,61,.15);color:var(--red);border:1px solid rgba(255,61,61,.25);}
+.badge-cancelled{background:rgba(255,255,255,.08);color:var(--text2);border:1px solid var(--border2);}
+
+/* ── Zone scan ── */
+.scan-zone{
+  background:rgba(255,209,0,.06);border:2px dashed rgba(255,209,0,.3);
+  border-radius:16px;padding:20px;text-align:center;
+  margin-bottom:16px;transition:.2s;cursor:text;
+}
+.scan-zone.focused{border-color:var(--yellow);background:rgba(255,209,0,.1);}
+.scan-icon{font-size:36px;margin-bottom:8px;}
+.scan-txt{font-size:13px;color:var(--text2);margin-bottom:8px;}
+#scan-input{
+  width:100%;background:rgba(255,255,255,.08);border:1.5px solid var(--border);
+  border-radius:9px;padding:11px 14px;color:#fff;font-size:14px;
+  font-family:var(--mono);outline:none;text-align:center;letter-spacing:2px;
+}
+#scan-input:focus{border-color:var(--yellow);}
+
+/* ── Code barre print ── */
+.bc-card{
+  background:#fff;border-radius:12px;padding:16px;
+  display:flex;flex-direction:column;align-items:center;
+  color:#000;text-align:center;
+}
+.bc-ref{font-family:var(--mono);font-size:11px;color:#003189;font-weight:700;margin-bottom:4px;}
+.bc-desc{font-size:10px;color:#5A6A8A;margin-bottom:8px;max-width:200px;line-height:1.3;}
+.bc-svg{max-width:220px;}
+.bc-meta{font-size:9px;color:#999;margin-top:4px;}
+
+/* ── Timeline ── */
+.timeline{list-style:none;position:relative;padding-left:20px;}
+.timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--border);}
+.tl-item{position:relative;padding-bottom:16px;padding-left:20px;}
+.tl-item::before{
+  content:'';position:absolute;left:-14px;top:4px;
+  width:10px;height:10px;border-radius:50%;
+  background:var(--yellow);border:2px solid var(--blue-deeper);
+}
+.tl-date{font-size:10px;color:var(--text3);font-family:var(--mono);}
+.tl-text{font-size:12px;color:var(--text2);margin-top:2px;}
+.tl-author{font-size:10px;color:var(--text3);margin-top:1px;}
+
+/* ── Modal ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,30,.85);backdrop-filter:blur(6px);
+  padding:20px;overflow-y:auto;
+}
+.modal-overlay.open{display:flex;align-items:flex-start;justify-content:center;padding-top:40px;}
+.modal{
+  width:100%;max-width:680px;
+  background:linear-gradient(135deg,#0a1628,#0f2044);
+  border:1px solid var(--border);border-radius:20px;overflow:hidden;
+  animation:fadeUp .3s ease;
+  margin-bottom:40px;
+}
+.modal-hdr{
+  background:rgba(255,255,255,.06);padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border2);
+}
+.modal-title{font-size:15px;font-weight:800;color:var(--yellow);}
+.modal-close{
+  width:32px;height:32px;border-radius:8px;border:none;
+  background:rgba(255,61,61,.15);color:#ff8080;
+  font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.modal-body{padding:20px;}
+.modal-footer{
+  padding:14px 20px;border-top:1px solid var(--border2);
+  display:flex;justify-content:flex-end;gap:10px;
+}
+
+/* ── Toast ── */
+#toast{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  padding:13px 22px;border-radius:12px;font-size:13px;font-weight:700;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);display:none;
+  animation:fadeUp .3s ease;pointer-events:none;
+}
+#toast.success{background:var(--green);color:#fff;}
+#toast.error{background:var(--red);color:#fff;}
+#toast.info{background:var(--blue2);color:#fff;}
+
+/* ── Chips / Tags ── */
+.chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;
+  background:var(--glass);border:1px solid var(--border);color:var(--text2);
+}
+.chip.selected{background:rgba(255,209,0,.18);border-color:rgba(255,209,0,.4);color:var(--yellow);}
+
+/* ── Priorité barre ── */
+.prio-bar{height:3px;border-radius:2px;margin-top:4px;}
+.prio-low{background:var(--green);}
+.prio-medium{background:var(--orange);}
+.prio-high{background:var(--red);}
+.prio-critical{background:var(--red);animation:pulse-red 1s infinite;}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:48px 20px;color:var(--text3);}
+.empty-icon{font-size:48px;margin-bottom:12px;}
+.empty-text{font-size:14px;color:var(--text2);margin-bottom:6px;}
+.empty-sub{font-size:12px;}
+
+/* ── Barcode liste ── */
+.bc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+
+/* ── Info chips ── */
+.info-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.info-chip{
+  background:rgba(255,255,255,.06);border:1px solid var(--border2);
+  border-radius:8px;padding:6px 12px;font-size:11px;color:var(--text2);
+}
+.info-chip span{font-weight:700;color:var(--text);}
+
+/* ── Search / filters ── */
+.filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-bar input{
+  flex:1;min-width:200px;background:rgba(255,255,255,.08);
+  border:1.5px solid var(--border);border-radius:9px;
+  padding:9px 14px;color:#fff;font-size:13px;font-family:var(--font);outline:none;
+}
+.filter-bar input:focus{border-color:var(--yellow);}
+.filter-bar input::placeholder{color:var(--text3);}
+.filter-bar select{
+  background:rgba(255,255,255,.08);border:1.5px solid var(--border);
+  border-radius:9px;padding:9px 14px;color:#fff;font-size:12px;
+  font-family:var(--font);outline:none;cursor:pointer;
+}
+.filter-bar select option{background:#001f6e;}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-red{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* ── Divider ── */
+.divider{height:1px;background:var(--border2);margin:14px 0;}
+
+/* ── Page title ── */
+.page-title{
+  font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;
+}
+.page-sub{font-size:12px;color:var(--text2);margin-bottom:20px;}
+
+/* ── Resp ── */
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr;}
+  .form-grid.cols3{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .main{padding:12px;}
+  .nav{padding:8px 12px;}
+}
+
+/* ── Print barcode ── */
+.bc-print-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+
+/* ── Scan result flash ── */
+.scan-result{
+  padding:14px 18px;border-radius:12px;margin-bottom:12px;
+  border:1px solid;animation:fadeUp .3s ease;
+}
+.scan-result.ok{background:rgba(0,200,83,.1);border-color:rgba(0,200,83,.3);color:var(--green);}
+.scan-result.err{background:rgba(255,61,61,.1);border-color:rgba(255,61,61,.3);color:var(--red);}
+.scan-result-title{font-weight:800;font-size:14px;margin-bottom:4px;}
+.scan-result-body{font-size:12px;color:var(--text2);}
+
+/* ── Équipe intervenants ── */
+.equipe-list { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+.equipe-row {
+  display:grid; grid-template-columns:1fr 1fr auto;
+  gap:8px; align-items:center;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border2);
+  border-radius:10px; padding:10px 12px;
+}
+.equipe-row input, .equipe-row select {
+  background:rgba(255,255,255,.08); border:1.5px solid var(--border);
+  border-radius:8px; padding:8px 10px; color:#fff; font-size:12px;
+  font-family:var(--font); outline:none; width:100%;
+  transition:border-color .18s;
+}
+.equipe-row input:focus, .equipe-row select:focus { border-color:var(--yellow); }
+.equipe-row select option { background:#001f6e; }
+.btn-add-equipe {
+  display:flex; align-items:center; gap:6px;
+  padding:8px 14px; border-radius:9px;
+  background:rgba(0,200,83,.12); border:1px solid rgba(0,200,83,.28);
+  color:var(--green); font-size:11px; font-weight:700;
+  cursor:pointer; margin-top:8px; transition:.2s;
+}
+.btn-add-equipe:hover { background:rgba(0,200,83,.22); }
+.btn-del-equipe {
+  width:28px; height:28px; border-radius:7px; border:none;
+  background:rgba(255,61,61,.14); color:var(--red);
+  font-size:14px; cursor:pointer; display:flex;
+  align-items:center; justify-content:center; flex-shrink:0;
+  transition:.18s;
+}
+.btn-del-equipe:hover { background:rgba(255,61,61,.28); }
+
+/* ── Clauses contractuelles ── */
+.clauses-wrap { display:flex; flex-direction:column; gap:8px; }
+.clause-item {
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border2); border-radius:10px;
+  padding:12px 14px;
+}
+.clause-hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:6px; gap:8px;
+}
+.clause-title {
+  font-size:11px; font-weight:700; color:var(--yellow);
+  display:flex; align-items:center; gap:6px;
+}
+.clause-body {
+  font-size:12px; color:var(--text2); line-height:1.6;
+  background:rgba(255,255,255,.04); border:1px solid var(--border2);
+  border-radius:8px; padding:9px 12px; width:100%; resize:vertical;
+  min-height:54px; font-family:var(--font); color:#fff; outline:none;
+  transition:border-color .18s;
+}
+.clause-body:focus { border-color:var(--yellow); }
+.clause-badge {
+  font-size:9px; font-weight:800; letter-spacing:.8px;
+  padding:2px 8px; border-radius:20px; text-transform:uppercase;
+  background:rgba(255,209,0,.14); color:var(--yellow); border:1px solid rgba(255,209,0,.25);
+}
+.clause-required { border-color:rgba(255,140,0,.3); }
+
+/* ── Signatures ── */
+.sig-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:16px;
+}
+.sig-block {
+  background:rgba(255,255,255,.04); border:1px solid var(--border2);
+  border-radius:12px; padding:14px;
+}
+.sig-label {
+  font-size:10px; font-weight:800; color:var(--text3);
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;
+  display:flex; align-items:center; gap:6px;
+}
+.sig-canvas-wrap {
+  background:#fff; border-radius:8px; border:2px solid #D0D9EF;
+  overflow:hidden; position:relative; cursor:crosshair;
+}
+canvas.sig-canvas { display:block; width:100%; height:90px; touch-action:none; }
+.sig-controls {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:6px;
+}
+.sig-name-input {
+  width:100%; background:rgba(255,255,255,.07); border:1.5px solid var(--border);
+  border-radius:8px; padding:7px 11px; color:#fff; font-size:12px;
+  font-family:var(--font); outline:none; margin-bottom:8px;
+  transition:border-color .18s;
+}
+.sig-name-input:focus { border-color:var(--yellow); }
+.sig-name-input::placeholder { color:var(--text3); }
+.sig-date { font-size:10px; color:var(--text3); font-family:var(--mono); }
+.btn-clear-sig {
+  font-size:10px; font-weight:700; color:var(--red);
+  background:none; border:none; cursor:pointer; padding:2px 6px;
+}
+.sig-placeholder {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:11px; color:#aaa; pointer-events:none;
+  font-style:italic;
+}
+.signed-indicator {
+  font-size:10px; font-weight:700; color:var(--green);
+  display:inline-flex; align-items:center; gap:4px;
+}
+
+/* ── Sections accordion dans modal ── */
+.form-section {
+  border:1px solid var(--border2); border-radius:14px;
+  margin-bottom:14px; overflow:hidden;
+}
+.form-section-hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; cursor:pointer;
+  background:rgba(255,255,255,.04);
+  transition:background .18s;
+  user-select:none;
+}
+.form-section-hdr:hover { background:rgba(255,255,255,.08); }
+.form-section-title {
+  font-size:11px; font-weight:800; color:var(--yellow);
+  text-transform:uppercase; letter-spacing:1px;
+  display:flex; align-items:center; gap:8px;
+}
+.form-section-body { padding:16px; }
+.form-section-arrow {
+  font-size:12px; color:var(--text3); transition:transform .2s;
+}
+.form-section.collapsed .form-section-body { display:none; }
+.form-section.collapsed .form-section-arrow { transform:rotate(-90deg); }
+
+/* ── Print fiche contractuelle ── */
+@media print { button { display:none !important; } }
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     TOAST
+══════════════════════════════════════════ -->
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     SCREEN : LOGIN
+══════════════════════════════════════════ -->
+<div id="screen-login" class="screen">
+  <div class="login-wrap">
+    <div class="login-logo">🔨</div>
+    <div class="login-title">HEPHAISTOS</div>
+    <div class="login-sub">HEPHAISTOS · PIC de Saint-Denis</div>
+    <div class="login-err" id="login-err">Identifiant ou mot de passe incorrect.</div>
+    <div class="lf">
+      <label>Identifiant</label>
+      <input id="l-user" placeholder="Votre identifiant" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="lf">
+      <label>Mot de passe</label>
+      <input id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-yellow btn-full" onclick="doLogin()">▶ Connexion</button>
+    <div style="text-align:center;margin-top:18px;font-size:10px;color:var(--text3);">
+      La Poste Réunion · PIC · Rivière Cédric_PXRA993
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SCREEN : APP
+══════════════════════════════════════════ -->
+<div id="screen-app" class="screen active">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="tb-brand">
+      <div class="tb-logo">🔨</div>
+      <div>
+        <div class="tb-title">HEPHAISTOS</div>
+        <div class="tb-sub">HEPHAISTOS PIC · Rivière Cédric</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <div class="user-badge" onclick="showUserMenu()">
+        <div class="user-av" id="user-av">?</div>
+        <div>
+          <div class="user-name" id="user-name">—</div>
+          <div class="role-pill" id="role-pill">agent</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="hephGoHome()" title="Retour a Olympe">🏠 Accueil</button>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <button class="nav-btn active" data-tab="dashboard" onclick="switchTab(this)">📊 Tableau de bord</button>
+    <button class="nav-btn" data-tab="missions" onclick="switchTab(this)">📋 Missions</button>
+    <button class="nav-btn" data-tab="scan" onclick="switchTab(this)">📷 Scanner</button>
+    <button class="nav-btn" data-tab="intervenants" onclick="switchTab(this)">👷 Intervenants</button>
+    <button class="nav-btn admin-only" data-tab="barcodes" onclick="switchTab(this)">🔖 Codes-barres</button>
+    <button class="nav-btn admin-only" data-tab="admin" onclick="switchTab(this)">⚙ Administration</button>
+  </div>
+
+  <!-- Contenu -->
+  <div class="main">
+
+    <!-- ── DASHBOARD ── -->
+    <div id="tab-dashboard" class="section active">
+      <div class="page-title">Tableau de bord</div>
+      <div class="page-sub" id="dash-date">—</div>
+
+      <div class="stats-grid" id="dash-stats"></div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title"><span class="icon">🚨</span> Missions urgentes / en cours</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Réf.</th><th>Type</th><th>Zone</th><th>Priorité</th><th>Statut</th><th>Intervenant</th><th>Début</th>
+            </tr></thead>
+            <tbody id="dash-urgent"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title"><span class="icon">📅</span> Activité récente</div>
+        </div>
+        <ul class="timeline" id="dash-timeline"></ul>
+      </div>
+    </div>
+
+    <!-- ── MISSIONS ── -->
+    <div id="tab-missions" class="section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:10px;">
+        <div class="page-title">Missions / Interventions</div>
+        <button class="btn btn-yellow admin-only" onclick="openNewMission()">+ Nouvelle mission</button>
+      </div>
+      <div class="page-sub">Toutes les interventions enregistrées</div>
+
+      <div class="filter-bar">
+        <input id="mission-search" placeholder="🔍 Chercher réf., type, zone, intervenant..." oninput="renderMissions()">
+        <select id="mission-filter-statut" onchange="renderMissions()">
+          <option value="">Tous les statuts</option>
+          <option value="ouvert">Ouvert</option>
+          <option value="en_cours">En cours</option>
+          <option value="termine">Terminé</option>
+          <option value="urgent">Urgent</option>
+          <option value="annule">Annulé</option>
+        </select>
+        <select id="mission-filter-type" onchange="renderMissions()">
+          <option value="">Tous les types</option>
+        </select>
+        <select id="mission-filter-annee" onchange="renderMissions()">
+          <option value="">Toutes années</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Réf. / Code</th><th>Type travaux</th><th>Zone / Lieu</th>
+              <th>Priorité</th><th>Statut</th><th>Intervenant(s)</th>
+              <th>Date début</th><th>Montant</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="missions-tbody"></tbody>
+          </table>
+        </div>
+        <div id="missions-empty" class="empty" style="display:none;">
+          <div class="empty-icon">📋</div>
+          <div class="empty-text">Aucune mission trouvée</div>
+          <div class="empty-sub">Modifier les filtres ou créer une nouvelle mission</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCAN ── -->
+    <div id="tab-scan" class="section">
+      <div class="page-title">Scanner une mission</div>
+      <div class="page-sub">Flashez le code-barre d'une fiche d'intervention</div>
+
+      <div class="scan-zone" id="scan-zone" onclick="document.getElementById('scan-input').focus()">
+        <div class="scan-icon">📷</div>
+        <div class="scan-txt">Pointez votre lecteur de code-barre ou saisissez la référence</div>
+        <input id="scan-input" placeholder="HEPH-2026-XXXX" autocomplete="off">
+      </div>
+
+      <div id="scan-result-area"></div>
+
+      <div class="card" id="scan-detail" style="display:none;">
+        <div class="card-hdr">
+          <div class="card-title" id="scan-detail-title">Détail mission</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm admin-only" id="scan-edit-btn">✏️ Modifier</button>
+            <button class="btn btn-yellow btn-sm admin-only" id="scan-update-status-btn">⟳ Maj statut</button>
+          </div>
+        </div>
+        <div id="scan-detail-body"></div>
+      </div>
+    </div>
+
+    <!-- ── INTERVENANTS ── -->
+    <div id="tab-intervenants" class="section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:10px;">
+        <div class="page-title">Intervenants</div>
+        <button class="btn btn-yellow admin-only" onclick="openNewIntervenant()">+ Ajouter</button>
+      </div>
+      <div class="page-sub">Entreprises et prestataires enregistrés</div>
+
+      <div class="filter-bar">
+        <input id="intv-search" placeholder="🔍 Nom, spécialité, contact..." oninput="renderIntervenants()">
+        <select id="intv-filter" onchange="renderIntervenants()">
+          <option value="">Toutes spécialités</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Entreprise</th><th>Spécialité</th><th>Contact</th>
+              <th>Téléphone</th><th>Email</th><th>Missions</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="intv-tbody"></tbody>
+          </table>
+        </div>
+        <div id="intv-empty" class="empty" style="display:none;">
+          <div class="empty-icon">👷</div>
+          <div class="empty-text">Aucun intervenant</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CODES-BARRES (admin) ── -->
+    <div id="tab-barcodes" class="section">
+      <div class="page-title">Codes-barres générés</div>
+      <div class="page-sub">Fiches d'intervention imprimables avec code-barre</div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title"><span class="icon">🖨</span> Imprimer les fiches</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm" onclick="printAllBC()">🖨 Tout imprimer</button>
+            <select id="bc-filter-mission" onchange="renderBarcodes()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:#fff;font-size:11px;font-family:var(--font);">
+              <option value="">Toutes les missions</option>
+            </select>
+          </div>
+        </div>
+        <div class="bc-grid" id="bc-grid"></div>
+        <div id="bc-empty" class="empty" style="display:none;">
+          <div class="empty-icon">🔖</div>
+          <div class="empty-text">Aucun code-barre à afficher</div>
+          <div class="empty-sub">Créez une mission pour générer un code-barre</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADMIN ── -->
+    <div id="tab-admin" class="section">
+      <div class="page-title">Administration</div>
+      <div class="page-sub">Gestion des utilisateurs et paramètres système</div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title"><span class="icon">👥</span> Utilisateurs HEPHAISTOS</div>
+          <button class="btn btn-yellow btn-sm" onclick="openNewUser()">+ Ajouter utilisateur</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Identifiant</th><th>Nom</th><th>Rôle</th><th>Créé le</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="admin-users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title"><span class="icon">🔧</span> Types de travaux</div>
+          <button class="btn btn-ghost btn-sm" onclick="openAddType()">+ Ajouter type</button>
+        </div>
+        <div id="types-list"></div>
+      </div>
+
+      <div class="card" style="border-color:rgba(255,61,61,.2);">
+        <div class="card-hdr">
+          <div class="card-title" style="color:var(--red);"><span class="icon">⚠</span> Zone dangereuse</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-red btn-sm" onclick="exportData()">⬇ Exporter données (JSON)</button>
+          <button class="btn btn-red btn-sm" onclick="importDataPrompt()">⬆ Importer données</button>
+          <button class="btn btn-red btn-sm" onclick="resetConfirm()">🗑 Réinitialiser toutes les données</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /screen-app -->
+
+<!-- ══════════════════════════════════════════
+     MODALS
+══════════════════════════════════════════ -->
+
+<!-- Modal nouvelle mission -->
+<div class="modal-overlay" id="modal-mission">
+  <div class="modal" style="max-width:780px;">
+    <div class="modal-hdr">
+      <div class="modal-title" id="modal-mission-title">📋 Nouvelle mission</div>
+      <button class="modal-close" onclick="closeModal('modal-mission')">✕</button>
+    </div>
+    <div class="modal-body" style="max-height:78vh;overflow-y:auto;padding-right:14px;">
+
+      <!-- ── SECTION 1 : Informations générales ── -->
+      <div class="form-section">
+        <div class="form-section-hdr" onclick="toggleSection(this)">
+          <div class="form-section-title">📋 Informations générales</div>
+          <span class="form-section-arrow">▼</span>
+        </div>
+        <div class="form-section-body">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Type de travaux *</label>
+              <select id="m-type" required></select>
+            </div>
+            <div class="form-group">
+              <label>Zone / Lieu *</label>
+              <input id="m-zone" placeholder="Ex: Toiture hangar B, Salle informatique...">
+            </div>
+            <div class="form-group">
+              <label>Priorité *</label>
+              <select id="m-prio">
+                <option value="low">🟢 Basse</option>
+                <option value="medium" selected>🟡 Moyenne</option>
+                <option value="high">🟠 Haute</option>
+                <option value="critical">🔴 Critique</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date de début prévue</label>
+              <input type="date" id="m-date-start">
+            </div>
+            <div class="form-group">
+              <label>Date de fin prévue</label>
+              <input type="date" id="m-date-end">
+            </div>
+            <div class="form-group full">
+              <label>Description des travaux *</label>
+              <textarea id="m-desc" placeholder="Décrire précisément les travaux à effectuer, le périmètre d'intervention, les matériaux..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Montant estimé (€)</label>
+              <input type="number" id="m-budget" placeholder="0.00" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>Montant facturé (€)</label>
+              <input type="number" id="m-facture" placeholder="0.00" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>N° Facture / Bon de commande</label>
+              <input id="m-invoice-ref" placeholder="FAC-2026-XXXX ou BC-XXXX">
+            </div>
+            <div class="form-group">
+              <label>Statut</label>
+              <select id="m-statut">
+                <option value="ouvert">🟢 Ouvert</option>
+                <option value="en_cours">🟡 En cours</option>
+                <option value="termine">✅ Terminé</option>
+                <option value="urgent">🔴 Urgent</option>
+                <option value="annule">⬛ Annulé</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Observations / Notes internes</label>
+              <textarea id="m-notes" placeholder="Remarques, conditions particulières, accès, équipements requis..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 2 : Équipe d'intervention ── -->
+      <div class="form-section">
+        <div class="form-section-hdr" onclick="toggleSection(this)">
+          <div class="form-section-title">👷 Équipe d'intervention</div>
+          <span class="form-section-arrow">▼</span>
+        </div>
+        <div class="form-section-body">
+          <div class="form-group" style="margin-bottom:10px;">
+            <label>Entreprise prestataire</label>
+            <select id="m-intervenant">
+              <option value="">— Sélectionner un prestataire —</option>
+            </select>
+          </div>
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;">
+            Membres de l'équipe (nom, identifiant, rôle)
+          </div>
+          <div class="equipe-list" id="equipe-list"></div>
+          <button class="btn-add-equipe" onclick="addEquipeMember()">+ Ajouter un membre</button>
+        </div>
+      </div>
+
+      <!-- ── SECTION 3 : Clauses contractuelles ── -->
+      <div class="form-section">
+        <div class="form-section-hdr" onclick="toggleSection(this)">
+          <div class="form-section-title">📜 Clauses contractuelles</div>
+          <span class="form-section-arrow">▼</span>
+        </div>
+        <div class="form-section-body">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.6;">
+            Définissez les clauses qui seront incluses dans le bon de commande remis au prestataire.
+          </div>
+          <div class="clauses-wrap">
+            <div class="clause-item clause-required">
+              <div class="clause-hdr">
+                <div class="clause-title">🔒 Clause de sécurité <span class="clause-badge">Obligatoire</span></div>
+              </div>
+              <textarea class="clause-body" id="clause-secu" placeholder="Ex: Le prestataire s'engage à respecter les règles de sécurité en vigueur au sein des installations de La Poste Réunion. Port des EPI obligatoire. Signalement immédiat de tout incident.">Le prestataire s'engage à respecter les règles de sécurité en vigueur au sein des installations de La Poste Réunion (PIC de Saint Denis). Le port des équipements de protection individuelle (EPI) est obligatoire. Tout incident ou accident devra être signalé immédiatement au responsable de site.</textarea>
+            </div>
+            <div class="clause-item clause-required">
+              <div class="clause-hdr">
+                <div class="clause-title">⚖️ Clause de responsabilité <span class="clause-badge">Obligatoire</span></div>
+              </div>
+              <textarea class="clause-body" id="clause-resp" placeholder="Ex: Le prestataire est seul responsable des dommages causés...">Le prestataire est seul responsable des dommages matériels ou corporels causés à des tiers ou aux installations de La Poste Réunion du fait de ses interventions. Il devra fournir une attestation d'assurance responsabilité civile professionnelle valide avant le début des travaux.</textarea>
+            </div>
+            <div class="clause-item">
+              <div class="clause-hdr">
+                <div class="clause-title">🔐 Clause de confidentialité</div>
+              </div>
+              <textarea class="clause-body" id="clause-conf" placeholder="Ex: Le prestataire s'engage à ne divulguer aucune information...">Le prestataire s'engage à maintenir la stricte confidentialité de toutes les informations auxquelles il pourrait avoir accès dans le cadre de cette intervention. Toute divulgation à des tiers est formellement interdite.</textarea>
+            </div>
+            <div class="clause-item">
+              <div class="clause-hdr">
+                <div class="clause-title">📅 Délais & Pénalités de retard</div>
+              </div>
+              <textarea class="clause-body" id="clause-delai" placeholder="Ex: Tout dépassement du délai convenu entraîne une pénalité...">Tout dépassement du délai d'exécution convenu sans accord préalable de La Poste Réunion pourra entraîner l'application de pénalités. Le prestataire devra informer le responsable de site au moins 48h avant toute modification du planning.</textarea>
+            </div>
+            <div class="clause-item">
+              <div class="clause-hdr">
+                <div class="clause-title">✅ Conditions générales de réception</div>
+              </div>
+              <textarea class="clause-body" id="clause-recep" placeholder="Ex: La réception des travaux sera prononcée après vérification...">La réception des travaux sera prononcée après vérification contradictoire entre le prestataire et le représentant de La Poste Réunion. Toute réserve devra être levée dans un délai de 15 jours ouvrés à compter de la notification. La facture ne sera honorée qu'après réception sans réserve.</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 4 : Signatures ── -->
+      <div class="form-section">
+        <div class="form-section-hdr" onclick="toggleSection(this)">
+          <div class="form-section-title">✍️ Signatures</div>
+          <span class="form-section-arrow">▼</span>
+        </div>
+        <div class="form-section-body">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.6;">
+            Signatures requises pour validation du bon d'intervention. Le document imprimé sera remis au prestataire avec les deux signatures.
+          </div>
+          <div class="sig-grid">
+            <div class="sig-block">
+              <div class="sig-label">🏢 La Poste Réunion<br><span style="font-size:9px;color:var(--text3);">Responsable PIC de Saint-Denis</span></div>
+              <input class="sig-name-input" id="sig-lp-nom" placeholder="Nom du signataire La Poste">
+              <div class="sig-canvas-wrap">
+                <canvas class="sig-canvas" id="sig-lp-canvas" width="300" height="90"></canvas>
+                <div class="sig-placeholder" id="sig-lp-placeholder">Signer ici ✍</div>
+              </div>
+              <div class="sig-controls">
+                <span class="sig-date" id="sig-lp-date"></span>
+                <button class="btn-clear-sig" onclick="clearSig('lp')">✕ Effacer</button>
+              </div>
+            </div>
+            <div class="sig-block">
+              <div class="sig-label">👷 Prestataire<br><span style="font-size:9px;color:var(--text3);">Représentant entreprise</span></div>
+              <input class="sig-name-input" id="sig-prest-nom" placeholder="Nom du représentant prestataire">
+              <div class="sig-canvas-wrap">
+                <canvas class="sig-canvas" id="sig-prest-canvas" width="300" height="90"></canvas>
+                <div class="sig-placeholder" id="sig-prest-placeholder">Signer ici ✍</div>
+              </div>
+              <div class="sig-controls">
+                <span class="sig-date" id="sig-prest-date"></span>
+                <button class="btn-clear-sig" onclick="clearSig('prest')">✕ Effacer</button>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:var(--text3);display:flex;align-items:center;gap:8px;">
+            <span id="sig-status-indicator"></span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /modal-body -->
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-mission')">Annuler</button>
+      <button class="btn btn-ghost btn-sm" onclick="printOdm()" style="border-color:rgba(255,209,0,.3);color:var(--yellow);">🖨 Aperçu ODM</button>
+      <button class="btn btn-yellow" onclick="saveMission()">💾 Enregistrer & Générer code-barre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal détail mission -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal" style="max-width:780px;">
+    <div class="modal-hdr">
+      <div class="modal-title" id="modal-detail-title">Détail mission</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-ghost btn-sm" onclick="printMissionFiche()">🖨 Imprimer fiche</button>
+        <button class="modal-close" onclick="closeModal('modal-detail')">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="modal-detail-body"></div>
+    <div class="modal-footer" id="modal-detail-footer"></div>
+  </div>
+</div>
+
+<!-- Modal intervenant -->
+<div class="modal-overlay" id="modal-intervenant">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="modal-intv-title">👷 Nouvel intervenant</div>
+      <button class="modal-close" onclick="closeModal('modal-intervenant')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Nom de l'entreprise *</label>
+          <input id="iv-nom" placeholder="SARL Dupont BTP...">
+        </div>
+        <div class="form-group">
+          <label>Spécialité *</label>
+          <input id="iv-spec" placeholder="Couverture, Électricité, Climatisation...">
+        </div>
+        <div class="form-group">
+          <label>Contact (prénom nom)</label>
+          <input id="iv-contact" placeholder="Jean Martin">
+        </div>
+        <div class="form-group">
+          <label>Téléphone</label>
+          <input id="iv-tel" placeholder="0262 XX XX XX" type="tel">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input id="iv-email" placeholder="contact@entreprise.re" type="email">
+        </div>
+        <div class="form-group">
+          <label>N° SIRET</label>
+          <input id="iv-siret" placeholder="123 456 789 00010">
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <textarea id="iv-notes" placeholder="Conditions, tarifs, observations..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-intervenant')">Annuler</button>
+      <button class="btn btn-yellow" onclick="saveIntervenant()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal utilisateur -->
+<div class="modal-overlay" id="modal-user">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">👤 Utilisateur</div>
+      <button class="modal-close" onclick="closeModal('modal-user')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Identifiant *</label>
+          <input id="u-id" placeholder="prenom.nom" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Mot de passe *</label>
+          <input id="u-pass" type="password" placeholder="••••••••" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Nom complet *</label>
+          <input id="u-nom" placeholder="Prénom Nom">
+        </div>
+        <div class="form-group">
+          <label>Rôle *</label>
+          <select id="u-role">
+            <option value="agent">Agent</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-user')">Annuler</button>
+      <button class="btn btn-yellow" onclick="saveUser()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal update statut -->
+<div class="modal-overlay" id="modal-statut">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-hdr">
+      <div class="modal-title">⟳ Mettre à jour le statut</div>
+      <button class="modal-close" onclick="closeModal('modal-statut')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Nouveau statut</label>
+        <select id="statut-select">
+          <option value="ouvert">🟢 Ouvert</option>
+          <option value="en_cours">🟡 En cours</option>
+          <option value="termine">✅ Terminé</option>
+          <option value="urgent">🔴 Urgent</option>
+          <option value="annule">⬛ Annulé</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Commentaire (optionnel)</label>
+        <textarea id="statut-comment" placeholder="Ex: Travaux terminés le 07/06/2026..." style="min-height:60px;"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-statut')">Annuler</button>
+      <button class="btn btn-yellow" onclick="applyStatusUpdate()">✅ Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal type travaux -->
+<div class="modal-overlay" id="modal-type">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-hdr">
+      <div class="modal-title">🔧 Type de travaux</div>
+      <button class="modal-close" onclick="closeModal('modal-type')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:12px;">
+        <label>Nom du type *</label>
+        <input id="type-name" placeholder="Ex: Toiture, Électricité, Climatisation...">
+      </div>
+      <div class="form-group">
+        <label>Icône (emoji)</label>
+        <input id="type-icon" placeholder="🔨" maxlength="4">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-type')">Annuler</button>
+      <button class="btn btn-yellow" onclick="saveType()">💾 Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ════════════════════════════════════════════════
+//  ÉTAT GLOBAL
+// ════════════════════════════════════════════════
+const LS_KEYS = {
+  missions: 'heph_missions_v1',
+  intervenants: 'heph_intervenants_v1',
+  users: 'heph_users_v1',
+  types: 'heph_types_v1',
+  log: 'heph_log_v1'
+};
+
+let STATE = {
+  currentUser: null,
+  editingMissionId: null,
+  editingIntvId: null,
+  scanTargetId: null
+};
+
+// ════════════════════════════════════════════════
+//  DONNÉES
+// ════════════════════════════════════════════════
+function load() {
+  return {
+    missions: safeJSON(LS_KEYS.missions, []),
+    intervenants: safeJSON(LS_KEYS.intervenants, []),
+    users: safeJSON(LS_KEYS.users, defaultUsers()),
+    types: safeJSON(LS_KEYS.types, defaultTypes()),
+    log: safeJSON(LS_KEYS.log, [])
+  };
+}
+
+function save(data) {
+  try { localStorage.setItem(LS_KEYS.missions, JSON.stringify(data.missions)); } catch(e) {}
+  try { localStorage.setItem(LS_KEYS.intervenants, JSON.stringify(data.intervenants)); } catch(e) {}
+  try { localStorage.setItem(LS_KEYS.users, JSON.stringify(data.users)); } catch(e) {}
+  try { localStorage.setItem(LS_KEYS.types, JSON.stringify(data.types)); } catch(e) {}
+  try { localStorage.setItem(LS_KEYS.log, JSON.stringify(data.log)); } catch(e) {}
+}
+
+function safeJSON(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch(e) { return def; }
+}
+
+function defaultUsers() {
+  return [
+    { id:'admin', pass:'admin', nom:'Administrateur', role:'admin', created: now() },
+    { id:'cedric', pass:'diobrando', nom:'Cédric', role:'admin', created: now() }
+  ];
+}
+
+function defaultTypes() {
+  return [
+    { id:'toiture', nom:'Toiture / Étanchéité', icon:'🏚' },
+    { id:'elec', nom:'Électricité', icon:'⚡' },
+    { id:'clim', nom:'Climatisation / CVC', icon:'❄' },
+    { id:'plomb', nom:'Plomberie / Sanitaires', icon:'🔧' },
+    { id:'infra', nom:'Infrastructure / Génie civil', icon:'🔨' },
+    { id:'secu', nom:'Sécurité / Alarmes', icon:'🔒' },
+    { id:'peinture', nom:'Peinture / Revêtements', icon:'🎨' },
+    { id:'espverts', nom:'Espaces verts', icon:'🌿' },
+    { id:'autre', nom:'Autre', icon:'📦' }
+  ];
+}
+
+function now() { return new Date().toISOString(); }
+function uid() { return 'HEPH-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2,6).toUpperCase(); }
+function uidIntv() { return 'IV-' + Math.random().toString(36).slice(2,8).toUpperCase(); }
+
+function addLog(action, detail) {
+  const data = load();
+  data.log.unshift({
+    date: now(),
+    user: STATE.currentUser?.nom || '?',
+    action,
+    detail
+  });
+  if (data.log.length > 500) data.log = data.log.slice(0, 500);
+  save(data);
+}
+
+// ════════════════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════════════════
+function doLogin() {
+  const uid_v = el('l-user')?.value.trim();
+  const pwd = el('l-pass')?.value;
+  const data = load();
+  const u = data.users.find(x => x.id === uid_v && x.pass === pwd);
+  const errEl = el('login-err');
+  if (!u) { if(errEl) errEl.style.display = 'block'; return; }
+  if(errEl) errEl.style.display = 'none';
+  STATE.currentUser = u;
+  if(el('user-av')) el('user-av').textContent = u.nom.charAt(0).toUpperCase();
+  if(el('user-name')) el('user-name').textContent = u.nom;
+  const rp = el('role-pill');
+  if(rp) { rp.textContent = u.role === 'admin' ? 'ADMIN' : 'AGENT'; rp.className = 'role-pill ' + u.role; }
+  // Show/hide admin elements
+  document.querySelectorAll('.admin-only').forEach(e => {
+    e.style.display = u.role === 'admin' ? '' : 'none';
+  });
+  showScreen('screen-app');
+  initApp();
+}
+
+function doLogout() {
+  STATE.currentUser = null;
+  STATE.editingMissionId = null;
+  showScreen('screen-login');
+  if(el('l-pass')) el('l-pass').value = '';
+}
+
+function showUserMenu() { /* simple */ toast('Utilisateur: ' + STATE.currentUser?.nom, 'info'); }
+
+// ════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const s = el(id); if(s) s.classList.add('active');
+}
+
+function switchTab(btn) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const tab = btn.dataset.tab;
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const s = el('tab-' + tab); if(s) s.classList.add('active');
+  if(tab === 'dashboard') renderDashboard();
+  if(tab === 'missions') renderMissions();
+  if(tab === 'scan') initScan();
+  if(tab === 'intervenants') renderIntervenants();
+  if(tab === 'barcodes') renderBarcodes();
+  if(tab === 'admin') renderAdmin();
+}
+
+// ════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════
+function initApp() {
+  renderDashboard();
+  populateTypeFilters();
+}
+
+function populateTypeFilters() {
+  const data = load();
+  const ft = el('mission-filter-type');
+  if(ft) {
+    ft.innerHTML = '<option value="">Tous les types</option>' +
+      data.types.map(t => `<option value="${t.id}">${t.icon} ${t.nom}</option>`).join('');
+  }
+  const mt = el('m-type');
+  if(mt) {
+    mt.innerHTML = '<option value="">— Sélectionner —</option>' +
+      data.types.map(t => `<option value="${t.id}">${t.icon} ${t.nom}</option>`).join('');
+  }
+  // Filtres années
+  const fa = el('mission-filter-annee');
+  if(fa) {
+    const years = [...new Set(data.missions.map(m => m.created?.slice(0,4)).filter(Boolean))].sort().reverse();
+    fa.innerHTML = '<option value="">Toutes années</option>' +
+      years.map(y => `<option value="${y}">${y}</option>`).join('');
+  }
+  // Intervenants dans select mission
+  const mi = el('m-intervenant');
+  if(mi) {
+    mi.innerHTML = data.intervenants.map(i => `<option value="${i.id}">${i.nom} (${i.spec})</option>`).join('');
+  }
+  // Filter barcodes
+  const bcf = el('bc-filter-mission');
+  if(bcf) {
+    bcf.innerHTML = '<option value="">Toutes les missions</option>' +
+      data.missions.map(m => `<option value="${m.id}">${m.id} — ${m.zone}</option>`).join('');
+  }
+  // Spécialité intervenants
+  const ifs = el('intv-filter');
+  if(ifs) {
+    const specs = [...new Set(data.intervenants.map(i => i.spec).filter(Boolean))].sort();
+    ifs.innerHTML = '<option value="">Toutes spécialités</option>' +
+      specs.map(s => `<option value="${s}">${s}</option>`).join('');
+  }
+}
+
+// ════════════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════════════
+function renderDashboard() {
+  const data = load();
+  const m = data.missions;
+
+  // Date
+  const ds = el('dash-date');
+  if(ds) ds.textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  // Stats
+  const total = m.length;
+  const enCours = m.filter(x => x.statut==='en_cours').length;
+  const urgent = m.filter(x => x.statut==='urgent').length;
+  const termine = m.filter(x => x.statut==='termine').length;
+  const montantTotal = m.reduce((a,x) => a + (parseFloat(x.facture)||0), 0);
+
+  const sg = el('dash-stats');
+  if(sg) sg.innerHTML = `
+    <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">Total missions</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--orange)">${enCours}</div><div class="stat-lbl">En cours</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--red)">${urgent}</div><div class="stat-lbl">Urgent</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--green)">${termine}</div><div class="stat-lbl">Terminées</div></div>
+    <div class="stat-box"><div class="stat-num" style="font-size:18px;color:var(--yellow)">${montantTotal.toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</div><div class="stat-lbl">Total facturé</div></div>
+  `;
+
+  // Urgentes / en cours
+  const urgent_list = m.filter(x => x.statut==='urgent'||x.statut==='en_cours')
+    .sort((a,b) => prioPriority(b.prio) - prioPriority(a.prio)).slice(0,8);
+  const du = el('dash-urgent');
+  if(du) {
+    if(!urgent_list.length) {
+      du.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3);">Aucune mission urgente en cours 🟢</td></tr>';
+    } else {
+      du.innerHTML = urgent_list.map(mission => {
+        const iv = data.intervenants.filter(i => (mission.intervenants||[]).includes(i.id)).map(i=>i.nom).join(', ') || '—';
+        return `<tr onclick="openMissionDetail('${mission.id}')" style="cursor:pointer;">
+          <td class="td-code">${mission.id}</td>
+          <td>${getTypeIcon(mission.type, data.types)} ${getTypeName(mission.type, data.types)}</td>
+          <td>${mission.zone||'—'}</td>
+          <td>${prioBadge(mission.prio)}</td>
+          <td>${statutBadge(mission.statut)}</td>
+          <td style="font-size:11px;">${iv}</td>
+          <td style="font-size:11px;color:var(--text2);">${fmtDate(mission.dateStart)}</td>
+        </tr>`;
+      }).join('');
+    }
+  }
+
+  // Timeline
+  const tl = el('dash-timeline');
+  if(tl) {
+    const logs = data.log.slice(0, 10);
+    if(!logs.length) {
+      tl.innerHTML = '<li style="color:var(--text3);font-size:13px;">Aucune activité récente</li>';
+    } else {
+      tl.innerHTML = logs.map(l => `
+        <li class="tl-item">
+          <div class="tl-date">${new Date(l.date).toLocaleString('fr-FR')}</div>
+          <div class="tl-text">${l.action}</div>
+          <div class="tl-author">par ${l.user}${l.detail?' — '+l.detail:''}</div>
+        </li>`).join('');
+    }
+  }
+}
+
+// ════════════════════════════════════════════════
+//  MISSIONS
+// ════════════════════════════════════════════════
+function renderMissions() {
+  const data = load();
+  const search = el('mission-search')?.value.toLowerCase()||'';
+  const fs = el('mission-filter-statut')?.value||'';
+  const ft = el('mission-filter-type')?.value||'';
+  const fa = el('mission-filter-annee')?.value||'';
+
+  let list = data.missions.filter(m => {
+    if(fs && m.statut !== fs) return false;
+    if(ft && m.type !== ft) return false;
+    if(fa && !(m.created||'').startsWith(fa)) return false;
+    if(search) {
+      const hay = [m.id,m.zone,m.desc,m.notes,m.invoiceRef,
+        getTypeName(m.type,data.types),
+        ...((m.intervenants||[]).map(id => data.intervenants.find(i=>i.id===id)?.nom||''))
+      ].join(' ').toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    return true;
+  }).sort((a,b) => (b.created||'').localeCompare(a.created||''));
+
+  const tbody = el('missions-tbody');
+  const empty = el('missions-empty');
+  if(!tbody) return;
+
+  if(!list.length) {
+    tbody.innerHTML=''; if(empty) empty.style.display='flex';
+    return;
+  }
+  if(empty) empty.style.display='none';
+
+  tbody.innerHTML = list.map(m => {
+    const iv = data.intervenants.filter(i => (m.intervenants||[]).includes(i.id)).map(i=>i.nom).join(', ')||'—';
+    const budget = m.budget ? parseFloat(m.budget).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}) : '—';
+    const isAdmin = STATE.currentUser?.role === 'admin';
+    return `<tr>
+      <td><span class="td-code" style="cursor:pointer;" onclick="openMissionDetail('${m.id}')">${m.id}</span></td>
+      <td>${getTypeIcon(m.type,data.types)} ${getTypeName(m.type,data.types)}</td>
+      <td style="max-width:160px;">${m.zone||'—'}</td>
+      <td>${prioBadge(m.prio)}</td>
+      <td>${statutBadge(m.statut)}</td>
+      <td style="font-size:11px;max-width:140px;">${iv}</td>
+      <td style="font-size:11px;">${fmtDate(m.dateStart)}</td>
+      <td style="font-size:11px;color:var(--yellow);">${budget}</td>
+      <td>
+        <div style="display:flex;gap:5px;">
+          <button class="btn btn-ghost btn-xs" onclick="openMissionDetail('${m.id}')">👁</button>
+          ${isAdmin ? `<button class="btn btn-ghost btn-xs" onclick="openEditMission('${m.id}')">✏️</button>` : ''}
+          ${isAdmin ? `<button class="btn btn-red btn-xs" onclick="deleteMission('${m.id}')">🗑</button>` : ''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openNewMission() {
+  STATE.editingMissionId = null;
+  el('modal-mission-title').textContent = '📋 Nouvelle mission';
+  ['m-type','m-zone','m-desc','m-notes','m-invoice-ref','m-budget','m-facture'].forEach(id => { const e=el(id); if(e)e.value=''; });
+  if(el('m-prio')) el('m-prio').value = 'medium';
+  if(el('m-statut')) el('m-statut').value = 'ouvert';
+  if(el('m-date-start')) el('m-date-start').value = new Date().toISOString().slice(0,10);
+  if(el('m-date-end')) el('m-date-end').value = '';
+  if(el('m-intervenant')) el('m-intervenant').value = '';
+  // Clauses par défaut déjà dans les textareas via HTML
+  populateTypeFilters();
+  // Équipe vide
+  loadEquipeIntoForm([]);
+  // Signatures vierges
+  resetSigState();
+  openModal('modal-mission');
+  // Init canvases après ouverture
+  setTimeout(() => { initSigCanvas('lp'); initSigCanvas('prest'); updateSigStatus(); }, 60);
+}
+
+function openEditMission(id) {
+  const data = load();
+  const m = data.missions.find(x => x.id === id);
+  if(!m) return;
+  STATE.editingMissionId = id;
+  el('modal-mission-title').textContent = '✏️ Modifier mission — ' + id;
+  if(el('m-type')) el('m-type').value = m.type||'';
+  if(el('m-zone')) el('m-zone').value = m.zone||'';
+  if(el('m-prio')) el('m-prio').value = m.prio||'medium';
+  if(el('m-statut')) el('m-statut').value = m.statut||'ouvert';
+  if(el('m-date-start')) el('m-date-start').value = m.dateStart||'';
+  if(el('m-date-end')) el('m-date-end').value = m.dateEnd||'';
+  if(el('m-desc')) el('m-desc').value = m.desc||'';
+  if(el('m-notes')) el('m-notes').value = m.notes||'';
+  if(el('m-invoice-ref')) el('m-invoice-ref').value = m.invoiceRef||'';
+  if(el('m-budget')) el('m-budget').value = m.budget||'';
+  if(el('m-facture')) el('m-facture').value = m.facture||'';
+  // Prestataire
+  if(el('m-intervenant')) el('m-intervenant').value = m.prestataire||'';
+  // Clauses
+  if(m.clauses) {
+    ['secu','resp','conf','delai','recep'].forEach(k => {
+      if(el('clause-'+k)) el('clause-'+k).value = m.clauses[k]||'';
+    });
+  }
+  populateTypeFilters();
+  // Équipe
+  loadEquipeIntoForm(m.equipe||[]);
+  // Signatures
+  resetSigState();
+  openModal('modal-mission');
+  setTimeout(() => {
+    initSigCanvas('lp'); initSigCanvas('prest');
+    loadSigFromMission(m);
+  }, 60);
+}
+
+
+// ════════════════════════════════════════════════
+//  SECTIONS ACCORDION
+// ════════════════════════════════════════════════
+function toggleSection(hdr) {
+  const section = hdr.closest('.form-section');
+  section.classList.toggle('collapsed');
+}
+
+// ════════════════════════════════════════════════
+//  ÉQUIPE D'INTERVENTION
+// ════════════════════════════════════════════════
+let _equipeRows = [];
+
+function renderEquipeList() {
+  const container = document.getElementById('equipe-list');
+  if(!container) return;
+  if(!_equipeRows.length) {
+    container.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:8px 0;">Aucun membre ajouté. Cliquez "+ Ajouter un membre".</div>';
+    return;
+  }
+  container.innerHTML = _equipeRows.map((row, i) => `
+    <div class="equipe-row">
+      <input type="text" placeholder="Prénom NOM" value="${row.nom||''}"
+        oninput="_equipeRows[${i}].nom=this.value" style="min-width:0;">
+      <input type="text" placeholder="Matricule / Identifiant" value="${row.matricule||''}"
+        oninput="_equipeRows[${i}].matricule=this.value" style="min-width:0;">
+      <select oninput="_equipeRows[${i}].role=this.value">
+        <option value="technicien" ${row.role==='technicien'?'selected':''}>🔧 Technicien</option>
+        <option value="chef_equipe" ${row.role==='chef_equipe'?'selected':''}>👑 Chef d'équipe</option>
+        <option value="chef_chantier" ${row.role==='chef_chantier'?'selected':''}>🏗 Chef de chantier</option>
+        <option value="manoeuvre" ${row.role==='manoeuvre'?'selected':''}>🪚 Manœuvre</option>
+        <option value="electricien" ${row.role==='electricien'?'selected':''}>⚡ Électricien</option>
+        <option value="plombier" ${row.role==='plombier'?'selected':''}>🔧 Plombier</option>
+        <option value="responsable" ${row.role==='responsable'?'selected':''}>📋 Responsable travaux</option>
+        <option value="sous_traitant" ${row.role==='sous_traitant'?'selected':''}>🤝 Sous-traitant</option>
+      </select>
+      <button class="btn-del-equipe" onclick="_equipeRows.splice(${i},1);renderEquipeList()">✕</button>
+    </div>`).join('');
+}
+
+function addEquipeMember() {
+  _equipeRows.push({ nom:'', matricule:'', role:'technicien' });
+  renderEquipeList();
+}
+
+function getEquipeData() {
+  // Lire les valeurs actuelles depuis le DOM
+  const container = document.getElementById('equipe-list');
+  if(!container) return _equipeRows;
+  const rows = container.querySelectorAll('.equipe-row');
+  return Array.from(rows).map((row, i) => {
+    const inputs = row.querySelectorAll('input');
+    const sel = row.querySelector('select');
+    return {
+      nom: inputs[0]?.value.trim()||'',
+      matricule: inputs[1]?.value.trim()||'',
+      role: sel?.value||'technicien'
+    };
+  }).filter(r => r.nom || r.matricule);
+}
+
+function loadEquipeIntoForm(equipe) {
+  _equipeRows = (equipe||[]).map(r => ({...r}));
+  renderEquipeList();
+}
+
+function roleLabelFr(role) {
+  const map = {
+    technicien:'Technicien', chef_equipe:"Chef d'équipe",
+    chef_chantier:'Chef de chantier', manoeuvre:'Manœuvre',
+    electricien:'Électricien', plombier:'Plombier',
+    responsable:'Responsable travaux', sous_traitant:'Sous-traitant'
+  };
+  return map[role] || role;
+}
+
+// ════════════════════════════════════════════════
+//  SIGNATURES CANVAS
+// ════════════════════════════════════════════════
+const _sigState = {
+  lp:    { drawing:false, hasData:false, dataUrl:null, date:null },
+  prest: { drawing:false, hasData:false, dataUrl:null, date:null }
+};
+
+function initSigCanvas(id) {
+  const canvas = document.getElementById('sig-'+id+'-canvas');
+  const placeholder = document.getElementById('sig-'+id+'-placeholder');
+  const dateEl = document.getElementById('sig-'+id+'-date');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#003189';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x:(clientX-rect.left)*scaleX, y:(clientY-rect.top)*scaleY };
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    _sigState[id].drawing = true;
+    const pos = getPos(e);
+    ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
+  }
+  function draw(e) {
+    e.preventDefault();
+    if(!_sigState[id].drawing) return;
+    const pos = getPos(e);
+    ctx.lineTo(pos.x, pos.y); ctx.stroke();
+    if(placeholder) placeholder.style.display = 'none';
+    _sigState[id].hasData = true;
+    const now = new Date();
+    _sigState[id].date = now.toISOString();
+    if(dateEl) dateEl.textContent = 'Signé le ' + now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    updateSigStatus();
+  }
+  function stopDraw(e) {
+    e.preventDefault();
+    if(_sigState[id].drawing) {
+      _sigState[id].drawing = false;
+      _sigState[id].dataUrl = canvas.toDataURL('image/png');
+    }
+  }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', stopDraw);
+  canvas.addEventListener('mouseleave', stopDraw);
+  canvas.addEventListener('touchstart', startDraw, {passive:false});
+  canvas.addEventListener('touchmove', draw, {passive:false});
+  canvas.addEventListener('touchend', stopDraw, {passive:false});
+}
+
+function clearSig(id) {
+  const canvas = document.getElementById('sig-'+id+'-canvas');
+  const placeholder = document.getElementById('sig-'+id+'-placeholder');
+  const dateEl = document.getElementById('sig-'+id+'-date');
+  if(!canvas) return;
+  canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+  _sigState[id].hasData = false;
+  _sigState[id].dataUrl = null;
+  _sigState[id].date = null;
+  if(placeholder) placeholder.style.display = '';
+  if(dateEl) dateEl.textContent = '';
+  updateSigStatus();
+}
+
+function updateSigStatus() {
+  const el = document.getElementById('sig-status-indicator');
+  if(!el) return;
+  const lpOk = _sigState.lp.hasData;
+  const prOk = _sigState.prest.hasData;
+  if(lpOk && prOk) {
+    el.innerHTML = '<span class="signed-indicator">✅ Les deux parties ont signé — Document prêt à imprimer</span>';
+  } else if(lpOk || prOk) {
+    el.innerHTML = '<span style="color:var(--orange);font-size:11px;font-weight:700;">⏳ En attente de ' + (!lpOk?'La Poste':'le prestataire') + '</span>';
+  } else {
+    el.innerHTML = '<span style="color:var(--text3);font-size:11px;">✍ Signatures en attente</span>';
+  }
+}
+
+function resetSigState() {
+  ['lp','prest'].forEach(id => {
+    clearSig(id);
+    const inp = document.getElementById('sig-'+id+'-nom');
+    if(inp) inp.value = '';
+  });
+}
+
+function loadSigFromMission(m) {
+  if(!m) return;
+  resetSigState();
+  setTimeout(() => {
+    ['lp','prest'].forEach(sid => {
+      const sig = m['sig_'+sid];
+      if(!sig) return;
+      const inp = document.getElementById('sig-'+sid+'-nom');
+      if(inp) inp.value = sig.nom||'';
+      if(sig.dataUrl) {
+        const canvas = document.getElementById('sig-'+sid+'-canvas');
+        const placeholder = document.getElementById('sig-'+sid+'-placeholder');
+        const dateEl = document.getElementById('sig-'+sid+'-date');
+        if(!canvas) return;
+        const img = new Image();
+        img.onload = () => {
+          canvas.getContext('2d').drawImage(img,0,0);
+          if(placeholder) placeholder.style.display='none';
+        };
+        img.src = sig.dataUrl;
+        _sigState[sid].hasData = true;
+        _sigState[sid].dataUrl = sig.dataUrl;
+        _sigState[sid].date = sig.date;
+        if(dateEl && sig.date) {
+          const d = new Date(sig.date);
+          dateEl.textContent = 'Signé le '+d.toLocaleDateString('fr-FR')+' à '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+        }
+      }
+    });
+    updateSigStatus();
+  }, 120);
+}
+
+function getSigData() {
+  return {
+    sig_lp: {
+      nom: document.getElementById('sig-lp-nom')?.value.trim()||'',
+      dataUrl: _sigState.lp.dataUrl||null,
+      hasData: _sigState.lp.hasData,
+      date: _sigState.lp.date
+    },
+    sig_prest: {
+      nom: document.getElementById('sig-prest-nom')?.value.trim()||'',
+      dataUrl: _sigState.prest.dataUrl||null,
+      hasData: _sigState.prest.hasData,
+      date: _sigState.prest.date
+    }
+  };
+}
+
+// ════════════════════════════════════════════════
+//  IMPRESSION ORDRE DE MISSION (ODM)
+// ════════════════════════════════════════════════
+function printOdm() {
+  const mId = STATE.editingMissionId;
+  const data = load();
+  let m = mId ? data.missions.find(x=>x.id===mId) : null;
+  // Construction des données depuis le formulaire courant
+  const equipe = getEquipeData();
+  const clauses = {
+    secu:  document.getElementById('clause-secu')?.value||'',
+    resp:  document.getElementById('clause-resp')?.value||'',
+    conf:  document.getElementById('clause-conf')?.value||'',
+    delai: document.getElementById('clause-delai')?.value||'',
+    recep: document.getElementById('clause-recep')?.value||''
+  };
+  const sigData = getSigData();
+  const typeId = document.getElementById('m-type')?.value||'';
+  const zone = document.getElementById('m-zone')?.value||'';
+  const desc = document.getElementById('m-desc')?.value||'';
+  const budget = document.getElementById('m-budget')?.value||'';
+  const dateStart = document.getElementById('m-date-start')?.value||'';
+  const dateEnd = document.getElementById('m-date-end')?.value||'';
+  const ref = m?.id || 'HEPH-BROUILLON';
+  const tn = getTypeName(typeId, data.types);
+  const ti = getTypeIcon(typeId, data.types);
+  const prestNom = data.intervenants.find(i=>i.id===document.getElementById('m-intervenant')?.value)?.nom||'—';
+  _openODMWindow(ref, ti, tn, zone, desc, budget, dateStart, dateEnd, equipe, clauses, sigData, prestNom);
+}
+
+function printOdmFromMission(id) {
+  const data = load();
+  const m = data.missions.find(x=>x.id===id);
+  if(!m) { toast('Mission introuvable', 'error'); return; }
+  const tn = getTypeName(m.type, data.types);
+  const ti = getTypeIcon(m.type, data.types);
+  const prestNom = data.intervenants.find(i=>i.id===m.prestataire)?.nom||'';
+  _openODMWindow(m.id, ti, tn, m.zone, m.desc, m.budget, m.dateStart, m.dateEnd,
+    m.equipe||[], m.clauses||{}, {sig_lp:m.sig_lp||{},sig_prest:m.sig_prest||{}}, prestNom);
+}
+
+function _openODMWindow(ref, ti, tn, zone, desc, budget, dateStart, dateEnd, equipe, clauses, sigData, prestNom) {
+  const win = window.open('','_blank','width=900,height=1100');
+  if(!win) { toast('Autoriser les popups pour imprimer', 'error'); return; }
+
+  const equipeHtml = equipe.length ? equipe.map(m=>`
+    <tr>
+      <td style="padding:7px 10px;border-bottom:1px solid #E8EEF8;">${m.nom||'—'}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #E8EEF8;font-family:monospace;font-size:11px;">${m.matricule||'—'}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #E8EEF8;font-weight:600;color:#003189;">${roleLabelFr(m.role)}</td>
+    </tr>`).join('') :
+    '<tr><td colspan="3" style="padding:10px;color:#999;font-style:italic;">Aucun membre défini</td></tr>';
+
+  const clausesHtml = Object.entries({
+    '🔒 Sécurité': clauses.secu,
+    '⚖️ Responsabilité': clauses.resp,
+    '🔐 Confidentialité': clauses.conf,
+    '📅 Délais & Pénalités': clauses.delai,
+    '✅ Réception des travaux': clauses.recep
+  }).filter(([,v])=>v&&v.trim()).map(([title, text])=>`
+    <div style="margin-bottom:12px;page-break-inside:avoid;">
+      <div style="font-size:10px;font-weight:800;color:#003189;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid #E0E6F2;">${title}</div>
+      <div style="font-size:11px;color:#2C3E50;line-height:1.7;text-align:justify;">${text.replace(/\n/g,'<br>')}</div>
+    </div>`).join('');
+
+  const lpSigHtml = sigData.sig_lp?.hasData && sigData.sig_lp?.dataUrl
+    ? `<img src="${sigData.sig_lp.dataUrl}" style="max-width:220px;max-height:80px;display:block;margin:6px 0;">`
+    : '<div style="height:80px;border:1.5px dashed #C0C8D8;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;font-style:italic;margin:6px 0;">Signature à apposer</div>';
+
+  const prSigHtml = sigData.sig_prest?.hasData && sigData.sig_prest?.dataUrl
+    ? `<img src="${sigData.sig_prest.dataUrl}" style="max-width:220px;max-height:80px;display:block;margin:6px 0;">`
+    : '<div style="height:80px;border:1.5px dashed #C0C8D8;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;font-style:italic;margin:6px 0;">Signature à apposer</div>';
+
+  const lpSigDate = sigData.sig_lp?.date ? new Date(sigData.sig_lp.date).toLocaleDateString('fr-FR') : '';
+  const prSigDate = sigData.sig_prest?.date ? new Date(sigData.sig_prest.date).toLocaleDateString('fr-FR') : '';
+
+  win.document.write(`<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="UTF-8">
+<title>ODM — ${ref}</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"><\/script>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:Arial,sans-serif; color:#000; background:#fff; font-size:12px; }
+  .page { padding:18mm 16mm; max-width:210mm; margin:0 auto; }
+
+  /* Header */
+  .doc-header { display:flex; align-items:stretch; gap:0; margin-bottom:18px; border:2px solid #003189; border-radius:10px; overflow:hidden; }
+  .header-brand { background:#003189; padding:14px 18px; display:flex; flex-direction:column; justify-content:center; align-items:center; min-width:90px; }
+  .lp-badge { width:46px;height:46px;background:#FFD100;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#003189;margin-bottom:6px; }
+  .header-brand-name { color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;text-align:center; }
+  .header-main { flex:1;padding:14px 18px; }
+  .doc-type { font-size:9px;font-weight:800;color:#003189;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px; }
+  .doc-title { font-size:20px;font-weight:800;color:#003189;margin-bottom:3px; }
+  .doc-ref { font-family:monospace;font-size:13px;color:#003189;font-weight:700; }
+  .doc-sub { font-size:10px;color:#5A6A8A;margin-top:2px; }
+  .header-bc { padding:14px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#F8FAFF;border-left:2px solid #E0E8F4; }
+  .bc-label { font-size:8px;font-weight:700;color:#5A6A8A;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px; }
+
+  /* Info boxes */
+  .info-strip { display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px; }
+  .info-box { background:#F4F7FF;border:1px solid #D0D9EF;border-radius:7px;padding:9px 12px; }
+  .info-box-label { font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#5A6A8A;margin-bottom:3px; }
+  .info-box-val { font-size:12px;font-weight:700;color:#003189; }
+
+  /* Sections */
+  .section { margin-bottom:16px;page-break-inside:avoid; }
+  .section-title { font-size:10px;font-weight:800;color:#fff;background:#003189;padding:7px 12px;border-radius:7px 7px 0 0;letter-spacing:.8px;text-transform:uppercase;display:flex;align-items:center;gap:6px; }
+  .section-body { border:1px solid #D0D9EF;border-top:none;border-radius:0 0 7px 7px;padding:12px; }
+
+  /* Tables */
+  table { width:100%;border-collapse:collapse; }
+  th { background:#003189;color:#FFD100;padding:7px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;text-align:left; }
+  td { padding:6px 10px;border-bottom:1px solid #EDF0F7;font-size:11px;vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+
+  /* Description */
+  .desc-box { background:#F8FAFF;border:1px solid #E0E8F4;border-radius:6px;padding:12px;font-size:12px;line-height:1.7;color:#2C3E50; }
+
+  /* Signatures */
+  .sig-section { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px; }
+  .sig-block { border:1.5px solid #D0D9EF;border-radius:9px;padding:14px; }
+  .sig-party { font-size:10px;font-weight:800;color:#003189;text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px; }
+  .sig-name { font-size:12px;color:#2C3E50;font-weight:600;margin-bottom:8px; }
+  .sig-date-str { font-size:9px;color:#5A6A8A;margin-top:6px; }
+  .sig-note { font-size:9px;color:#888;font-style:italic; }
+
+  /* Footer */
+  .doc-footer { margin-top:20px;padding-top:10px;border-top:1.5px dashed #D0D9EF;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#999; }
+  .stamp-area { border:2px dashed #E0E6F2;border-radius:8px;padding:8px 16px;text-align:center;font-size:9px;color:#bbb;font-style:italic;min-width:120px; }
+
+  @media print { button{display:none!important;} @page{margin:10mm;size:A4;} }
+</style>
+</head><body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="header-brand">
+      <div class="lp-badge">🔨</div>
+      <div class="header-brand-name">HEPHAISTOS</div>
+      <div style="color:rgba(255,255,255,.6);font-size:7px;margin-top:2px;text-align:center;">La Poste Réunion</div>
+    </div>
+    <div class="header-main">
+      <div class="doc-type">Ordre de Mission / Bon d'Intervention</div>
+      <div class="doc-title">FICHE D'INTERVENTION</div>
+      <div class="doc-ref">${ref}</div>
+      <div class="doc-sub">PIC · Saint-Denis · La Réunion</div>
+    </div>
+    <div class="header-bc">
+      <div class="bc-label">Code mission</div>
+      <svg id="odm-bc"></svg>
+    </div>
+  </div>
+
+  <!-- INFO STRIP -->
+  <div class="info-strip">
+    <div class="info-box">
+      <div class="info-box-label">Type de travaux</div>
+      <div class="info-box-val">${ti} ${tn}</div>
+    </div>
+    <div class="info-box">
+      <div class="info-box-label">Zone / Lieu</div>
+      <div class="info-box-val">${zone||'—'}</div>
+    </div>
+    <div class="info-box">
+      <div class="info-box-label">Début prévu</div>
+      <div class="info-box-val">${dateStart ? new Date(dateStart+'T00:00:00').toLocaleDateString('fr-FR') : '—'}</div>
+    </div>
+    <div class="info-box">
+      <div class="info-box-label">Fin prévue</div>
+      <div class="info-box-val">${dateEnd ? new Date(dateEnd+'T00:00:00').toLocaleDateString('fr-FR') : '—'}</div>
+    </div>
+  </div>
+  ${budget ? `<div class="info-strip" style="grid-template-columns:repeat(2,1fr);">
+    <div class="info-box"><div class="info-box-label">Budget estimé</div><div class="info-box-val">${parseFloat(budget).toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</div></div>
+    <div class="info-box"><div class="info-box-label">Entreprise prestataire</div><div class="info-box-val">${prestNom||'—'}</div></div>
+  </div>` : ''}
+
+  <!-- DESCRIPTION -->
+  <div class="section">
+    <div class="section-title">📝 Description des travaux</div>
+    <div class="section-body"><div class="desc-box">${(desc||'—').replace(/\n/g,'<br>')}</div></div>
+  </div>
+
+  <!-- ÉQUIPE -->
+  <div class="section">
+    <div class="section-title">👷 Équipe d'intervention</div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>Nom complet</th><th>Matricule / Identifiant</th><th>Rôle</th></tr></thead>
+        <tbody>${equipeHtml}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CLAUSES -->
+  ${clausesHtml ? `<div class="section">
+    <div class="section-title">📜 Clauses contractuelles</div>
+    <div class="section-body">${clausesHtml}</div>
+  </div>` : ''}
+
+  <!-- SIGNATURES -->
+  <div class="section" style="margin-top:20px;">
+    <div class="section-title">✍️ Signatures des parties</div>
+    <div class="section-body">
+      <div style="font-size:10px;color:#5A6A8A;margin-bottom:12px;">
+        En signant ce document, les deux parties reconnaissent avoir pris connaissance et accepté l'ensemble des conditions ci-dessus.
+        Ce document fait office de bon d'intervention contractuel.
+      </div>
+      <div class="sig-section">
+        <div class="sig-block">
+          <div class="sig-party">🏢 La Poste Réunion</div>
+          <div class="sig-name">${sigData.sig_lp?.nom||'Responsable PIC Saint-Denis'}</div>
+          ${lpSigHtml}
+          <div class="sig-date-str">${lpSigDate ? 'Signé le ' + lpSigDate : 'Date : ___/___/______'}</div>
+          <div class="sig-note" style="margin-top:6px;">Cachet & signature</div>
+          <div class="stamp-area" style="margin-top:8px;">CACHET LA POSTE</div>
+        </div>
+        <div class="sig-block">
+          <div class="sig-party">👷 Prestataire / Entreprise</div>
+          <div class="sig-name">${sigData.sig_prest?.nom||'Représentant entreprise'}</div>
+          ${prSigHtml}
+          <div class="sig-date-str">${prSigDate ? 'Signé le ' + prSigDate : 'Date : ___/___/______'}</div>
+          <div class="sig-note" style="margin-top:6px;">Cachet & signature</div>
+          <div class="stamp-area" style="margin-top:8px;">CACHET ENTREPRISE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <div>HEPHAISTOS v1.0 · La Poste Réunion · PIC de Saint-Denis</div>
+    <div>Généré le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
+    <div>Document confidentiel — Usage interne</div>
+  </div>
+
+</div>
+<script>
+  try { JsBarcode('#odm-bc','${ref}',{format:'CODE128',width:1.8,height:55,displayValue:true,fontSize:10,margin:3,background:'#F8FAFF',lineColor:'#003189'}); } catch(e){}
+  setTimeout(function(){window.print();},500);
+<\/script>
+</body></html>`);
+  win.document.close();
+}
+
+function saveMission() {
+  const type = el('m-type')?.value;
+  const zone = el('m-zone')?.value.trim();
+  const desc = el('m-desc')?.value.trim();
+  if(!type||!zone||!desc) { toast('Remplir Type, Zone et Description', 'error'); return; }
+
+  const data = load();
+  const ivSelected = el('m-intervenant')?.value||'';
+  const equipe = getEquipeData();
+  const clauses = {
+    secu:  el('clause-secu')?.value.trim()||'',
+    resp:  el('clause-resp')?.value.trim()||'',
+    conf:  el('clause-conf')?.value.trim()||'',
+    delai: el('clause-delai')?.value.trim()||'',
+    recep: el('clause-recep')?.value.trim()||''
+  };
+  const sigData = getSigData();
+
+  const missionFields = {
+    type, zone, desc,
+    prio: el('m-prio')?.value,
+    statut: el('m-statut')?.value,
+    dateStart: el('m-date-start')?.value,
+    dateEnd: el('m-date-end')?.value,
+    notes: el('m-notes')?.value.trim(),
+    invoiceRef: el('m-invoice-ref')?.value.trim(),
+    budget: el('m-budget')?.value,
+    facture: el('m-facture')?.value,
+    prestataire: ivSelected,
+    equipe,
+    clauses,
+    sig_lp: sigData.sig_lp,
+    sig_prest: sigData.sig_prest,
+    updated: now()
+  };
+
+  if(STATE.editingMissionId) {
+    const idx = data.missions.findIndex(m => m.id === STATE.editingMissionId);
+    if(idx>=0) {
+      data.missions[idx] = { ...data.missions[idx], ...missionFields };
+      data.missions[idx].history = data.missions[idx].history || [];
+      data.missions[idx].history.push({ date:now(), user:STATE.currentUser?.nom, action:'Mission modifiée' });
+      addLog('Mission modifiée', data.missions[idx].id);
+    }
+  } else {
+    const id = uid();
+    const mission = {
+      id, ...missionFields,
+      created: now(),
+      history: [{ date:now(), user:STATE.currentUser?.nom, action:'Mission créée — code-barre généré' }]
+    };
+    data.missions.unshift(mission);
+    addLog('Nouvelle mission créée', id);
+  }
+
+  save(data);
+  closeModal('modal-mission');
+  populateTypeFilters();
+  renderMissions();
+  renderBarcodes();
+  toast(STATE.editingMissionId ? '✅ Mission mise à jour !' : '✅ Mission créée ! Code-barre disponible.', 'success');
+}
+
+function deleteMission(id) {
+  if(!confirm('Supprimer définitivement la mission ' + id + ' ?')) return;
+  const data = load();
+  data.missions = data.missions.filter(m => m.id !== id);
+  addLog('Mission supprimée', id);
+  save(data);
+  renderMissions();
+  renderBarcodes();
+  toast('Mission supprimée', 'info');
+}
+
+function openMissionDetail(id) {
+  const data = load();
+  const m = data.missions.find(x => x.id === id);
+  if(!m) { toast('Mission introuvable', 'error'); return; }
+  STATE.scanTargetId = id;
+
+  const ivNames = data.intervenants.filter(i => (m.intervenants||[]).includes(i.id));
+  const typeName = getTypeName(m.type, data.types);
+  const typeIcon = getTypeIcon(m.type, data.types);
+  const isAdmin = STATE.currentUser?.role === 'admin';
+
+  el('modal-detail-title').textContent = `${typeIcon} ${typeName} — ${m.id}`;
+
+  const history = (m.history||[]).slice().reverse().map(h =>
+    `<li class="tl-item"><div class="tl-date">${new Date(h.date).toLocaleString('fr-FR')}</div>
+     <div class="tl-text">${h.action}</div><div class="tl-author">par ${h.user}</div></li>`
+  ).join('');
+
+  el('modal-detail-body').innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+      ${statutBadge(m.statut)} ${prioBadge(m.prio)}
+    </div>
+    <div class="info-row" style="margin-bottom:16px;">
+      <div class="info-chip">Zone : <span>${m.zone||'—'}</span></div>
+      <div class="info-chip">Créée : <span>${fmtDate(m.created)}</span></div>
+      <div class="info-chip">Début prévu : <span>${fmtDate(m.dateStart)||'—'}</span></div>
+      <div class="info-chip">Fin prévue : <span>${fmtDate(m.dateEnd)||'—'}</span></div>
+      ${m.invoiceRef ? `<div class="info-chip">Réf. facture : <span>${m.invoiceRef}</span></div>` : ''}
+      ${m.budget ? `<div class="info-chip">Budget : <span>${parseFloat(m.budget).toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</span></div>` : ''}
+      ${m.facture ? `<div class="info-chip" style="color:var(--yellow);">Facturé : <span>${parseFloat(m.facture).toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</span></div>` : ''}
+    </div>
+    <div class="divider"></div>
+    <div style="margin-bottom:12px;">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;">Description</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;">${m.desc||'—'}</div>
+    </div>
+    ${m.notes ? `<div style="margin-bottom:12px;"><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;">Notes</div><div style="font-size:12px;color:var(--text2);">${m.notes}</div></div>` : ''}
+    ${ivNames.length ? `
+    <div style="margin-bottom:14px;">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;">Prestataire</div>
+      ${ivNames.map(i => `<div style="background:var(--glass);border:1px solid var(--border);border-radius:9px;padding:10px 14px;margin-bottom:6px;font-size:12px;">
+        <div style="font-weight:700;margin-bottom:2px;">🏢 ${i.nom}</div>
+        <div style="color:var(--text2);">${i.spec||''} ${i.contact ? '· ' + i.contact : ''} ${i.tel ? '· 📞 ' + i.tel : ''}</div>
+      </div>`).join('')}
+    </div>` : ''}
+    ${m.equipe&&m.equipe.length ? `
+    <div style="margin-bottom:14px;">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;">👷 Équipe d'intervention (${m.equipe.length} membre${m.equipe.length>1?'s':''})</div>
+      <div style="background:var(--glass3);border:1px solid var(--border2);border-radius:10px;overflow:hidden;">
+        ${m.equipe.map(e=>`<div style="display:flex;gap:12px;padding:8px 14px;border-bottom:1px solid var(--border2);font-size:12px;">
+          <span style="font-weight:700;flex:1;">${e.nom||'—'}</span>
+          <span style="font-family:var(--mono);color:var(--text3);font-size:11px;">${e.matricule||''}</span>
+          <span style="background:rgba(255,209,0,.12);color:var(--yellow);padding:1px 8px;border-radius:20px;font-size:10px;font-weight:700;">${roleLabelFr(e.role)}</span>
+        </div>`).join('')}
+      </div>
+    </div>` : ''}
+    ${m.clauses&&(m.clauses.secu||m.clauses.resp) ? `
+    <div style="margin-bottom:14px;">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;">📜 Clauses contractuelles</div>
+      <div style="background:rgba(255,209,0,.05);border:1px solid rgba(255,209,0,.15);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--text2);line-height:1.6;">
+        ${Object.keys(m.clauses).filter(k=>m.clauses[k]).length} clause${Object.keys(m.clauses).filter(k=>m.clauses[k]).length>1?'s':''} définie${Object.keys(m.clauses).filter(k=>m.clauses[k]).length>1?'s':''} — <span style="color:var(--yellow);">Voir l'Ordre de Mission pour le détail complet</span>
+      </div>
+    </div>` : ''}
+    ${(m.sig_lp?.hasData||m.sig_prest?.hasData) ? `
+    <div style="margin-bottom:14px;">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;">✍️ Signatures</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="background:${m.sig_lp?.hasData?'rgba(0,200,83,.1)':'var(--glass3)'};border:1px solid ${m.sig_lp?.hasData?'rgba(0,200,83,.25)':'var(--border2)'};border-radius:9px;padding:8px 14px;font-size:11px;">
+          🏢 La Poste : ${m.sig_lp?.hasData?'<span style=\'color:var(--green);font-weight:700;\'>✅ Signé'+( m.sig_lp?.nom?' par '+m.sig_lp.nom:'')+'</span>':'<span style=\'color:var(--text3);\'>En attente</span>'}
+        </div>
+        <div style="background:${m.sig_prest?.hasData?'rgba(0,200,83,.1)':'var(--glass3)'};border:1px solid ${m.sig_prest?.hasData?'rgba(0,200,83,.25)':'var(--border2)'};border-radius:9px;padding:8px 14px;font-size:11px;">
+          👷 Prestataire : ${m.sig_prest?.hasData?'<span style=\'color:var(--green);font-weight:700;\'>✅ Signé'+( m.sig_prest?.nom?' par '+m.sig_prest.nom:'')+'</span>':'<span style=\'color:var(--text3);\'>En attente</span>'}
+        </div>
+      </div>
+    </div>` : ''}
+    <div class="divider"></div>
+    <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;">Historique</div>
+    <ul class="timeline">${history||'<li style="color:var(--text3);font-size:12px;">Aucun historique</li>'}</ul>
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:center;margin-top:8px;">
+      <div class="bc-print-wrap">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-align:center;">CODE-BARRE DE LA MISSION</div>
+        <div class="bc-card" style="min-width:240px;">
+          <div class="bc-ref">📋 ${m.id}</div>
+          <div class="bc-desc">${typeIcon} ${typeName}<br>${m.zone||''}</div>
+          <svg id="detail-bc-svg" class="bc-svg"></svg>
+          <div class="bc-meta">La Poste Réunion · PIC de Saint Denis · ${fmtDate(m.created)}</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  el('modal-detail-footer').innerHTML = `
+    ${isAdmin ? `<button class="btn btn-ghost btn-sm" onclick="openEditMission('${m.id}');closeModal('modal-detail');">✏️ Modifier</button>` : ''}
+    ${isAdmin ? `<button class="btn btn-ghost btn-sm" onclick="openStatusModal('${m.id}')">⟳ Maj statut</button>` : ''}
+    <button class="btn btn-ghost btn-sm" style="border-color:rgba(255,209,0,.35);color:var(--yellow);" onclick="printOdmFromMission('${m.id}')">📄 Ordre de Mission</button>
+    <button class="btn btn-yellow btn-sm" onclick="printMissionFiche()">🖨 Imprimer fiche</button>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-detail')">Fermer</button>
+  `;
+
+  openModal('modal-detail');
+
+  // Générer le code barre
+  setTimeout(() => {
+    try {
+      if(window.JsBarcode) {
+        JsBarcode('#detail-bc-svg', m.id, {
+          format:'CODE128', width:2, height:60,
+          displayValue:true, fontSize:12, margin:4,
+          background:'#ffffff', lineColor:'#000000'
+        });
+      }
+    } catch(e) { console.warn('BC error', e); }
+  }, 100);
+}
+
+// ════════════════════════════════════════════════
+//  STATUT
+// ════════════════════════════════════════════════
+function openStatusModal(id) {
+  STATE.scanTargetId = id;
+  const data = load();
+  const m = data.missions.find(x => x.id === id);
+  if(m && el('statut-select')) el('statut-select').value = m.statut;
+  if(el('statut-comment')) el('statut-comment').value = '';
+  openModal('modal-statut');
+}
+
+function applyStatusUpdate() {
+  const id = STATE.scanTargetId;
+  if(!id) { closeModal('modal-statut'); return; }
+  const newStatut = el('statut-select')?.value;
+  const comment = el('statut-comment')?.value.trim();
+  const data = load();
+  const idx = data.missions.findIndex(m => m.id === id);
+  if(idx<0) { toast('Mission introuvable', 'error'); return; }
+  const oldStatut = data.missions[idx].statut;
+  data.missions[idx].statut = newStatut;
+  data.missions[idx].updated = now();
+  data.missions[idx].history = data.missions[idx].history || [];
+  data.missions[idx].history.push({
+    date: now(),
+    user: STATE.currentUser?.nom,
+    action: `Statut: ${statutLabel(oldStatut)} → ${statutLabel(newStatut)}${comment ? ' — ' + comment : ''}`
+  });
+  addLog('Statut mis à jour', `${id}: ${statutLabel(newStatut)}`);
+  save(data);
+  closeModal('modal-statut');
+  closeModal('modal-detail');
+  renderMissions();
+  renderDashboard();
+  toast('Statut mis à jour !', 'success');
+  // Re-ouvrir le détail si on venait du scan
+  const scanArea = el('scan-result-area');
+  if(scanArea) { processScan(id); }
+}
+
+// ════════════════════════════════════════════════
+//  SCAN
+// ════════════════════════════════════════════════
+function initScan() {
+  const input = el('scan-input');
+  const zone = el('scan-zone');
+  if(input) {
+    input.focus();
+    input.addEventListener('keydown', function(e) {
+      if(e.key === 'Enter') {
+        const v = input.value.trim();
+        if(v) { processScan(v); input.value = ''; }
+        e.preventDefault();
+      }
+    });
+    input.addEventListener('input', function() {
+      if(input.value.includes('\n')||input.value.includes('\r')) {
+        const v = input.value.replace(/[\r\n]/g,'').trim();
+        if(v) { processScan(v); input.value = ''; }
+      }
+    });
+    input.addEventListener('focus', () => zone?.classList.add('focused'));
+    input.addEventListener('blur', () => zone?.classList.remove('focused'));
+  }
+}
+
+function processScan(code) {
+  const data = load();
+  const m = data.missions.find(x => x.id === code);
+  const resultArea = el('scan-result-area');
+  const detailCard = el('scan-detail');
+
+  if(!m) {
+    if(resultArea) resultArea.innerHTML = `
+      <div class="scan-result err">
+        <div class="scan-result-title">❌ Mission introuvable</div>
+        <div class="scan-result-body">Aucune mission avec le code <strong>${code}</strong></div>
+      </div>`;
+    if(detailCard) detailCard.style.display = 'none';
+    return;
+  }
+
+  STATE.scanTargetId = m.id;
+  const typeName = getTypeName(m.type, data.types);
+  const typeIcon = getTypeIcon(m.type, data.types);
+  const ivNames = data.intervenants.filter(i => (m.intervenants||[]).includes(i.id)).map(i=>i.nom).join(', ')||'—';
+  const isAdmin = STATE.currentUser?.role === 'admin';
+
+  if(resultArea) resultArea.innerHTML = `
+    <div class="scan-result ok">
+      <div class="scan-result-title">✅ Mission trouvée — ${m.id}</div>
+      <div class="scan-result-body">${typeIcon} ${typeName} · ${m.zone||''} · ${statutLabel(m.statut)}</div>
+    </div>`;
+
+  if(detailCard) {
+    detailCard.style.display = 'block';
+    el('scan-detail-title').textContent = `${typeIcon} ${typeName} — ${m.id}`;
+  }
+
+  // Boutons scan
+  const editBtn = el('scan-edit-btn');
+  const updBtn = el('scan-update-status-btn');
+  if(editBtn) editBtn.onclick = () => openEditMission(m.id);
+  if(updBtn) updBtn.onclick = () => openStatusModal(m.id);
+
+  const ivObjs = data.intervenants.filter(i => (m.intervenants||[]).includes(i.id));
+  const body = el('scan-detail-body');
+  if(body) body.innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+      ${statutBadge(m.statut)} ${prioBadge(m.prio)}
+    </div>
+    <div class="info-row" style="margin-bottom:14px;">
+      <div class="info-chip">Zone : <span>${m.zone||'—'}</span></div>
+      <div class="info-chip">Début : <span>${fmtDate(m.dateStart)||'—'}</span></div>
+      <div class="info-chip">Fin : <span>${fmtDate(m.dateEnd)||'—'}</span></div>
+      ${m.budget ? `<div class="info-chip">Budget : <span>${parseFloat(m.budget).toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</span></div>` : ''}
+    </div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:12px;">${m.desc||'—'}</div>
+    ${ivObjs.length ? `<div style="font-size:11px;color:var(--text3);">Intervenants : ${ivObjs.map(i=>i.nom+' ('+i.spec+')').join(' · ')}</div>` : ''}
+    <div class="divider"></div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.7px;">Derniers événements</div>
+    <ul class="timeline">
+      ${(m.history||[]).slice().reverse().slice(0,4).map(h =>
+        `<li class="tl-item"><div class="tl-date">${new Date(h.date).toLocaleString('fr-FR')}</div><div class="tl-text">${h.action}</div><div class="tl-author">par ${h.user}</div></li>`
+      ).join('')||'<li style="color:var(--text3);font-size:12px;">Aucun historique</li>'}
+    </ul>
+  `;
+
+  addLog('Scan code-barre', m.id);
+}
+
+// ════════════════════════════════════════════════
+//  CODES-BARRES
+// ════════════════════════════════════════════════
+function renderBarcodes() {
+  const data = load();
+  const filterMission = el('bc-filter-mission')?.value||'';
+  let missions = data.missions;
+  if(filterMission) missions = missions.filter(m => m.id === filterMission);
+
+  const grid = el('bc-grid');
+  const empty = el('bc-empty');
+  if(!grid) return;
+
+  if(!missions.length) {
+    grid.innerHTML = '';
+    if(empty) empty.style.display = 'flex';
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+
+  grid.innerHTML = missions.map(m => {
+    const safeId = m.id.replace(/[^a-zA-Z0-9]/g,'_');
+    return `<div class="bc-print-wrap" id="bcw-${safeId}">
+      <div class="bc-card" style="min-width:200px;cursor:pointer;" onclick="openMissionDetail('${m.id}')">
+        <div class="bc-ref">${m.id}</div>
+        <div class="bc-desc">${getTypeIcon(m.type,data.types)} ${getTypeName(m.type,data.types)}<br>${m.zone||''}</div>
+        <svg id="bc-${safeId}" class="bc-svg"></svg>
+        <div class="bc-meta">${statutLabel(m.statut)} · ${fmtDate(m.dateStart)||fmtDate(m.created)}</div>
+        <div style="margin-top:8px;display:flex;gap:5px;">
+          <button class="btn btn-blue btn-xs" onclick="event.stopPropagation();printSingleBC('${m.id}')">🖨 Imprimer</button>
+          ${STATE.currentUser?.role==='admin' ? `<button class="btn btn-red btn-xs" onclick="event.stopPropagation();deleteMission('${m.id}')">🗑</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Générer tous les codes barres
+  setTimeout(() => {
+    missions.forEach(m => {
+      const safeId = m.id.replace(/[^a-zA-Z0-9]/g,'_');
+      try {
+        if(window.JsBarcode) {
+          JsBarcode(`#bc-${safeId}`, m.id, {
+            format:'CODE128', width:1.8, height:50,
+            displayValue:true, fontSize:11, margin:3,
+            background:'#ffffff', lineColor:'#000000'
+          });
+        }
+      } catch(e) {}
+    });
+  }, 100);
+}
+
+function printSingleBC(id) {
+  const data = load();
+  const m = data.missions.find(x => x.id === id);
+  if(!m) return;
+  const typeName = getTypeName(m.type, data.types);
+  const typeIcon = getTypeIcon(m.type, data.types);
+  const ivNames = data.intervenants.filter(i=>(m.intervenants||[]).includes(i.id)).map(i=>i.nom).join(', ')||'—';
+
+  const win = window.open('','_blank','width=400,height=600');
+  if(!win) { toast('Autoriser les popups', 'error'); return; }
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>Fiche ${m.id}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"><\/script>
+    <style>
+      body{font-family:Arial,sans-serif;padding:20px;color:#000;}
+      .hdr{display:flex;align-items:center;gap:12px;border-bottom:3px solid #003189;padding-bottom:12px;margin-bottom:14px;}
+      .lp{width:40px;height:40px;background:#003189;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#FFD100;}
+      .title{font-size:18px;font-weight:800;color:#003189;}
+      .sub{font-size:10px;color:#5A6A8A;}
+      .bc-wrap{text-align:center;margin:16px 0;padding:12px;border:1px solid #E0E6F2;border-radius:8px;}
+      .field{margin-bottom:8px;font-size:12px;}
+      .field b{color:#003189;}
+      .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+      @media print{button{display:none!important;}}
+      @page{margin:10mm;size:A5;}
+    </style>
+  </head><body>
+    <div class="hdr">
+      <div class="lp">LP</div>
+      <div><div class="title">FICHE D'INTERVENTION</div><div class="sub">La Poste Réunion · PIC de Saint-Denis</div></div>
+    </div>
+    <div class="bc-wrap">
+      <svg id="bc-print"></svg>
+      <div style="font-size:11px;color:#003189;font-weight:700;margin-top:6px;">${m.id}</div>
+    </div>
+    <div class="grid">
+      <div class="field"><b>Type :</b> ${typeIcon} ${typeName}</div>
+      <div class="field"><b>Zone :</b> ${m.zone||'—'}</div>
+      <div class="field"><b>Statut :</b> ${statutLabel(m.statut)}</div>
+      <div class="field"><b>Priorité :</b> ${prioLabel(m.prio)}</div>
+      <div class="field"><b>Début :</b> ${fmtDate(m.dateStart)||'—'}</div>
+      <div class="field"><b>Fin prévue :</b> ${fmtDate(m.dateEnd)||'—'}</div>
+      <div class="field"><b>Budget :</b> ${m.budget ? parseFloat(m.budget).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}) : '—'}</div>
+      <div class="field"><b>Facture :</b> ${m.invoiceRef||'—'}</div>
+    </div>
+    <div class="field"><b>Intervenants :</b> ${ivNames}</div>
+    <div class="field" style="margin-top:8px;"><b>Description :</b><br><span style="color:#444;">${m.desc||'—'}</span></div>
+    ${m.notes ? `<div class="field"><b>Notes :</b> ${m.notes}</div>` : ''}
+    <div style="margin-top:16px;border-top:1px dashed #D0D9EF;padding-top:10px;">
+      <table style="width:100%;font-size:10px;border-collapse:collapse;">
+        <tr style="background:#003189;color:#fff;"><th style="padding:5px 8px;text-align:left;">Date</th><th style="padding:5px 8px;text-align:left;">Événement</th><th style="padding:5px 8px;text-align:left;">Par</th></tr>
+        ${(m.history||[]).slice().reverse().map(h=>`<tr><td style="padding:4px 8px;border-bottom:1px solid #eee;">${new Date(h.date).toLocaleDateString('fr-FR')}</td><td style="padding:4px 8px;border-bottom:1px solid #eee;">${h.action}</td><td style="padding:4px 8px;border-bottom:1px solid #eee;">${h.user}</td></tr>`).join('')}
+      </table>
+    </div>
+    <div style="text-align:center;margin-top:14px;font-size:9px;color:#999;">Imprimé le ${new Date().toLocaleDateString('fr-FR')} · HEPHAISTOS v1.0</div>
+    <script>
+      JsBarcode('#bc-print','${m.id}',{format:'CODE128',width:2,height:65,displayValue:true,fontSize:12,margin:4,background:'#ffffff',lineColor:'#000000'});
+      setTimeout(function(){window.print();},400);
+    <\/script>
+  </body></html>`);
+  win.document.close();
+}
+
+function printMissionFiche() {
+  if(STATE.scanTargetId) printSingleBC(STATE.scanTargetId);
+}
+
+function printAllBC() {
+  const data = load();
+  const wins = window.open('','_blank','width=800,height=900');
+  if(!wins) { toast('Autoriser les popups', 'error'); return; }
+
+  const missionCards = data.missions.map((m,idx) => {
+    const safeId = m.id.replace(/[^a-zA-Z0-9]/g,'_');
+    const typeName = getTypeName(m.type,data.types);
+    const typeIcon = getTypeIcon(m.type,data.types);
+    return `<div style="page-break-inside:avoid;margin-bottom:20px;border:1px solid #D0D9EF;border-radius:8px;padding:14px;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+        <div style="width:32px;height:32px;background:#003189;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#FFD100;">LP</div>
+        <div><div style="font-size:13px;font-weight:800;color:#003189;">${typeIcon} ${typeName}</div><div style="font-size:10px;color:#5A6A8A;">${m.zone||''} · ${statutLabel(m.statut)}</div></div>
+      </div>
+      <div style="text-align:center;margin-bottom:8px;"><svg id="bca-${safeId}"></svg></div>
+      <div style="text-align:center;font-family:monospace;font-size:11px;font-weight:700;color:#003189;">${m.id}</div>
+      <div style="font-size:10px;color:#5A6A8A;text-align:center;margin-top:2px;">${fmtDate(m.dateStart)||fmtDate(m.created)}</div>
+    </div>`;
+  }).join('');
+
+  wins.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Tous les codes-barres HEPHAISTOS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"><\/script>
+    <style>body{font-family:Arial,sans-serif;padding:20px;} .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;} @media print{button{display:none!important;}} @page{margin:10mm;}</style>
+  </head><body>
+    <div style="text-align:center;margin-bottom:16px;"><h2 style="color:#003189;">📋 Codes-barres HEPHAISTOS — PIC de Saint-Denis</h2><p style="font-size:12px;color:#5A6A8A;">Généré le ${new Date().toLocaleDateString('fr-FR')} · ${data.missions.length} mission(s)</p></div>
+    <div class="grid">${missionCards}</div>
+    <script>
+      ${data.missions.map(m=>{const s=m.id.replace(/[^a-zA-Z0-9]/g,'_');return `try{JsBarcode('#bca-${s}','${m.id}',{format:'CODE128',width:1.6,height:45,displayValue:true,fontSize:10,margin:2,background:'#fff',lineColor:'#000'});}catch(e){}`;}).join('\n')}
+      setTimeout(function(){window.print();},500);
+    <\/script>
+  </body></html>`);
+  wins.document.close();
+}
+
+// ════════════════════════════════════════════════
+//  INTERVENANTS
+// ════════════════════════════════════════════════
+function renderIntervenants() {
+  const data = load();
+  const search = el('intv-search')?.value.toLowerCase()||'';
+  const filt = el('intv-filter')?.value||'';
+  const isAdmin = STATE.currentUser?.role === 'admin';
+
+  let list = data.intervenants.filter(i => {
+    if(filt && i.spec !== filt) return false;
+    if(search) {
+      const hay = [i.nom,i.spec,i.contact,i.tel,i.email,i.siret].join(' ').toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  const tbody = el('intv-tbody');
+  const empty = el('intv-empty');
+  if(!tbody) return;
+  if(!list.length) { tbody.innerHTML=''; if(empty)empty.style.display='flex'; return; }
+  if(empty) empty.style.display='none';
+
+  tbody.innerHTML = list.map(i => {
+    const mCount = data.missions.filter(m=>(m.intervenants||[]).includes(i.id)).length;
+    return `<tr>
+      <td style="font-weight:700;">${i.nom}</td>
+      <td><span class="chip">${i.spec||'—'}</span></td>
+      <td>${i.contact||'—'}</td>
+      <td><a href="tel:${i.tel}" style="color:var(--yellow);text-decoration:none;">${i.tel||'—'}</a></td>
+      <td style="font-size:11px;">${i.email||'—'}</td>
+      <td><span class="chip selected">${mCount} mission${mCount>1?'s':''}</span></td>
+      <td>
+        <div style="display:flex;gap:5px;">
+          ${isAdmin ? `<button class="btn btn-ghost btn-xs" onclick="openEditIntervenant('${i.id}')">✏️</button>` : ''}
+          ${isAdmin ? `<button class="btn btn-red btn-xs" onclick="deleteIntervenant('${i.id}')">🗑</button>` : ''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openNewIntervenant() {
+  STATE.editingIntvId = null;
+  el('modal-intv-title').textContent = '👷 Nouvel intervenant';
+  ['iv-nom','iv-spec','iv-contact','iv-tel','iv-email','iv-siret','iv-notes'].forEach(id => { const e=el(id); if(e)e.value=''; });
+  openModal('modal-intervenant');
+}
+
+function openEditIntervenant(id) {
+  const data = load();
+  const i = data.intervenants.find(x => x.id === id);
+  if(!i) return;
+  STATE.editingIntvId = id;
+  el('modal-intv-title').textContent = '✏️ Modifier intervenant';
+  if(el('iv-nom')) el('iv-nom').value = i.nom||'';
+  if(el('iv-spec')) el('iv-spec').value = i.spec||'';
+  if(el('iv-contact')) el('iv-contact').value = i.contact||'';
+  if(el('iv-tel')) el('iv-tel').value = i.tel||'';
+  if(el('iv-email')) el('iv-email').value = i.email||'';
+  if(el('iv-siret')) el('iv-siret').value = i.siret||'';
+  if(el('iv-notes')) el('iv-notes').value = i.notes||'';
+  openModal('modal-intervenant');
+}
+
+function saveIntervenant() {
+  const nom = el('iv-nom')?.value.trim();
+  const spec = el('iv-spec')?.value.trim();
+  if(!nom||!spec) { toast('Nom et Spécialité obligatoires', 'error'); return; }
+  const data = load();
+  if(STATE.editingIntvId) {
+    const idx = data.intervenants.findIndex(i => i.id === STATE.editingIntvId);
+    if(idx>=0) {
+      data.intervenants[idx] = { ...data.intervenants[idx],
+        nom, spec,
+        contact: el('iv-contact')?.value.trim(),
+        tel: el('iv-tel')?.value.trim(),
+        email: el('iv-email')?.value.trim(),
+        siret: el('iv-siret')?.value.trim(),
+        notes: el('iv-notes')?.value.trim()
+      };
+    }
+    addLog('Intervenant modifié', nom);
+  } else {
+    data.intervenants.push({
+      id: uidIntv(), nom, spec,
+      contact: el('iv-contact')?.value.trim(),
+      tel: el('iv-tel')?.value.trim(),
+      email: el('iv-email')?.value.trim(),
+      siret: el('iv-siret')?.value.trim(),
+      notes: el('iv-notes')?.value.trim(),
+      created: now()
+    });
+    addLog('Intervenant ajouté', nom);
+  }
+  save(data);
+  closeModal('modal-intervenant');
+  renderIntervenants();
+  populateTypeFilters();
+  toast('Intervenant enregistré !', 'success');
+}
+
+function deleteIntervenant(id) {
+  const data = load();
+  const i = data.intervenants.find(x=>x.id===id);
+  if(!confirm('Supprimer l\'intervenant ' + (i?.nom||id) + ' ?')) return;
+  data.intervenants = data.intervenants.filter(x=>x.id!==id);
+  addLog('Intervenant supprimé', i?.nom||id);
+  save(data);
+  renderIntervenants();
+  populateTypeFilters();
+  toast('Intervenant supprimé', 'info');
+}
+
+// ════════════════════════════════════════════════
+//  ADMIN
+// ════════════════════════════════════════════════
+function renderAdmin() {
+  const data = load();
+
+  // Utilisateurs
+  const tbody = el('admin-users-tbody');
+  if(tbody) {
+    tbody.innerHTML = data.users.map(u => `<tr>
+      <td class="td-code">${u.id}</td>
+      <td>${u.nom}</td>
+      <td><span class="role-pill ${u.role}">${u.role}</span></td>
+      <td style="font-size:11px;">${fmtDate(u.created)}</td>
+      <td>
+        <div style="display:flex;gap:5px;">
+          ${u.id !== STATE.currentUser?.id ? `<button class="btn btn-red btn-xs" onclick="deleteUser('${u.id}')">🗑</button>` : '<span style="font-size:10px;color:var(--text3);">(vous)</span>'}
+        </div>
+      </td>
+    </tr>`).join('');
+  }
+
+  // Types
+  const tl = el('types-list');
+  if(tl) {
+    tl.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:8px;">
+      ${data.types.map(t => `<span class="chip" style="cursor:pointer;">
+        ${t.icon} ${t.nom}
+        <button onclick="deleteType('${t.id}')" style="background:none;border:none;color:var(--red);cursor:pointer;margin-left:4px;font-size:12px;" title="Supprimer">✕</button>
+      </span>`).join('')}
+    </div>`;
+  }
+}
+
+function openNewUser() {
+  ['u-id','u-pass','u-nom'].forEach(id => { const e=el(id); if(e)e.value=''; });
+  if(el('u-role')) el('u-role').value = 'agent';
+  openModal('modal-user');
+}
+
+function saveUser() {
+  const id = el('u-id')?.value.trim().toLowerCase();
+  const pass = el('u-pass')?.value;
+  const nom = el('u-nom')?.value.trim();
+  const role = el('u-role')?.value;
+  if(!id||!pass||!nom) { toast('Tous les champs sont requis', 'error'); return; }
+  const data = load();
+  if(data.users.find(u=>u.id===id)) { toast('Identifiant déjà utilisé', 'error'); return; }
+  data.users.push({ id, pass, nom, role, created: now() });
+  addLog('Utilisateur créé', id);
+  save(data);
+  closeModal('modal-user');
+  renderAdmin();
+  toast('Utilisateur créé !', 'success');
+}
+
+function deleteUser(id) {
+  if(!confirm('Supprimer l\'utilisateur ' + id + ' ?')) return;
+  const data = load();
+  data.users = data.users.filter(u => u.id !== id);
+  addLog('Utilisateur supprimé', id);
+  save(data);
+  renderAdmin();
+  toast('Utilisateur supprimé', 'info');
+}
+
+function openAddType() {
+  if(el('type-name')) el('type-name').value = '';
+  if(el('type-icon')) el('type-icon').value = '📦';
+  openModal('modal-type');
+}
+
+function saveType() {
+  const nom = el('type-name')?.value.trim();
+  const icon = el('type-icon')?.value.trim() || '📦';
+  if(!nom) { toast('Nom requis', 'error'); return; }
+  const data = load();
+  const id = nom.toLowerCase().replace(/[^a-z0-9]/g,'_').slice(0,20);
+  if(!data.types.find(t=>t.id===id)) {
+    data.types.push({ id, nom, icon });
+    save(data);
+    populateTypeFilters();
+    renderAdmin();
+    toast('Type ajouté !', 'success');
+  }
+  closeModal('modal-type');
+}
+
+function deleteType(id) {
+  const data = load();
+  data.types = data.types.filter(t => t.id !== id);
+  save(data);
+  renderAdmin();
+  populateTypeFilters();
+  toast('Type supprimé', 'info');
+}
+
+function exportData() {
+  const data = load();
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'hephaistos_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Données exportées', 'success');
+}
+
+function importDataPrompt() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if(data.missions && data.users) {
+          if(!confirm('Remplacer toutes les données par ce fichier ?')) return;
+          Object.keys(LS_KEYS).forEach(k => {
+            if(data[k]) try { localStorage.setItem(LS_KEYS[k], JSON.stringify(data[k])); } catch(e){}
+          });
+          renderDashboard();
+          populateTypeFilters();
+          toast('Données importées !', 'success');
+        } else { toast('Format de fichier invalide', 'error'); }
+      } catch(e) { toast('Erreur lecture fichier', 'error'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function resetConfirm() {
+  if(!confirm('ATTENTION : Supprimer TOUTES les données HEPHAISTOS ? Cette action est irréversible.')) return;
+  if(!confirm('Confirmer la réinitialisation complète ?')) return;
+  Object.values(LS_KEYS).forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
+  toast('Données réinitialisées', 'info');
+  doLogout();
+}
+
+// ════════════════════════════════════════════════
+//  HELPERS UI
+// ════════════════════════════════════════════════
+function openModal(id) {
+  const m = el(id); if(m) m.classList.add('open');
+}
+function closeModal(id) {
+  const m = el(id); if(m) m.classList.remove('open');
+}
+
+let toastTimer = null;
+function toast(msg, type='info') {
+  const t = el('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.className = type;
+  t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.display='none'; }, 3000);
+}
+
+function el(id) { return document.getElementById(id); }
+
+// ════════════════════════════════════════════════
+//  HELPERS DATA / AFFICHAGE
+// ════════════════════════════════════════════════
+function getTypeName(typeId, types) {
+  return (types||[]).find(t=>t.id===typeId)?.nom || typeId || '—';
+}
+function getTypeIcon(typeId, types) {
+  return (types||[]).find(t=>t.id===typeId)?.icon || '📦';
+}
+function statutBadge(s) {
+  const map = {
+    ouvert:'badge-open', en_cours:'badge-progress',
+    termine:'badge-done', urgent:'badge-urgent', annule:'badge-cancelled'
+  };
+  return `<span class="badge ${map[s]||'badge-cancelled'}">${statutLabel(s)}</span>`;
+}
+function statutLabel(s) {
+  return {ouvert:'Ouvert',en_cours:'En cours',termine:'Terminé',urgent:'Urgent',annule:'Annulé'}[s]||s||'—';
+}
+function prioBadge(p) {
+  const map = {
+    low:'<span style="color:var(--green);font-size:11px;font-weight:700;">🟢 Basse</span>',
+    medium:'<span style="color:var(--orange);font-size:11px;font-weight:700;">🟡 Moyenne</span>',
+    high:'<span style="color:var(--orange);font-size:11px;font-weight:700;">🟠 Haute</span>',
+    critical:'<span style="color:var(--red);font-size:11px;font-weight:700;animation:pulse-red 1s infinite;">🔴 Critique</span>'
+  };
+  return map[p]||p||'—';
+}
+function prioLabel(p) {
+  return {low:'Basse',medium:'Moyenne',high:'Haute',critical:'Critique'}[p]||p||'—';
+}
+function prioPriority(p) {
+  return {critical:4,high:3,medium:2,low:1}[p]||0;
+}
+function fmtDate(d) {
+  if(!d) return '';
+  try {
+    if(d.includes('T')) return new Date(d).toLocaleDateString('fr-FR');
+    return new Date(d+'T00:00:00').toLocaleDateString('fr-FR');
+  } catch(e) { return d; }
+}
+
+// ════════════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ════════════════════════════════════════════════
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
+// Fermer modal en cliquant overlay
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if(e.target === overlay) overlay.classList.remove('open');
+  });
+});
+
+// ════════════════════════════════════════════════
+//  BOOT
+// ════════════════════════════════════════════════
+(function init() {
+  const data = load();
+  // Migration des identifiants : forcer les bons mdp au démarrage
+  let users = data.users.length ? data.users : defaultUsers();
+  let changed = false;
+  users = users.map(function(u) {
+    // admin → mdp: admin
+    if(u.id === 'admin' && u.pass !== 'admin') { changed=true; return Object.assign({},u,{pass:'admin',role:'admin'}); }
+    // agent → remplacer par cedric/diobrando
+    if(u.id === 'agent') { changed=true; return {id:'cedric',pass:'diobrando',nom:'Cédric',role:'admin',created:u.created||new Date().toISOString()}; }
+    // cedric avec ancien mdp
+    if(u.id === 'cedric' && u.pass !== 'diobrando') { changed=true; return Object.assign({},u,{pass:'diobrando',role:'admin'}); }
+    return u;
+  });
+  // S'assurer que cedric existe
+  if(!users.find(function(u){return u.id==='cedric';})) {
+    users.push({id:'cedric',pass:'diobrando',nom:'Cédric',role:'admin',created:new Date().toISOString()});
+    changed=true;
+  }
+  if(changed || !data.users.length) {
+    try { localStorage.setItem(LS_KEYS.users, JSON.stringify(users)); } catch(e) {}
+  }
+  if(!data.types.length) {
+    try { localStorage.setItem(LS_KEYS.types, JSON.stringify(defaultTypes())); } catch(e) {}
+  }
+})();
+
+// \u2550\u2550\u2550\u2550\u2550 INTEGRATION OLYMPE \u2550\u2550\u2550\u2550\u2550
+// Retour au hub Olympe (ferme l'iframe si embarque, sinon navigue vers /)
+function hephGoHome(){
+  if(window.parent && window.parent !== window){
+    try{ window.parent.postMessage({ type:'olympe-close-app' }, '*'); return; }catch(e){}
+  }
+  window.location.href = '/';
+}
+
+// Connexion automatique : plus d'identifiant requis (compte admin implicite)
+(function autoBoot(){
+  try{
+    var data = load();
+    var admin = (data.users||[]).find(function(u){ return u.role==='admin'; })
+             || { id:'admin', nom:'Manager', role:'admin' };
+    STATE.currentUser = admin;
+    var av=el('user-av'); if(av) av.textContent=(admin.nom||'M').charAt(0).toUpperCase();
+    var un=el('user-name'); if(un) un.textContent=admin.nom||'Manager';
+    var rp=el('role-pill'); if(rp){ rp.textContent='ADMIN'; rp.className='role-pill admin'; }
+    document.querySelectorAll('.admin-only').forEach(function(e){ e.style.display=''; });
+    showScreen('screen-app');
+    initApp();
+  }catch(e){ console.error('[heph] autoBoot', e); }
+})();
+</script>
+</body>
+</html>
