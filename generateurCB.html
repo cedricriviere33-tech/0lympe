@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Générateur Codes-Barres — La Poste Réunion</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Share+Tech+Mono&family=Barlow:wght@400;500;600&display=swap');
+:root{
+  --j:#FFD100;--jd:#c9a600;--n:#080808;--g1:#111;--g2:#181818;--g3:#222;
+  --gb:#2a2a2a;--gl:#333;--w:#F0EFE8;--wd:#888;
+  --r:#FF3030;--v:#00D68F;--b:#3B9BFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--n);color:var(--w);font-family:'Barlow',sans-serif;min-height:100vh;}
+
+header{background:var(--g1);border-bottom:3px solid var(--j);height:60px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-sq{background:var(--j);color:var(--n);width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;}
+.logo-t1{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;letter-spacing:2px;}
+.logo-t2{font-size:9px;color:var(--j);letter-spacing:3px;text-transform:uppercase;}
+
+nav.tabs{display:flex;background:var(--g1);border-bottom:1px solid var(--gl);padding:0 24px;gap:2px;}
+.tab{background:none;border:none;color:var(--wd);font-family:'Barlow Condensed',sans-serif;
+  font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  padding:12px 18px;cursor:pointer;border-bottom:3px solid transparent;
+  transition:.2s;position:relative;top:1px;}
+.tab:hover{color:var(--w);}
+.tab.active{color:var(--j);border-bottom-color:var(--j);}
+
+.page{display:none;padding:24px;max-width:1200px;margin:0 auto;}
+.page.active{display:block;}
+
+.card{background:var(--g2);border:1px solid var(--gl);padding:20px;margin-bottom:16px;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--wd);}
+.card-title::before{content:'';width:3px;height:14px;background:var(--j);display:block;}
+
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:800px){.cols2{grid-template-columns:1fr;}}
+
+.flabel{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--wd);margin-bottom:5px;display:block;}
+.finput{width:100%;background:var(--g3);border:1px solid var(--gl);color:var(--w);
+  font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px 12px;outline:none;transition:.2s;}
+.finput:focus{border-color:var(--j);}
+select.finput{cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M0 0l5 7 5-7z' fill='%23FFD100'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+select.finput option{background:var(--g3);}
+.fgroup{margin-bottom:14px;}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;
+  border:none;transition:all .2s;}
+.btn-y{background:var(--j);color:var(--n);}
+.btn-y:hover{background:var(--jd);}
+.btn-b{background:rgba(59,155,255,.1);border:1px solid rgba(59,155,255,.3);color:var(--b);}
+.btn-b:hover{background:rgba(59,155,255,.2);}
+.btn-r{background:transparent;color:var(--r);border:1px solid rgba(255,48,48,.3);padding:5px 10px;font-size:10px;}
+.btn-s{background:transparent;color:var(--wd);border:1px solid var(--gl);}
+.btn-s:hover{color:var(--w);border-color:var(--w);}
+.btn-home{background:transparent;color:var(--j);border:1px solid var(--jd);}
+.btn-home:hover{background:var(--j);color:var(--n);}
+
+/* ── PREVIEW ZONE ── */
+.preview-wrap{background:var(--g3);border:1px solid var(--gl);padding:20px;
+  min-height:200px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;}
+
+/* ── ÉTIQUETTE CONTENEUR ── */
+.etiquette-cont{
+  background:white;color:#000;
+  width:200px;padding:10px 10px 8px;
+  display:inline-block;text-align:center;
+  page-break-inside:avoid;break-inside:avoid;
+  border:1px solid #ddd;
+}
+.etiquette-cont .eti-type{font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:11px;letter-spacing:2px;color:#555;text-transform:uppercase;}
+.etiquette-cont .eti-id{font-family:'Share Tech Mono',monospace;
+  font-size:22px;font-weight:700;color:#000;margin:2px 0;}
+.etiquette-cont svg{display:block;margin:4px auto;}
+.etiquette-cont .eti-org{font-size:8px;color:#777;margin-top:4px;letter-spacing:1px;}
+
+/* ── ÉTIQUETTE PRODUIT ── */
+.etiquette-prod{
+  background:white;color:#000;
+  width:220px;padding:10px;
+  display:inline-block;text-align:center;
+  page-break-inside:avoid;break-inside:avoid;
+  border:1px solid #ddd;
+}
+.etiquette-prod .ep-code{font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:24px;color:#000;letter-spacing:1px;}
+.etiquette-prod svg{display:block;margin:4px auto;}
+.etiquette-prod .ep-org{font-size:8px;color:#777;margin-top:3px;letter-spacing:1px;}
+
+/* ── GRID CONTENANTS ── */
+.cont-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+.cont-card{background:var(--g3);border:1px solid var(--gl);padding:12px;
+  display:flex;align-items:center;justify-content:space-between;}
+.cont-info .ct{font-size:9px;color:var(--wd);letter-spacing:2px;text-transform:uppercase;}
+.cont-info .cid{font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--j);}
+
+/* ── PROD LIST ── */
+.prod-row{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.prod-code{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--j);}
+
+/* ── ZPL ── */
+.zplbox{background:var(--g3);border:1px solid var(--gl);border-left:3px solid var(--b);
+  padding:16px;font-family:'Share Tech Mono',monospace;font-size:11px;
+  color:#aaccff;white-space:pre;overflow-x:auto;line-height:1.7;margin-bottom:10px;}
+.copybtn{background:rgba(59,155,255,.1);border:1px solid rgba(59,155,255,.3);
+  color:var(--b);font-family:'Barlow Condensed',sans-serif;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;padding:7px 14px;cursor:pointer;}
+.copybtn:hover{background:rgba(59,155,255,.2);}
+
+hr{border:none;border-top:1px solid var(--gl);margin:18px 0;}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--gb);
+  border:1px solid var(--gl);border-left:3px solid var(--v);
+  padding:12px 18px;font-size:12px;z-index:500;
+  transform:translateX(130%);transition:transform .3s;max-width:320px;}
+.toast.show{transform:translateX(0);}
+
+/* ── PRINT ── */
+@media print{
+  header,nav.tabs,.no-print,.card-title,button,input,select,label,.flabel,
+  .card,.cols2,.btn,.cont-grid,.prod-row,.fgroup,.zplbox,.copybtn,
+  .info-box,p,.section-sub{ display:none !important; }
+  body{background:white;color:black;margin:0;padding:0;}
+  .print-zone{display:flex!important;flex-wrap:wrap;gap:10px;padding:10px;}
+  .etiquette-cont,.etiquette-prod{display:inline-block!important;border:1px solid #ccc;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-sq">LP</div>
+    <div>
+      <div class="logo-t1">Générateur Codes-Barres</div>
+      <div class="logo-t2">La Poste Réunion — Gillot PIC</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;" class="no-print">
+    <button class="btn btn-home" onclick="retourOlympe()" title="Retour à l'accueil Olympe">🏠 Accueil</button>
+    <button class="btn btn-y" onclick="imprimerTout()">🖨 IMPRIMER TOUT</button>
+  </div>
+</header>
+
+<nav class="tabs no-print">
+  <button class="tab active" onclick="goTab('contenants',this)">📦 Contenants</button>
+  <button class="tab" onclick="goTab('produits',this)">🏷 Produits</button>
+  <button class="tab" onclick="goTab('zpl',this)">🖨 ZPL Zebra</button>
+</nav>
+
+<!-- ══════════ CONTENANTS ══════════ -->
+<div id="page-contenants" class="page active">
+  <div class="cols2">
+    <div>
+      <div class="card">
+        <div class="card-title">Créer des contenants</div>
+        <div class="fgroup">
+          <label class="flabel">Type de contenant</label>
+          <select class="finput" id="cont-type">
+            <option value="CP">CP</option>
+            <option value="CE30">CE30</option>
+            <option value="CV300">CV300</option>
+            <option value="KUB">KUB</option>
+            <option value="PALETTES">PAL</option>
+          </select>
+        </div>
+        <div class="fgroup" style="display:flex;gap:8px;align-items:flex-end;">
+          <div style="flex:1">
+            <label class="flabel">N° de départ</label>
+            <input class="finput" type="number" id="cont-from" value="1" min="1">
+          </div>
+          <div style="flex:1">
+            <label class="flabel">N° de fin</label>
+            <input class="finput" type="number" id="cont-to" value="10" min="1">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px;">
+          <button class="btn btn-y" style="flex:1" onclick="genContenants()">⚡ GÉNÉRER</button>
+          <button class="btn btn-s" onclick="ajouterContManuel()">+ Manuel</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Contenants enregistrés</div>
+        <div class="cont-grid" id="cont-list"></div>
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <button class="btn btn-y" onclick="imprimerContenants()">🖨 IMPRIMER ÉTIQUETTES</button>
+          <button class="btn btn-r" onclick="clearContenants()">🗑 TOUT SUPPRIMER</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title">Aperçu étiquettes contenants</div>
+        <div class="preview-wrap" id="preview-cont"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PRODUITS ══════════ -->
+<div id="page-produits" class="page">
+  <div class="cols2">
+    <div>
+      <div class="card">
+        <div class="card-title">Gérer les produits</div>
+        <div class="fgroup" style="display:flex;gap:8px;">
+          <input class="finput" type="text" id="new-prod" placeholder="Ex: CTOC PRIO"
+                 style="text-transform:uppercase;flex:1;">
+          <button class="btn btn-y" style="width:auto;" onclick="ajouterProd()">+</button>
+        </div>
+        <div id="prod-list"></div>
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <button class="btn btn-y" onclick="imprimerProduits()">🖨 IMPRIMER ÉTIQUETTES</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title">Aperçu étiquettes produits</div>
+        <div class="preview-wrap" id="preview-prod"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ZPL ══════════ -->
+<div id="page-zpl" class="page">
+  <div class="cols2">
+    <div>
+      <div class="card">
+        <div class="card-title" style="color:var(--b)">🖨 Codes ZPL pour Zebra ZM400</div>
+        <div style="background:rgba(59,155,255,.06);border:1px solid rgba(59,155,255,.2);
+             padding:14px;font-size:12px;color:#aac;line-height:1.7;margin-bottom:16px;">
+          <strong style="color:var(--b)">Comment utiliser ?</strong><br>
+          1. Sélectionne le produit ou contenant<br>
+          2. Copie le code ZPL<br>
+          3. Ouvre le fichier <code style="color:var(--j)">.prn</code> dans Notepad sur le PC Zebra<br>
+          4. Remplace le contenu par ce ZPL<br>
+          5. Lance l'impression → le code-barre scanné donnera directement <code style="color:var(--v)">CTOC PRIO</code><br>
+          <br>
+          <strong style="color:var(--r)">Pourquoi la suite numérique ?</strong><br>
+          La Zebra encode la valeur interne Excel (ex: <code style="color:var(--r)">203974850974850...</code>) 
+          quand le ZPL est généré depuis Hermès. En forçant <code style="color:var(--v)">^FD[TEXTE]</code> 
+          à la place, le scanner relit le texte exact.
+        </div>
+
+        <div class="fgroup">
+          <label class="flabel">Produit → ZPL étiquette</label>
+          <select class="finput" id="zpl-prod-sel" onchange="updateZPLProd()" style="font-size:12px;"></select>
+        </div>
+        <div class="zplbox" id="zpl-prod-box"></div>
+        <button class="copybtn" onclick="copyEl('zpl-prod-box')">📋 COPIER ZPL PRODUIT</button>
+
+        <hr>
+
+        <div class="fgroup">
+          <label class="flabel">Contenant → ZPL étiquette</label>
+          <select class="finput" id="zpl-cont-sel" onchange="updateZPLCont()" style="font-size:12px;"></select>
+        </div>
+        <div class="zplbox" id="zpl-cont-box"></div>
+        <button class="copybtn" onclick="copyEl('zpl-cont-box')">📋 COPIER ZPL CONTENANT</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title">Impression en série — ZPL batch</div>
+        <p style="font-size:12px;color:var(--wd);margin-bottom:12px;line-height:1.6;">
+          Génère un fichier .prn contenant les ZPL de TOUS les produits d'un coup. 
+          À envoyer directement à la Zebra via <code style="color:var(--j)">copy fichier.prn \\\\serveur\zebra</code> 
+          ou via ZebraDesigner.
+        </p>
+        <button class="btn btn-b" style="margin-bottom:12px;" onclick="exportZPLBatch('produits')">
+          ⬇ EXPORT .PRN TOUS PRODUITS
+        </button>
+        <button class="btn btn-b" onclick="exportZPLBatch('contenants')">
+          ⬇ EXPORT .PRN TOUS CONTENANTS
+        </button>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title">Aperçu ZPL rendu</div>
+        <div style="background:white;padding:16px;text-align:center;min-height:150px;" id="zpl-preview-render">
+          <div id="zpl-preview-svg"></div>
+          <div id="zpl-preview-label" style="font-family:'Share Tech Mono',monospace;font-size:14px;color:#000;margin-top:8px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ZONE IMPRESSION (cachée à l'écran, visible à l'impression) -->
+<div class="print-zone" id="print-zone" style="display:none;flex-wrap:wrap;gap:10px;padding:10px;"></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+const KEY='cb_gillot_v1';
+let S=loadS();
+
+function loadS(){
+  try{ const r=localStorage.getItem(KEY); if(r) return JSON.parse(r); }catch(e){}
+  return {
+    contenants:[],
+    produits:[
+      'CTOC PRIO','BTOC PRIO','CTOC ECO','BTOC ECO','BTOC JAVER',
+      'Roissy','Presse','PPI OO','PPI OS','SINGAPOUR',
+      'Douane','PPI Roissy','Anomalie colis','Fausse direction','Cabine'
+    ]
+  };
+}
+function saveS(){ localStorage.setItem(KEY,JSON.stringify(S)); }
+
+// Préfixes par type
+const PREFIXES={CP:'CP',CE30:'CE30',CV300:'CV300',KUB:'KUB',PAL:'PAL'};
+const PAD={CP:4,CE30:3,CV300:3,KUB:3,PAL:3};
+
+function formatId(type,num){
+  return PREFIXES[type]+String(num).padStart(PAD[type],'0');
+}
+
+// ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+function goTab(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='contenants'){ renderContList(); renderContPreview(); }
+  if(name==='produits'){ renderProdList(); renderProdPreview(); }
+  if(name==='zpl'){ populateZPLSelects(); updateZPLProd(); updateZPLCont(); }
+}
+
+// ─────────────────────────────────────────────
+// CONTENANTS
+// ─────────────────────────────────────────────
+function genContenants(){
+  const type=document.getElementById('cont-type').value;
+  const from=parseInt(document.getElementById('cont-from').value)||1;
+  const to=parseInt(document.getElementById('cont-to').value)||1;
+  if(to<from){ showToast('N° fin doit être ≥ N° départ',true); return; }
+  let added=0;
+  for(let i=from;i<=to;i++){
+    const id=formatId(type,i);
+    if(!S.contenants.find(c=>c.id===id)){
+      S.contenants.push({id,type}); added++;
+    }
+  }
+  saveS();
+  renderContList(); renderContPreview();
+  showToast(`${added} contenant(s) ajouté(s)`);
+}
+
+function ajouterContManuel(){
+  const type=document.getElementById('cont-type').value;
+  const existing=S.contenants.filter(c=>c.type===type);
+  const maxNum=existing.length>0?
+    Math.max(...existing.map(c=>parseInt(c.id.replace(PREFIXES[type],''))||0))+1:1;
+  const id=formatId(type,maxNum);
+  S.contenants.push({id,type});
+  saveS(); renderContList(); renderContPreview();
+  showToast('Ajouté : '+id);
+}
+
+function suppCont(id){
+  S.contenants=S.contenants.filter(c=>c.id!==id);
+  saveS(); renderContList(); renderContPreview();
+}
+
+function clearContenants(){
+  if(!confirm('Supprimer tous les contenants ?')) return;
+  S.contenants=[]; saveS(); renderContList(); renderContPreview();
+}
+
+function renderContList(){
+  const el=document.getElementById('cont-list');
+  if(!S.contenants.length){
+    el.innerHTML='<div style="color:var(--wd);font-size:12px;padding:10px;">Aucun contenant. Utilisez le formulaire ci-dessus.</div>';
+    return;
+  }
+  el.innerHTML=S.contenants.map(c=>`
+    <div class="cont-card">
+      <div class="cont-info">
+        <div class="ct">${c.type}</div>
+        <div class="cid">${c.id}</div>
+      </div>
+      <button class="btn btn-r" onclick="suppCont('${c.id}')">✕</button>
+    </div>
+  `).join('');
+}
+
+function renderContPreview(){
+  const el=document.getElementById('preview-cont');
+  el.innerHTML='';
+  S.contenants.slice(0,20).forEach(c=>{
+    el.appendChild(makeEtiquetteCont(c));
+  });
+  if(S.contenants.length>20){
+    const more=document.createElement('div');
+    more.style.cssText='color:var(--wd);font-size:11px;padding:10px;align-self:center;';
+    more.textContent=`+${S.contenants.length-20} autres (tous imprimés)`;
+    el.appendChild(more);
+  }
+}
+
+function makeEtiquetteCont(c){
+  const wrap=document.createElement('div');
+  wrap.className='etiquette-cont';
+  wrap.innerHTML=`
+    <div class="eti-type">${c.type}</div>
+    <div class="eti-id">${c.id}</div>
+    <svg id="bc-${c.id.replace(/[^a-zA-Z0-9]/g,'')}"></svg>
+    <div class="eti-org">La Poste — Réunion PIC</div>
+  `;
+  // Générer le code-barre après ajout au DOM
+  setTimeout(()=>{
+    try{
+      JsBarcode('#bc-'+c.id.replace(/[^a-zA-Z0-9]/g,''),c.id,{
+        format:'CODE128',width:1.8,height:50,displayValue:true,
+        fontSize:11,margin:2,background:'#ffffff',lineColor:'#000000'
+      });
+    }catch(e){}
+  },50);
+  return wrap;
+}
+
+// ─────────────────────────────────────────────
+// PRODUITS
+// ─────────────────────────────────────────────
+function ajouterProd(){
+  const v=document.getElementById('new-prod').value.trim().toUpperCase();
+  if(!v){ showToast('Code requis',true); return; }
+  if(S.produits.includes(v)){ showToast('Déjà existant',true); return; }
+  S.produits.push(v); saveS();
+  document.getElementById('new-prod').value='';
+  renderProdList(); renderProdPreview();
+  showToast('Produit ajouté : '+v);
+}
+
+function suppProd(i){
+  S.produits.splice(i,1); saveS(); renderProdList(); renderProdPreview();
+}
+
+function renderProdList(){
+  const el=document.getElementById('prod-list');
+  el.innerHTML=S.produits.map((p,i)=>`
+    <div class="prod-row">
+      <span class="prod-code">${p}</span>
+      <button class="btn btn-r" onclick="suppProd(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function renderProdPreview(){
+  const el=document.getElementById('preview-prod');
+  el.innerHTML='';
+  S.produits.forEach((p,i)=>{
+    el.appendChild(makeEtiquetteProd(p,i));
+  });
+}
+
+function makeEtiquetteProd(code,idx){
+  const wrap=document.createElement('div');
+  wrap.className='etiquette-prod';
+  const safeid='bcp-'+idx;
+  wrap.innerHTML=`
+    <div class="ep-code">${code}</div>
+    <svg id="${safeid}"></svg>
+    <div class="ep-org">La Poste — Gillot PIC</div>
+  `;
+  setTimeout(()=>{
+    try{
+      JsBarcode('#'+safeid,code,{
+        format:'CODE128',width:1.8,height:55,displayValue:true,
+        fontSize:11,margin:2,background:'#ffffff',lineColor:'#000000'
+      });
+    }catch(e){
+      // CODE128 ne supporte pas tous les caractères, fallback sans displayValue
+      try{
+        JsBarcode('#'+safeid,code,{
+          format:'CODE128',width:1.8,height:55,displayValue:false,margin:2
+        });
+      }catch(e2){}
+    }
+  },50);
+  return wrap;
+}
+
+// ─────────────────────────────────────────────
+// ZPL
+// ─────────────────────────────────────────────
+function populateZPLSelects(){
+  const ps=document.getElementById('zpl-prod-sel');
+  const cs=document.getElementById('zpl-cont-sel');
+  ps.innerHTML=S.produits.map(p=>`<option value="${p}">${p}</option>`).join('');
+  cs.innerHTML=S.contenants.map(c=>`<option value="${c.id}">${c.id} (${c.type})</option>`).join('');
+}
+
+function genZPLProduit(code){
+  return `^XA
+^PW420
+^LL170
+^CF0,40
+^FO20,15^FD${code}^FS
+^FO20,65^BY2,3.5,75
+^BCN,75,N,N,N
+^FD${code}^FS
+^FO20,148^CF0,20
+^FDLa Poste Reunion — Gillot PIC^FS
+^XZ`;
+}
+
+function genZPLContenant(id,type){
+  return `^XA
+^PW420
+^LL180
+^CF0,35
+^FO20,12^FDType: ${type}^FS
+^FO20,52^CF0,42^FD${id}^FS
+^FO20,100^BY2,3.5,70
+^BCN,70,N,N,N
+^FD${id}^FS
+^FO20,178^CF0,18
+^FDLa Poste Reunion — Gillot PIC^FS
+^XZ`;
+}
+
+function updateZPLProd(){
+  const sel=document.getElementById('zpl-prod-sel');
+  if(!sel||!sel.value) return;
+  document.getElementById('zpl-prod-box').textContent=genZPLProduit(sel.value);
+  // Aperçu
+  const svgEl=document.getElementById('zpl-preview-svg');
+  const labelEl=document.getElementById('zpl-preview-label');
+  svgEl.innerHTML='<svg id="zpl-prev-bc"></svg>';
+  labelEl.textContent=sel.value;
+  setTimeout(()=>{
+    try{ JsBarcode('#zpl-prev-bc',sel.value,{format:'CODE128',width:2,height:60,displayValue:true,fontSize:12}); }catch(e){}
+  },50);
+}
+
+function updateZPLCont(){
+  const sel=document.getElementById('zpl-cont-sel');
+  if(!sel||!sel.value) return;
+  const cont=S.contenants.find(c=>c.id===sel.value);
+  if(!cont) return;
+  document.getElementById('zpl-cont-box').textContent=genZPLContenant(cont.id,cont.type);
+}
+
+function copyEl(id){
+  const t=document.getElementById(id).textContent;
+  navigator.clipboard.writeText(t).then(()=>showToast('ZPL copié !'));
+}
+
+function exportZPLBatch(mode){
+  let content='';
+  if(mode==='produits'){
+    S.produits.forEach(p=>{ content+=genZPLProduit(p)+'\n\n'; });
+  } else {
+    S.contenants.forEach(c=>{ content+=genZPLContenant(c.id,c.type)+'\n\n'; });
+  }
+  const blob=new Blob([content],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`zebra_${mode}_${new Date().toISOString().slice(0,10)}.prn`;
+  a.click();
+  showToast(`Fichier .prn exporté (${mode})`);
+}
+
+// ─────────────────────────────────────────────
+// IMPRESSION
+// ─────────────────────────────────────────────
+function imprimerContenants(){
+  buildPrintZone('contenants');
+  setTimeout(()=>window.print(),300);
+}
+function imprimerProduits(){
+  buildPrintZone('produits');
+  setTimeout(()=>window.print(),300);
+}
+function imprimerTout(){
+  buildPrintZone('tout');
+  setTimeout(()=>window.print(),300);
+}
+
+function buildPrintZone(mode){
+  const pz=document.getElementById('print-zone');
+  pz.innerHTML='';
+  if(mode==='contenants'||mode==='tout'){
+    S.contenants.forEach(c=>pz.appendChild(makeEtiquetteCont(c)));
+  }
+  if(mode==='produits'||mode==='tout'){
+    S.produits.forEach((p,i)=>pz.appendChild(makeEtiquetteProd(p,i)));
+  }
+}
+
+// ─────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────
+let toastT=null;
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show'+(err?' err':'');
+  if(toastT) clearTimeout(toastT);
+  toastT=setTimeout(()=>t.className='toast',3200);
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+renderContList(); renderContPreview();
+</script>
+<script>
+/* Retour à l'accueil Olympe :
+   - intégré en iframe dans Olympe -> postMessage capté par OlympeApps (ferme l'app)
+   - ouvert seul (hors Olympe) -> repli sur la racine */
+function retourOlympe(){
+  try{
+    if(window.parent && window.parent!==window){
+      window.parent.postMessage({type:'olympe-close-app'},'*');
+      return;
+    }
+  }catch(e){}
+  try{ window.location.href='/'; }catch(e){ window.location.assign('/'); }
+}
+</script>
+</body>
+</html>
