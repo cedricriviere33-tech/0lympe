@@ -1,9 +1,0 @@
-{
-  "name": "olympe-tv-proxy",
-  "version": "1.0.0",
-  "private": true,
-  "type": "commonjs",
-  "description": "Proxy HLS pour Olympe TV (contourne mixed-content/CORS des flux TNT).",
-  "engines": { "node": ">=18" },
-  "scripts": { "start": "node server.js" }
-}
