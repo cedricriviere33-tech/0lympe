@@ -1,0 +1,15 @@
+{
+  "name": "Dashboard Gillot",
+  "short_name": "Dashboard",
+  "start_url": "./dashboard_gillot.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#EDEEF2",
+  "theme_color": "#003189",
+  "description": "Récap journée — PIC Gillot Import",
+  "icons": [
+    { "src": "dashboard-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "dashboard-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

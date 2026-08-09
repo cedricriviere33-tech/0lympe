@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Dashboard Gillot 📊</title>
+<title>Dashboard Gillot 🧭</title>
+<link rel="manifest" href="dashboard-manifest.json">
+<meta name="theme-color" content="#003189">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Dashboard">
+<link rel="apple-touch-icon" href="dashboard-icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
@@ -61,6 +66,8 @@ body{ background:var(--bg); color:var(--ink);
 .dg-detail{ flex:1; border:none; background:rgba(0,49,137,.08); color:var(--blue); font-weight:700; border-radius:9px;
   padding:8px; cursor:pointer; font-family:inherit; font-size:12.5px; }
 .dg-detail:hover{ background:rgba(0,49,137,.16); }
+.dg-histo{ background:rgba(224,168,0,.14) !important; color:#8a6a00 !important; }
+.dg-histo:hover{ background:rgba(224,168,0,.26) !important; }
 .dg-kpi.span2{ grid-column:span 2; }
 @media(max-width:640px){ .dg-kpi.span2{ grid-column:span 1; } }
 /* ── Tableau PPI ── */
@@ -100,12 +107,35 @@ body{ background:var(--bg); color:var(--ink);
 .dg-sharebar .info{ flex:1; font-size:12.5px; color:var(--ink2); }
 @media print{ .dg-titlebar,.dg-daybar,.dg-sharebar,.dg-detail,.dg-chk,.dg-mini-detail{ display:none !important; }
   body{ background:#fff; } .dg-kpi,.dg-chart-card{ box-shadow:none; border:1px solid #ccc; break-inside:avoid; } }
+@media (max-width:680px){
+  .dg-titlebar{ flex-wrap:wrap; gap:8px; padding:9px 12px; }
+  .dg-title{ order:3; width:100%; text-align:left; font-size:13px; white-space:normal; }
+  .dg-tb-btn{ padding:6px 10px; font-size:12px; }
+  .dg-daybar{ gap:8px; padding:10px 12px 4px; }
+  .dg-date{ flex:1; min-width:0; font-size:14px; }
+  .dg-body{ padding:10px 12px 70px; }
+  .dg-grid{ grid-template-columns:1fr; gap:12px; }
+  .dg-kpi.span2{ grid-column:span 1; }
+  .dg-kpi-num{ font-size:30px; }
+  .dg-sharebar{ flex-direction:column; align-items:stretch; gap:8px; }
+  .dg-sharebar .info{ text-align:center; }
+  .dg-sharebar .dg-tb-btn{ justify-content:center; }
+  .dg-card{ width:96vw; max-height:82vh; }
+  .dg-table{ font-size:11px; } .dg-table th,.dg-table td{ padding:6px 6px; }
+}
+.dg-modal.win10 .dg-card{ background:linear-gradient(180deg,rgba(240,246,255,.97),rgba(223,236,251,.97)) !important; border:1px solid #6FA8DC !important; border-radius:6px !important; box-shadow:0 0 0 1px rgba(255,255,255,.6) inset, 0 18px 50px rgba(20,60,120,.35) !important; font-family:'Segoe UI',Tahoma,sans-serif !important; }
+.dg-modal.win10 .dg-card-h{ background:linear-gradient(180deg,#eef5ff,#d3e6fb) !important; border-bottom:1px solid #a9c9ea !important; }
+.dg-modal.win10 .dg-card-h .t{ color:#15559B !important; text-shadow:0 1px 0 #fff; }
+.dg-modal.win10 .dg-card-x{ background:#e6432e !important; color:#fff !important; border-radius:3px !important; }
+.dg-modal.win10 .dg-line{ border-bottom:1px solid rgba(30,80,150,.1) !important; }
+.dg-modal.win10 .dg-line .v{ color:#15559B !important; }
 </style>
 </head>
 <body>
 <div class="dg-win">
   <div class="dg-titlebar">
     <div class="dg-traffic"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+    <button class="dg-tb-btn" id="dg-install" style="display:none">⬇️ Télécharger l'app</button>
     <div class="dg-title">📊 <b>Dashboard</b> — Récap journée · PIC Gillot Import</div>
     <button class="dg-tb-btn" id="dg-print">🖨 Imprimer</button>
     <button class="dg-tb-btn" id="dg-home">🏠 Accueil</button>
@@ -172,25 +202,26 @@ body{ background:var(--bg); color:var(--ink);
     return { prio:prio, eco:eco, poidsPrio:r1(pP), poidsEco:r1(pE), total:prio+eco, poids:r1(pP+pE), detail:det }; }
   // PPI (par contenant : {oo,os,sing,cp + poids... + detail RESCON}) — défensif
   function ppi(date){ var raw=J('olympe_histo_ppi'), rows=[], tot={oo:0,os:0,sing:0,cp:0,pOO:0,pOS:0,pSing:0,pCP:0};
-    dayKeys(raw,date).forEach(function(k){ var e=raw[k]||{};
-      var row={ key:k, contenant:e.contenant||e.num||e.numContenant||e.uld||'—',
-        compagnie:e.compagnie||e.cie||e.airline||'—', vol:e.vol||e.numVol||e.flight||'—',
-        pNet:+(e.poidsNet||e.pnet||e.pNet||0)||0, pBrut:+(e.poidsBrut||e.pbrut||e.pBrut||0)||0,
-        oo:+(e.oo||0)||0, os:+(e.os||0)||0, sing:+(e.sing||e.singapour||0)||0, cp:+(e.cp||e.cp84||0)||0,
-        pOO:+(e.pOO||e.poidsOO||0)||0, pOS:+(e.pOS||e.poidsOS||0)||0, pSing:+(e.pSing||e.poidsSing||0)||0, pCP:+(e.pCP||e.poidsCP||0)||0,
-        detail:e.detail||e.codes||[] };
+    dayKeys(raw,date).forEach(function(k){ var e=raw[k]||{}; var det=e.detail||[];
+      function pType(t){ var s=0; det.forEach(function(x){ var xt=String(x.type||'').toUpperCase(); if(t==='SGP'){ if(xt==='SGP'||xt==='SING'||xt==='SINGAPOUR') s+=(+x.poids||0);} else if(t==='CP'){ if(xt==='CP84'||xt==='CP') s+=(+x.poids||0);} else if(xt===t) s+=(+x.poids||0); }); return s; }
+      var row={ key:k, contenant:e.contenant||'—', compagnie:e.compagnie||'—', vol:e.vol||'—', pays:e.pays||'',
+        oo:+(e.oo||0)||0, os:+(e.os||0)||0, sing:+(e.sing||0)||0, cp:+(e.cp||0)||0,
+        pOO:pType('OO'), pOS:pType('OS'), pSing:pType('SGP'), pCP:pType('CP'), detail:det };
       rows.push(row);
       tot.oo+=row.oo; tot.os+=row.os; tot.sing+=row.sing; tot.cp+=row.cp;
-      tot.pOO+=row.pOO; tot.pOS+=row.pOS; tot.pSing+=row.pSing; tot.pCP+=row.pCP;
-    });
+      tot.pOO+=row.pOO; tot.pOS+=row.pOS; tot.pSing+=row.pSing; tot.pCP+=row.pCP; });
     return { rows:rows, tot:tot }; }
+  // Colis par catégorie (sousType des PPI : prio/eco/roissy/presse/palette courrier…)
+  function colis(date){ var raw=J('olympe_histo_ppi'), cats={};
+    dayKeys(raw,date).forEach(function(k){ (raw[k].detail||[]).forEach(function(x){
+      var c=(x.sousType||x.categorie||x.cat||x.type||'Autre'); c=String(c).trim()||'Autre';
+      if(!cats[c]) cats[c]={n:0,p:0}; cats[c].n++; cats[c].p+=(+x.poids||0); }); });
+    return cats; }
   // Hermès relevé / ULD (olympe_mrd_releve_v1) — total ULD + flashés
-  function uld(date){ var raw=J('olympe_mrd_releve_v1'); var list=[];
-    // format supposé : {entries:[{id,date,uld,agent,compagnie,done/flashe}]} OU map par id
-    var arr = Array.isArray(raw.entries)?raw.entries : Object.keys(raw).map(function(k){ return raw[k]; }).filter(function(x){ return x&&typeof x==='object'; });
-    arr.forEach(function(e){ if(!e) return; var ed=(e.date||e.jour||'').slice(0,10); if(ed && ed!==date) return; list.push(e); });
-    var total=list.length, flashe=list.filter(function(e){ return e.done||e.flashe||e.fait||e.flashed; }).length;
-    return { total:total, flashe:flashe, nonFait:total-flashe, list:list }; }
+  function uld(date){ var raw=J('hermes_uld_histo'); var list=(raw[date]||[]);
+    var deb=list.filter(function(u){ return /barqu/i.test(String(u.st||'')); }).length;
+    return { total:list.length, flashe:list.length, debarque:deb, encours:list.length-deb, list:list }; }
+  function mrdNF(date){ var raw=J('hermes_mrd_histo'); return (raw[date]||[]).filter(function(r){ return !r.fait; }); }
   // VPG + Anomalie
   function vpgAno(date){ var vg=J('olympe_histo_vgp'), an=J('olympe_histo_anomalie');
     function cnt(raw){ var n=0,det=[]; dayKeys(raw,date).forEach(function(k){ var e=raw[k]; var c=(e&&(e.total||e.count))|| (e&&e.detail?e.detail.length:1); n+=c||0; if(e&&e.detail)det=det.concat(e.detail); }); return {n:n,det:det}; }
@@ -203,7 +234,7 @@ body{ background:var(--bg); color:var(--ink);
         +'<input type="checkbox" class="dg-chk" data-share="'+id+'" title="Partager ce KPI"></div>'
       +'<div class="dg-kpi-main">'+mainHtml+'</div>'
       +(subHtml?'<div class="dg-kpi-sub">'+subHtml+'</div>':'')
-      +(hasDetail?'<div class="dg-kpi-foot"><button class="dg-detail" data-detail="'+id+'">🔍 Détail</button></div>':'')
+      +(hasDetail?'<div class="dg-kpi-foot"><button class="dg-detail" data-detail="'+id+'">🔍 Détail</button><button class="dg-detail dg-histo" data-histo="'+id+'">📊 Historique</button></div>':'')
       +'</div>';
   }
   function num(n,unit){ return '<span class="dg-kpi-num">'+n+'</span>'+(unit?'<span class="dg-kpi-unit">'+unit+'</span>':''); }
@@ -214,9 +245,9 @@ body{ background:var(--bg); color:var(--ink);
     var g=$('dg-grid'); var h='';
 
     // 1) ULD + flashés (Hermès)
-    h+=kpiCard('uld','🛬','ULD — Relevé Rescon / MRD',
-      num(ul.total,'ULD'),
-      '<span class="tag">'+ul.flashe+' flashés</span><span class="tag prio">'+ul.nonFait+' non faits</span>', true);
+    h+=kpiCard('uld','🛬','ULD — RESCON flashés',
+      num(ul.total,'ULD')+' <span class="dg-kpi-unit">·</span> '+num(ul.flashe,'flashés'),
+      '<span class="tag">'+ul.debarque+' débarqués</span><span class="tag">'+ul.encours+' en cours</span>', true);
 
     // 2) PPI (tableau)
     var ppRows = pp.rows.length ? pp.rows.map(function(r){
@@ -232,8 +263,14 @@ body{ background:var(--bg); color:var(--ink);
       : '<div class="dg-empty">Aucun PPI flashé ce jour.</div>';
     h+='<div class="dg-kpi span2" data-kpi="ppi"><div class="dg-kpi-h"><span class="dg-kpi-ic">📦</span><span class="dg-kpi-t">PPI flashés — Saisie du jour</span><input type="checkbox" class="dg-chk" data-share="ppi"></div>'+ppTable+'</div>';
 
+    // 2bis) Colis par catégorie (🧭)
+    var cl=colis(_date); var clTot=0, clP=0; Object.keys(cl).forEach(function(k){ clTot+=cl[k].n; clP+=cl[k].p; });
+    var clTags=Object.keys(cl).sort().map(function(k){ return '<span class="tag">'+esc(k)+' '+cl[k].n+'</span>'; }).join('') || '<span style="color:var(--ink3)">—</span>';
+    h+=kpiCard('colis','🧭','Colis par catégorie',
+      num(clTot,'colis')+' <span class="dg-kpi-unit">·</span> '+num(r1(clP),'kg'), clTags, true);
+
     // 3) Sac CP84
-    h+=kpiCard('sac','🛄','Sacs CP84 — flashés',
+    h+=kpiCard('sac' ,'🛄','Sacs CP84 — flashés',
       num(sc.total,'sacs'),
       '<span class="tag prio">PRIO '+sc.prio+' · '+sc.poidsPrio+'kg</span><span class="tag eco">ECO '+sc.eco+' · '+sc.poidsEco+'kg</span>', true);
 
@@ -243,9 +280,10 @@ body{ background:var(--bg); color:var(--ink);
       '', c.detail.length>0);
 
     // 5) MRD non faits
+    var mnf=mrdNF(_date);
     h+=kpiCard('mrd','📋','MRD non faits du jour',
-      num(ul.nonFait,'MRD'),
-      '<span class="tag">sur '+ul.total+' au total</span>', true);
+      num(mnf.length,'MRD'),
+      (mnf.length?'<span class="tag prio">à traiter</span>':'<span class="tag" style="color:#248A3D;background:#E4F6E9">✓ tout fait</span>'), mnf.length>0);
 
     // 6) VPG + Anomalie
     h+=kpiCard('vpgano','⚠️','Registre VPG + Anomalies colis',
@@ -257,30 +295,32 @@ body{ background:var(--bg); color:var(--ink);
   }
 
   /* ══ POPUPS DÉTAIL ══ */
-  function openModal(title, bodyHtml){ $('dg-m-title').innerHTML=title; $('dg-m-body').innerHTML=bodyHtml; $('dg-modal').classList.add('show'); }
+  function openModal(title, bodyHtml, cls){ $('dg-m-title').innerHTML=title; $('dg-m-body').innerHTML=bodyHtml; var m=$('dg-modal'); m.classList.remove('win10'); if(cls) m.classList.add(cls); m.classList.add('show'); }
   function closeModal(){ $('dg-modal').classList.remove('show'); }
   function line(k,v){ return '<div class="dg-line"><span class="k">'+esc(k)+'</span><span class="v">'+esc(v)+'</span></div>'; }
 
   function detail(id){
     if(id==='cabine'){ var c=cabine(_date);
-      var body=c.detail.length? c.detail.map(function(x){ return line((x.depeche||'—')+(x.code?' · '+x.code:''), r1(x.poids)+' kg'); }).join('') : '<div class="dg-empty">Aucun détail.</div>';
+      var body=c.detail.length? c.detail.map(function(x){ var prov=x.provenance||x.orig||x.port||''; return line((x.depeche||'—')+(prov?' · '+prov:'')+(x.code?' · '+x.code:''), r1(x.poids)+' kg'); }).join('') : '<div class="dg-empty">Aucun détail.</div>';
       openModal('✈️ Cabine — '+frLabel(_date), '<div class="dg-sub-h">'+c.vols+' dépêches · '+c.poids+' kg</div>'+body);
     }
     else if(id==='sac'){ var s=sac(_date);
       function grp(type){ var items=s.detail.filter(function(x){return String(x.type).toUpperCase()===type;}).sort(function(a,b){ return String(a.depeche).localeCompare(String(b.depeche)); });
-        return items.length? items.map(function(x){ return line((x.depeche||'—')+(x.code?' · '+x.code:''), r1(x.poids)+' kg'); }).join('') : '<div class="dg-empty">—</div>'; }
+        return items.length? items.map(function(x){ var prov=x.orig||x.provenance||''; return line((x.depeche||'—')+(prov?' · '+prov:'')+(x.dest?' → '+x.dest:''), r1(x.poids)+' kg'); }).join('') : '<div class="dg-empty">—</div>'; }
       openModal('🛄 Sacs CP84 — '+frLabel(_date),
         '<div class="dg-sub-h">PRIO — '+s.prio+' sacs · '+s.poidsPrio+' kg</div>'+grp('PRIO')
         +'<div class="dg-sub-h">ECO — '+s.eco+' sacs · '+s.poidsEco+' kg</div>'+grp('ECO'));
     }
-    else if(id==='mrd' || id==='uld'){ var u=uld(_date);
-      function by(field){ var m={}; u.list.forEach(function(e){ if(id==='mrd' && (e.done||e.flashe||e.fait)) return; var key=e[field]||'—'; m[key]=(m[key]||0)+1; });
-        var ks=Object.keys(m); return ks.length? ks.map(function(k){ return line(k, m[k]+' ULD'); }).join('') : '<div class="dg-empty">—</div>'; }
-      var names=u.list.filter(function(e){ return id!=='mrd' || !(e.done||e.flashe||e.fait); }).map(function(e){ return '<span class="dg-code">'+esc(e.uld||e.num||e.id||'?')+'</span>'; }).join(' ');
-      openModal((id==='mrd'?'📋 MRD non faits':'🛬 ULD')+' — '+frLabel(_date),
-        '<div class="dg-sub-h">Par agent</div>'+by('agent')
-        +'<div class="dg-sub-h">Par compagnie</div>'+by('compagnie')
-        +'<div class="dg-sub-h">ULD concernés</div><div>'+(names||'<span class="dg-empty">—</span>')+'</div>');
+    else if(id==='uld'){ var u=uld(_date);
+      var body=u.list.length? u.list.map(function(x){ var d=/barqu/i.test(String(x.st||'')); return line((x.cp||'—')+' · '+(x.nv||'')+(x.np?' · '+x.np:(x.tu?' · '+x.tu:'')), (x.st||'—')+(x.pk?' · '+r1(x.pk)+'kg':'')); }).join('') : '<div class="dg-empty">Aucun ULD RESCON ce jour.</div>';
+      openModal('🛬 ULD RESCON — '+frLabel(_date), '<div class="dg-sub-h">'+u.total+' ULD · '+u.debarque+' débarqués</div>'+body);
+    }
+    else if(id==='mrd'){ var mnf=mrdNF(_date);
+      function by(f){ var m={}; mnf.forEach(function(e){ var k=e[f]||'—'; m[k]=(m[k]||0)+1; }); var ks=Object.keys(m).sort(); return ks.length? ks.map(function(k){ return line(k, m[k]+' MRD'); }).join('') : '<div class="dg-empty">—</div>'; }
+      var names=mnf.map(function(e){ return '<span class="dg-code">'+esc(e.pa||e.vl||'?')+'</span>'; }).join(' ');
+      openModal('📋 MRD non faits — '+frLabel(_date),
+        '<div class="dg-sub-h">Par agent</div>'+by('ag')+'<div class="dg-sub-h">Par compagnie</div>'+by('cp')
+        +'<div class="dg-sub-h">Palettes ('+mnf.length+')</div><div>'+(names||'<span class="dg-empty">—</span>')+'</div>');
     }
     else if(id==='vpgano'){ var va=vpgAno(_date);
       function lst(arr){ return arr&&arr.length? arr.map(function(x){ return line(x.ref||x.colis||x.num||'—', x.motif||x.type||x.obs||''); }).join('') : '<div class="dg-empty">—</div>'; }
@@ -289,24 +329,17 @@ body{ background:var(--bg); color:var(--ink);
         +'<div class="dg-sub-h">Anomalies colis ('+va.ano+')</div>'+lst(va.anoDet));
     }
   }
-  function ppiDetail(key){ var raw=J('olympe_histo_ppi'), e=raw[key]||{};
-    var det=e.detail||e.codes||[];
-    function codesByType(t){ var arr=(det||[]).filter(function(x){ return String(x.type||x.cat||'').toUpperCase().indexOf(t)>=0; });
-      return arr.length? arr.map(function(x){ return '<span class="dg-code">'+esc(x.code||x.barcode||x)+'</span>'; }).join(' ') : '<span class="dg-empty">—</span>'; }
-    var rescon = '<div class="dg-sub-h">Codes RESCON par type</div>'
-      +'<div class="dg-sub-h" style="color:var(--blue2)">OO</div><div>'+codesByType('OO')+'</div>'
-      +'<div class="dg-sub-h" style="color:var(--blue2)">OS</div><div>'+codesByType('OS')+'</div>'
-      +'<div class="dg-sub-h" style="color:var(--blue2)">SINGAPOUR</div><div>'+codesByType('SING')+'</div>'
-      +'<div class="dg-sub-h" style="color:var(--blue2)">CP84</div><div>'+codesByType('CP')+'</div>';
-    openModal('📦 Contenant '+esc(e.contenant||e.num||'—'),
-      line('Compagnie', e.compagnie||e.cie||'—')+line('N° Vol', e.vol||e.numVol||'—')
-      +line('N° Contenant', e.contenant||e.num||'—')+line('Poids Net', r1(e.poidsNet||e.pnet||0)+' kg')+line('Poids Brut', r1(e.poidsBrut||e.pbrut||0)+' kg')
-      +line('Total OO', (e.oo||0)+' · '+r1(e.pOO||e.poidsOO||0)+' kg')
-      +line('Total OS', (e.os||0)+' · '+r1(e.pOS||e.poidsOS||0)+' kg')
-      +line('Singapour', (e.sing||e.singapour||0)+' · '+r1(e.pSing||0)+' kg')
-      +line('Total CP84', (e.cp||e.cp84||0)+' · '+r1(e.pCP||0)+' kg')
-      + rescon);
-  }
+  function ppiDetail(key){ var raw=J('olympe_histo_ppi'), e=raw[key]||{}; var det=e.detail||[];
+    function byType(t){ var arr=det.filter(function(x){ var xt=String(x.type||'').toUpperCase(); return t==='SGP'?(xt==='SGP'||xt==='SING'||xt==='SINGAPOUR'):(t==='CP'?(xt==='CP84'||xt==='CP'):xt===t); });
+      return arr.length? arr.map(function(x){ var prov=x.port||x.provenance||''; return '<div class="dg-line"><span class="k"><span class="dg-code">'+esc(x.code||'')+'</span> '+esc(x.depeche||'')+(prov?' · '+esc(prov):'')+'</span><span class="v">'+r1(x.poids)+' kg</span></div>'; }).join('') : '<span class="dg-empty">—</span>'; }
+    function cnt(t){ return det.filter(function(x){ var xt=String(x.type||'').toUpperCase(); return t==='SGP'?(xt==='SGP'||xt==='SING'||xt==='SINGAPOUR'):(t==='CP'?(xt==='CP84'||xt==='CP'):xt===t); }).length; }
+    openModal('📦 Contenant '+esc(e.contenant||'—'),
+      line('Compagnie', e.compagnie||'—')+line('N° Vol', e.vol||'—')+line('N° Contenant', e.contenant||'—')+line('Pays / Provenance', e.pays||'—')
+      +'<div class="dg-sub-h">OO ('+cnt('OO')+')</div>'+byType('OO')
+      +'<div class="dg-sub-h">OS ('+cnt('OS')+')</div>'+byType('OS')
+      +'<div class="dg-sub-h">Singapour ('+cnt('SGP')+')</div>'+byType('SGP')
+      +'<div class="dg-sub-h">CP84 ('+cnt('CP')+')</div>'+byType('CP')); }
+
 
   /* ══ GRAPHIQUE 7 jours ══ */
   var _chart=null;
@@ -360,11 +393,26 @@ body{ background:var(--bg); color:var(--ink);
     $('dg-grid').addEventListener('click', function(e){
       var d=e.target.closest('[data-detail]'); if(d){ detail(d.getAttribute('data-detail')); return; }
       var p=e.target.closest('[data-ppi]'); if(p){ ppiDetail(p.getAttribute('data-ppi')); return; }
+      var hi=e.target.closest('[data-histo]'); if(hi){ openHisto(hi.getAttribute('data-histo')); return; }
     });
     document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ if($('dg-modal').classList.contains('show')) closeModal(); } });
   }
+  var HISTO_MAP={ uld:'mrd', mrd:'mrd', ppi:'ppi', colis:'ppi', sac:'sac', cabine:'cabine', vpgano:'anomalie' };
+  function openHisto(id){ var app=HISTO_MAP[id]||'ppi';
+    try{ if(window.parent && window.parent!==window){ window.parent.postMessage({type:'olympe-open-histo', app:app},'*'); return; } }catch(e){}
+    toast('Historique : '+app); }
   function shift(n){ var d=new Date(_date+'T12:00:00'); d.setDate(d.getDate()+n); _date=d.toISOString().slice(0,10); render(); }
   function goHome(){ try{ if(window.parent && window.parent!==window){ window.parent.postMessage({type:'olympe-close-app'},'*'); return; } }catch(e){} try{ window.location.href='/'; }catch(e){} }
+
+  // ── PWA : service worker + invite d'installation ──
+  if('serviceWorker' in navigator){ try{ navigator.serviceWorker.register('dashboard-sw.js').catch(function(){}); }catch(e){} }
+  var _deferred=null;
+  window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); _deferred=e; var b=$('dg-install'); if(b) b.style.display='inline-flex'; });
+  window.addEventListener('appinstalled', function(){ var b=$('dg-install'); if(b) b.style.display='none'; });
+  (function(){ var b=$('dg-install'); if(!b) return; b.addEventListener('click', function(){
+    if(_deferred){ _deferred.prompt(); _deferred.userChoice.then(function(){ _deferred=null; b.style.display='none'; }); }
+    else { toast('📲 Menu du navigateur → « Installer l\'application / Ajouter à l\'écran d\'accueil »'); }
+  }); })();
 
   wire(); render();
 })();
