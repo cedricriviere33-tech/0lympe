@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SOS — PIC Gillot Import</title>
+<link rel="manifest" href="data:application/manifest+json;base64,eyJpZCI6ICIvc29zLWFwcCIsICJuYW1lIjogIlNPUyBcdTIwMTQgUElDIEdpbGxvdCBJbXBvcnQiLCAic2hvcnRfbmFtZSI6ICJTT1MiLCAic3RhcnRfdXJsIjogIi9zb3MuaHRtbCIsICJzY29wZSI6ICIvc29zLmh0bWwiLCAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwgImJhY2tncm91bmRfY29sb3IiOiAiI2VjZWNmMCIsICJ0aGVtZV9jb2xvciI6ICIjZmYzYjMwIiwgImljb25zIjogW3sic3JjIjogImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBTUFBQUFEQUNBWUFBQUJTM0d3SEFBQUY2VWxFUVZSNG5PM2R1M1VqUnhDRjRRR1BRaUE5K1hMcGJ3TE1SckVvR3lWQW42NThlYXNjS0lNQ3hRZG1waDlWM1ZWOS84K1ZGcGlEdWJlcUFYSVhseTJZMXgrUHI3T3ZBWDR1enkrWDJkZncwZFNMSWV6WXRybWxHUDdFaEI1SFJwZGgySk1SZk5RWVZRVDNKeUg0Nk9GZEJMY0hKL2l3NUZVRTh3Y2wrUEJrWFlRN3l3Y2ovUEJtblRHVE5oRjh6R0N4RGJvM0FPSEhMQmJaNnlvQTRjZHN2UmxzTGdEaFJ4UTlXV3dxQU9GSE5LMlpyQzRBNFVkVUxkbXNLZ0RoUjNTMUdTMHVBT0ZIRmpWWkxTb0E0VWMycFprOUxRRGhSMVlsMlRYOVZRZ2dtOE1DTVAyUjNWbUdkd3RBK0xHS295eHpCSUswbXdWZyttTTFlNWxtQTBEYXR3SXcvYkdxVzlsbUEwRGFwd0l3L2JHNnJ4bG5BMERhZXdHWS9sRHhNZXRzQUVpakFKQjJ0MjBjZjZEbm1uazJBS1JSQUVpakFKQkdBU0R0d2h0Z0tHTURRQm9GbU8yUGw5bFhJSTBDekhRTlB5V1loZ0pBR2dXWTVldlVad3RNUVFFZ2pRTE1zRGZ0MlFMRFVRQklvd0NqblUxNXRzQlFGQURTS01CSXBkT2RMVEFNQllBMENqQks3VlJuQ3d4QkFTQ05Bb3pRT3MzWkF1NG9BS1JSQUcrOVU1d3Q0SW9DZUNLODRWR0FEQ2lTR3dyZ2hkQ21RQUd5b0ZBdUtJQUh3cG9HQmNpRVlwbWpBTmE4UTBvSlRGRUFTS01BbGtaTlo3YUFHUW9BYVJUQXl1aXB6Qll3UVFFZ2pRSlltRFdOMlFMZEtBQ2tVWUJlczZmdzdPZFBqZ0pBR2dYb0VXWDZScm1PaENoQUswSzNCQXF3Q2dyWmhBSzBJR3pMb0FBcm9aalZLRUF0UXJZVUNyQWFDbHJsbDlrWGtJcFJ1QjZlN25mLzI4OC8vekY1RHBSaEF3ejA4SFIvR1A3Uy8rY1VXNkFZQlNqVkdhcmFVSGVYQUVVb2dMT2VpZDYxRGRnQ1JTaEFDY0swTEFyZ3lPb1l3eGJ3UXdIT05JYkkrZ3hQQ1h4UUFFaWpBRWVDVFAvdXgyVUw3S0lBZXdpTkJBcWdna0xmUkFGdUlTd3lLSUFTaXYwTkJmaUtrRWloQUdvbytDY1U0Q1BDSVljQ0tLTG83eWpBRmFHUVJBRlVVZmh0MnlqQUc4SWdpd0lvby9nVWdCQm9vd0RxeEFlQWRnSEViejZVQzBENC95ZjhXdWdXQU5oVUN5QTg4WGFKdmlhYUJjQnRnaVhRSzREZ1RjWSt2UUxnbU5pQTBDcUEyTTNGT2EwQ29JelFvTkFwZ05CTlJUbWRBcUNPeU1EUUtJREl6VVE5alFJTTV2VTFSOE8vUGtsZ2NLeGZBSUdiaUhickYyQVM2Mms5N2N2ekZoOGdheGRnOHMyekNpM2ZIT2xuM1FJc1BybUdXdmkxNUh1Q25WMm5kOHUvN2Mvazk3Zm1CZ2c0c1dyREhDNzhBVjlUQzJ5QWdVcTJRYmpnTCs3eSt1UHhkZlpGbUZwMFVvWHgrK1BzS3pDMTVoRUlLTFJXQVpqKy9oWjdqZGNxQUZCcG5RSXNOcGxDVytpMVhxY0FRSU0xUGdWS05wSDJQZ1pOOXhIb0FwOElVWUJCYW44U25LWU15VXVRL3dpMFlQaGIvd3pxNVM5QVlBOVA5MTFCN3YzelF5UVlRRWR5RnlEd2kyOFozUEFsU0N4M0FSQkQ0RUYwSm04QkFyL29IaE9iTGVBalp3SEV3ai9pc2JzRnZpZEhjaFlBTUpLdkFFa25qWVNFOXlaZkFRSWJjVVFKZlF4S0tGY0JFazRZT2NudVVhNENBTWJ5RkNEWlpKR1c2RjdsS1FEZ0lFY0JFazBVL0NmSlBjdFJBTUJKL0FJa21TVGJOdVozK05QOFBZRnRTM0h2NGhjQWNCUzdBQWttQ0U0RXY0ZXhDNUNRNXhFbDFmRW5pYmdGQ0Q0NWpuZ0VOWFg0QTkvTE5mNVNmRUFQZi8xdCtuZy9mL3ZWOVBId0p1NEdTTTR5c0lUZkQvODh1cU5yY0Z1M0FjSDN4d1lZb0NYSWhIOE1Oc0FnSHdPOXR4RUkvWGdVWUFLQ0hnZEhJRWlqQUpCMmQzbCt1Y3krQ0dDR3kvUExoUTBBYVJRQTBpZ0FwRkVBU0x2YnRyYzNBN012QkJqcG1uazJBS1JSQUVoN0x3REhJS2o0bUhVMkFLUjlLZ0JiQUt2N21uRTJBS1I5S3dCYkFLdTZsVzAyQUtUZExBQmJBS3ZaeXpRYkFOSjJDOEFXd0NxT3NueTRBU2dCc2p2TE1FY2dTRHN0QUZzQVdaVmt0MmdEVUFKa1U1clo0aU1RSlVBV05WbXRlZzlBQ1JCZGJVYXIzd1JUQWtUVmtzMm1UNEVvQWFKcHpXVHp4NkNVQUZIMFpMSHI1d0NVQUxQMVpyRDdCMkdVQUxOWVpNODB2SHpmR0Vhd0hMcW12d3JCTm9BMzY0eTVCWlp0QUV0ZXc5VjlZbE1FOVBBK1ZRdzdzbEFFMUJoMW5CNStacWNJT0RMNmZlVFVONjJVQWRzMjk4T1RjSi9hVUlxMVJmdWs4RjgvU2NwQ01VZDRuZ0FBQUFCSlJVNUVya0pnZ2c9PSIsICJzaXplcyI6ICIxOTJ4MTkyIiwgInR5cGUiOiAiaW1hZ2UvcG5nIiwgInB1cnBvc2UiOiAiYW55In0sIHsic3JjIjogImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBZ0FBQUFJQUNBWUFBQUQwZU5UNkFBQVNMMGxFUVZSNG5PM2NQWG9jTjlhQTBhSWZMOEhLSnY5UzV0cUFkK08xekc2MEFlZEtKLzh5YVErY1FFT3JTVFhKcm1vVWNIL09pV2VzS3RDTit3Sk4rV0VqcEtmUGowK3Jud0ZnaEllL3Z6NnNmZ1orNVlleWlBRVA4SU5BV01PaVQyRFlBK3dqQ3M1bmdVOWc0QU9NSlFqR3M2QURHUGdBY3dtQysxbkFnd3g5Z0JqRXdERVdiUWRESHlBMk1YQTdDL1VCUXg4Z0p6SHdQb3Z6Qm9NZm9BWWhjSjFGdVdEb0E5UW1CbjZ5RUp2QkQ5Q05FR2dlQUFZL1FHK2RRNkRsaXh2OEFGenFHQUt0WHRqZ0IrQTluVUtneFlzYS9BRHMwU0VFZmx2OUFHY3ovQUhZcThQc0tGczRIWDU0QUp5djZtMUF1WmN5K0FFNFE3VVFLUFVWZ09FUHdGbXF6WmdTTlZQdGh3SkFiQlZ1QTlMZkFCaitBTXhXWWZha0RvQUtQd0FBY3NvK2cxSmVZV1JmZEFCcXlmaVZRTG9iQU1NZmdHZ3l6cVpVQVpCeGdRSG9JZHVNU25GbGtXMVJBZWd0dzFjQzRXOEFESDhBc3Nrd3UwSUhRSVlGQklCcm9zK3dzQUVRZmVFQTRDT1JaMW5JQUlpOFlBQ3dSOVNaRmk0QW9pNFVBQndWY2JhRkNvQ0lDd1FBSTBTYmNXRUNJTnJDQU1Cb2tXWmRpQUNJdENBQWNLWW9NMjk1QUVSWkNBQ1lKY0xzV3hvQUVSWUFBRlpZUFFPWEJjRHFGd2VBMVZiT3dpVUJZUGdEd0Erclp1TDBBREQ4QWVDbEZiTnhhZ0FZL2dCdzNld1pPUzBBREg4QWVOL01XVGtsQUF4L0FMak5ySm01L0w4REFBRE1kM29BT1AwRHdENHpadWVwQVdENEE4QXhaOC9RMHdMQThBZUErNXc1Uy8wT0FBQTBkRW9BT1AwRHdCaG56ZFRoQVdENEE4QllaOHpXb1FGZytBUEFPVWJQV0w4REFBQU5EUXNBcDM4QU9OZklXVHNrQUF4L0FKaGoxTXoxRlFBQU5IUjNBRGo5QThCY0kyYXZHd0FBYU9pdUFIRDZCNEExN3AzQmh3UEE4QWVBdGU2WnhiNENBSUNHRGdXQTB6OEF4SEIwSnJzQkFJQ0dkZ2VBMHo4QXhISmtOcnNCQUlDR2RnV0EwejhBeExSM1Jyc0JBSUNHYmc0QXAzOEFpRzNQckhZREFBQU4zUlFBVHY4QWtNT3RNOXNOQUFBMEpBQUFvS0VQQThEMVB3RGtjc3ZzZGdNQUFBMjlHd0JPL3dDUTAwY3ozQTBBQURRa0FBQ2dvVGNEd1BVL0FPVDIzaXgzQXdBQURRa0FBR2pvYWdDNC9nZUFHdDZhNlc0QUFLQWhBUUFBRGYwU0FLNy9BYUNXYTdQZERRQUFOQ1FBQUtBaEFRQUFEYjBJQU4vL0EwQk5yMmU4R3dBQWFFZ0FBRUJEQWdBQUd2b25BSHovRHdDMVhjNTZOd0FBMEpBQUFJQ0dCQUFBTkNRQUFLQ2gzN2JOTHdBQ1FCZlBNOThOQUFBMEpBQUFvQ0VCQUFBTkNRQUFhRWdBQUVCREFnQUFHaElBQU5EUWIvNGJBTkRZdjcrdWZnSmdnYWZQajA5dUFLQ3I1K0V2QXFBbEFRQUFEUWtBNk9qMXFkOHRBTFFqQUFDZ0lRRUEzYngxMm5jTEFLMElBQUJvU0FCQUp4K2Q4dDBDUUJzQ0FBQWFFZ0RReGEybmU3Y0EwSUlBQUlDR0JBQjBzUGRVN3hZQXloTUFBTkNRQUlEcWpwN20zUUpBYVFJQUFCb1NBRkRadmFkNHR3QlFsZ0FBZ0lZRUFGUTE2dlR1RmdCS0VnQUEwSkFBZ0lwR245cmRBa0E1QWdDcU1heUJHd2dBNERiQ0Frb1JBRkRKMlVOYUJFQVpBZ0FBR2hJQVVNV3MwN2xiQUNoQkFBQkFRd0lBS3BoOUtuY0xBT2tKQUFCb1NBQkFkcXRPNDI0QklEVUJBQUFOQ1FESWJQVXBmUFdmRHh3bUFBQ2dJUUVBV1VVNWZVZDVEbUFYQVFBQURRa0F5Q2phcVR2YTh3QWZFZ0FBMEpBQWdHeWlucmFqUGhkd2xRQ0FUQXhaWUJBQkFJd2pVQ0FOQVFCWkdLN0FRQUlBR0V1b1FBb0NBREl3VklIQkJBQXdubUNCOEFRQVJKZDFtR1o5Ym1oQ0FBQkFRd0lBSXN0K2lzNysvRkNZQUFDQWhnUUFSRlhsOUZ6bFBhQVlBUUFBRFFrQWlLamFxYm5hKzBBQkFnQUFHaElBRUUzVjAzTFY5NEtrQkFBQU5DUUFJSkxxcCtUcTd3ZUpDQUFBYUVnQVFCUmRUc2RkM2hPQ0V3QVFnYUVJVENZQWdQa0VEeXduQUdBMXd4QllRQUFBYXdnZldFb0F3RXFHSUxDSUFBRFdFVUN3akFDQVZRdy9ZQ0VCQUt3bGhHQUpBUUFyR0hvdldRK1lUZ0FBUUVNQ0FHWnoycjNPdXNCVUFnQUFHaElBTUpOVDd2dXNEMHdqQUFDZ0lRRUFzempkM3NZNndSUUNBQUFhRWdBd2cxUHRQdFlMVGljQUFLQWhBUUJuYzVvOXhyckJxUVFBbk1rUUE0SVNBRUJjQWdwT0l3RGdMSVlYRUpnQUFHSVRVbkFLQVFCbk1MU0E0QVFBRUorZ2d1RUVBSXhtV0FFSkNBQWdCMkVGUXdrQUdNbVFBcElRQUVBZUFndUdFUUF3aXVFMGgzV0dJUVFBQURRa0FHQUVwOUs1ckRmY1RRQUFRRU1DQU83bE5McUdkWWU3Q0FBQWFFZ0F3RDJjUXRleS9uQ1lBSUNqREI4Z01RRUE1Q2JFNEJBQkFFY1lPa0J5QWdESVQ1REJiZ0lBOWpKc2dBSUVBRkNETUlOZEJBRHNZY2dBUlFnQW9BNkJCamNUQUhBcnd3VW9SQUFBdFFnMXVJa0FnRnNZS2tBeHY2OStBR0NPVDMvK2NmUC85dHVYN3ljK3lRVC8vcnB0ZnoydWZnb0lUUURBUjVLZS92Y00vSS8rdittREFQaUZyd0NnbUU5Ly9uSFg4Si8xenp4ZDBuQ0RXUjZlUGo4K3JYNElDQ3ZSRUprNW9GUGRDUGdxQUs3eUZRQWt0K0prL3Z4bnBnb0I0QVZmQWNCYkVweitWMS9Mci83emI1TGc1d2dyQ0FCSUtzcndqZkljd0Q1K0J3Q3VDWHhxakR4d1EzOGw0SGNCNEFVM0FQQ2E0WDlZOU9jRGZoSUFrRVNXNFJyMk9RT0hIYXdnQU9DU0lRRTBJUUFnZ2JDbjZqZUVmVjZCQi84UUFQQXM2SEFJTzB3L2tQVzVvUXNCQUlGbEg2SWhuejlvNk1Gc0FnQzJ6VkFBMmhFQUVGVEkwL01CSWQ5RDhJRUFBTU1BNkVnQVFFQWhUODEzQ1BrK3dvL21CQUM5R1FKQVV3SUFnZ2w1V2g0ZzVIc0pRQm9UQVBSbDh3Y2FFd0JBYjBLUXBnUUFQZG4wZ2VZRUFBUVM4bnZ5Z2NLK255Q2tJUUZBUHpaN3J2SHZCYzBJQUhxeHlRTnMyeVlBQUg0U2lEUWlBT2pENWc3d0R3RUFjRWtvMG9RQW9BZWJPc0FMQWdEZ05jRklBd0tBK216bUFMOFFBQURYQ0VlS0V3RFVaaE1IdUVvQUFMeEZRRktZQUtBdW16ZkFtd1FBd0h1RUpFVUpBR3F5YVFPOFN3QUFmRVJRVXBBQW9CNmJOY0NIQkFEQUxZUWx4UWdBYXJGSkE5eEVBQURjU21CU2lBQ2dEcHN6d00wRUFEVVkvc3ppM3pXS0VBQUFlNGtBQ2hBQTVHY3pCdGhOQUFBY0lUeEpUZ0NRbTAwWTRCQUJBSENVQUNVeEFVQmVObCtBd3dRQXdEMkVLRWtKQUhLeTZRTGNSUUFBM0V1UWtwQUFJQitiTGNEZEJBREFDTUtVWkFRQXVkaGtBWVlRQUFDakNGUVNFUURrWVhNRkdFWUFBSXdrVkVsQ0FKQ0RUUlZnS0FFQU1KcGdKUUVCUUh3MlU0RGhCQUN4R2Y1azVkOWRnaE1BQUdjUkFRUW1BSWpMNWdsd0dnRUFjQ1loUzFBQ2dKaHNtZ0NuRWdBQVp4TzBCQ1FBaU1kbUNYQTZBUUF3ZzdBbEdBRkFMRFpKZ0NrRUFNQXNBcGRBQkFCeDJCd0JwaEVBQURNSlhZSVFBTVJnVXdTWVNnQUF6Q1o0Q1VBQXNKN05FR0E2QVFDd2d2QmxNUUhBV2paQmdDVUVBT3NZL25Ubk04QkNBZ0FBR2hJQXJPSGtBei80TExDSUFBQ0FoZ1FBOHpueHdFcytFeXdnQUFBaUVBRk1KZ0NZeXlZSEVJSUFBSWhDSURPUkFHQWVteHRBR0FJQUlCS2h6Q1FDZ0Rsc2FqZjU5dVg3NmtjNFZmWDNnMHdFQUVBMGdwa0pCQURuczVrQmhDTUFBQ0lTenB4TUFIQXVtOWh1VmI4bnIvcGVrSlVBQUloS1FITWlBY0I1YkY2SFZUc3RWM3NmcUVBQUFFUW1wRG1KQU9BY05xMjdWVGsxVjNrUHFFWUFNSjdoRDJQNVRIRUNBUUNCWlQ4OVozOStxRXdBTUphVHluQlpoMmpXNXc3TFo0dkJCQUFra0cyWVpudGU2RWdBTUk0VENwekxaNHlCQkFBa2tlVlVuZVU1b1RzQndCaE9KbE5FSDY3Um42OEVuelVHRVFDUXpMY3YzOE1OMm9qUFZKb0lZQUFCd1Axc1JrdEVHYmhSbmdQWVJ3QkFZcXVINytvL3Z6WGh6WjErWC8wQUpHY1RXdTU1Q0gvNjg0L3BmeWFRbHhzQUtHTEc5L0MrNnc5R2dITUhOd0FjWi9NSjZZd2JBVU1mNm5sNCt2ejR0UG9oU0VvQXBMSW5DQXo4WlA1NlhQMEVKT1FHZ0dNTS8zUU1kZUNTM3dFQXlFNlFjNEFBWUQrYkRVQjZBZ0NnQW1IT1RnS0FmV3d5QUNVSUFHNW4rRU5zUHFQc0lBQUFvQ0VCd0cyY0xDQUhuMVZ1SkFBQW9DRUJ3TWVjS0NBWG4xbHVJQUFBb0NFQndQdWNKQ0FubjEwK0lBQUFvQ0VCd051Y0lDQTNuMkhlSVFBQUtoTUJ2RUVBY0oxTkE2QTBBUUJRbmFEbkNnSEFyMndXQU9VSkFJQU9oRDJ2L0w3NkFRakdKbEhTcHovLzJQVy8vL2JsKzBsUEFrVHg4UFQ1OFduMVF4Q0lBQ2hoNzhEL2lDQW81Sy9IMVU5QUVHNEErTW53VDIzMDBIL3JueTBHb0FZM0FQeGcrS2QxNXVCL2p4Qkl6QzBBbXhzQVNHdlY0SC85NXdzQnlNbmZBc0RwUDZIVncvOVNwR2ZoUmo3emJHNEFJSldvdzladEFPVGpCcUE3SjRFMG9nNy9TeG1la2YveDJXOVBBRUFDbVFacnBtZUZ6Z1JBWjA0QUtXUWNxQm1mdVNWN1FHc0NBQUxMUEVnelB6dDBJQUM2VXY3aFZSaWdGZDZoUEh0Qld3SUFBcW8wT0N1OUMxUWlBRHBTL0tGVkhKZ1YzNmtVZTBKTEFnQUNxVHdvSzc4YlpDUUF1bEg2d0RYMmhuWUVBQVRSNFlUYzRSMVRFd0d0Q0lCT2ZMakQ2alFZTzcwclJDWUFBUGpKUWFFTkFkQ0ZEM1ZZSFUvRUhkOFpvaEVBQUx6a3dOQ0NBT2pBaHhtQVZ3UkFkWVovYUoydndqdS9ld3IyanZJRUFBQTBKQUFxVS9DaE9RRmJnL0RzSWFVSkFBQm9TQUJVcGR5QkVld2xaUWtBQUdoSUFGU2sySUdSN0NrbENRQll3QysvL1dRdFlBMEJVSTFTQjg1Z2J5bEhBQUJBUXdLZ0VvVU9uTWtlVTRvQUFJQ0dCRUFWeWh5WXdWNVRoZ0FBZ0lZRVFBV0tISmpKbmxPQ0FBQmdQeEdRbmdESXpvY1FnQU1FUUdhR1A3Q1NQU2cxQVFBTGZQdnlmZlVqaEdFdFlBMEJrSlh5QmlLd0Y2VWxBQUNnSVFHUWtlSUdJckVucFNRQUFLQWhBWkNOMGk3REw3OVpnMUxzVGVrSUFBQm9TQUJrb3JETDZYd0M3dnp1WmRtalVoRUFBTkNRQU1oQ1dRTVoyS3ZTRUFDd1dNZXI4STd2RE5FSWdBd1VOWkNKUFNzRkFRQUJkRG9SZDNwWGlFd0FSS2VrMitnd0dEdThJLzlqN3dwUEFBQkFRd0lnTWdYZFR1VVRjdVYzNHczMnNOQUVBQVJUY1ZCV2ZDZklUZ0JFcFp4YnF6UXdLNzBMQjlqTHducDQrdno0dFBvaGdPcysvZWYvVnovQ1hiNzkzNzlXUHdMd0JqY0FFRmptQVpyNTJhRURBUURCWlJ5a0daOFp1aEVBa0VDbWdacnBXYUV6QVFCSlpCaXNHWjRSK09IMzFROEEzTzU1d0ViNzVVQ0RIL0p4QXdBSlJScTRrWjRGdUowYkFFaHE5VzJBd1ErNUNRQklibllJR1B4UWd3Q0FJaTRIOCtnWU1QU2hIZ0VBQmIwZTJIdUR3TUNIK2dRQU5HQ2dBNi81V3dBQTBKQUFBSUNHQkFBQU5QVGJ3OTlmSDFZL0JBQXd6OFBmWHgvY0FBQkFRd0lBQUJvU0FBRFFrQUFBZ0lZRUFBQTBKQUFBb0NFQkFBQU4vYlp0UC80KzRPb0hBUURPOXp6ejNRQUFRRU1DQUFBYUVnQUEwSkFBQUlDRy9na0F2d2dJQUxWZHpubzNBQURRa0FBQWdJWUVBQUEwOUNJQS9CNEFBTlQwZXNhN0FRQ0FoZ1FBQURRa0FBQ2dvVjhDd084QkFFQXQxMmE3R3dBQWFFZ0FBRUJEVndQQTF3QUFVTU5iTTkwTkFBQTBKQUFBb0tFM0E4RFhBQUNRMjN1ejNBMEFBRFFrQUFDZ29YY0R3TmNBQUpEVFJ6UGNEUUFBTlBSaEFMZ0ZBSUJjYnBuZGJnQUFvQ0VCQUFBTjNSUUF2Z1lBZ0J4dW5kbHVBQUNnb1pzRHdDMEFBTVMyWjFhN0FRQ0FobllGZ0ZzQUFJaHA3NHgyQXdBQURlME9BTGNBQUJETGtkbnNCZ0FBR2pvVUFHNEJBQ0NHb3pQWkRRQUFOSFE0QU53Q0FNQmE5OHppdTI0QVJBQUFySEh2RFBZVkFBQTBkSGNBdUFVQWdMbEd6RjQzQUFEUTBKQUFjQXNBQUhPTW1ybkRiZ0JFQUFDY2ErU3M5UlVBQURRME5BRGNBZ0RBT1ViUDJPRTNBQ0lBQU1ZNlk3YWU4aFdBQ0FDQU1jNmFxWDRIQUFBYU9pMEEzQUlBd0gzT25LV24zZ0NJQUFBNDV1d1pldnBYQUNJQUFQYVpNVHY5RGdBQU5EUWxBTndDQU1CdFpzM01hVGNBSWdBQTNqZHpWazc5Q2tBRUFNQjFzMmZrOU44QkVBRUE4TktLMmJqa2x3QkZBQUQ4c0dvbUx2dGJBQ0lBZ081V3pzS2xmdzFRQkFEUTFlb1p1UHkvQTdCNkFRQmd0Z2l6YjNrQWJGdU1oUUNBR2FMTXZCQUJzRzF4RmdRQXpoSnAxb1VKZ0cyTHRUQUFNRkswR1JjcUFMWXQzZ0lCd0wwaXpyWndBYkJ0TVJjS0FJNklPdE5DQnNDMnhWMHdBTGhWNUZrV05nQzJMZmJDQWNCN29zK3cwQUd3YmZFWEVBQmV5ekM3d2ovZ3BhZlBqMCtybndFQTNwSmg4RDhMZndOd0tkUENBdEJMdGhtVktnQzJMZDhDQTFCZnh0bVU3b0V2K1VvQWdKVXlEdjVuNlc0QUxtVmVlQUJ5eXo2RFVnZkF0dVgvQVFDUVQ0WFprLzRGTHZsS0FJQXpWUmo4ejlMZkFGeXE5SU1CSUpacU02YlV5MXh5R3dEQUNOVUcvN09TTDNWSkNBQndSTlhCLzZ6VVZ3RFhWUDhCQWpCZWg5bFIvZ1V2dVEwQTREMGRCdit6Tmk5NlNRZ0FjS25UNEgvVzdvVXZDUUdBM2pvTy9tZHRYL3lTRUFEb3BmUGdmOVorQVM0SkFZRGFEUDZmTE1RYnhBQkFEWWIrZFJibEEwSUFJQ2VELzMwV1p3Y3hBQkNib1g4N0MzV1FHQUNJd2RBL3hxSU5JQVlBNWpMMDcyY0JUeUFJQU1ZeThNZXpvQk1JQW9COURQenpXZUJGUkFIQUQ0YjlHaFk5S0lFQVZHSEF4L1JmZWd1N096M0NPUnNBQUFBQVNVVk9SSzVDWUlJPSIsICJzaXplcyI6ICI1MTJ4NTEyIiwgInR5cGUiOiAiaW1hZ2UvcG5nIiwgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIn1dfQ==">
+<meta name="theme-color" content="#ff3b30">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SOS">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" href="data:image/png;base64,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">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root{ --font:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif;
+  --bg:#ececf0; --win:#fff; --ink:#1d1d1f; --ink2:#86868b; --line:#00000012; --blue:#0071e3; --me:#0b84fe; --other:#e9e9eb; --red:#ff3b30; --green:#34c759; --purple:#5856d6; --orange:#e8850e; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{font-family:var(--font);background:linear-gradient(160deg,#d7dbe3,#c3c8d3);display:flex;align-items:center;justify-content:center;padding:12px;}
+.win{width:min(440px,100%);height:100%;max-height:900px;background:var(--bg);border-radius:20px;box-shadow:0 30px 90px rgba(0,0,0,.4);overflow:hidden;display:flex;flex-direction:column;}
+.bar{position:relative;display:flex;align-items:center;padding:11px 15px;background:linear-gradient(180deg,#fbfbfd,#f2f2f5);border-bottom:.5px solid var(--line);flex-shrink:0;}
+.dots{display:flex;gap:7px;}.dots i{width:12px;height:12px;border-radius:50%;display:block;}
+.dots i:nth-child(1){background:#ff5f57;}.dots i:nth-child(2){background:#febc2e;}.dots i:nth-child(3){background:#28c840;}
+.bar .ttl{position:absolute;left:0;right:0;text-align:center;font-size:14px;font-weight:700;color:var(--ink);pointer-events:none;}
+
+.who{display:flex;align-items:center;gap:7px;padding:8px 15px;font-size:12px;color:var(--ink2);font-weight:600;flex-shrink:0;border-bottom:.5px solid var(--line);background:#f7f8fa;}
+.who b{color:var(--ink);}
+.who .dot{width:8px;height:8px;border-radius:50%;background:var(--ink2);}
+.who .dot.ok{background:var(--green);}.who .dot.err{background:var(--red);}
+.who button{margin-left:auto;border:none;background:rgba(0,0,0,.05);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--blue);cursor:pointer;font-family:inherit;}
+
+.top{padding:16px 16px 12px;display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0;}
+/* SOS */
+.sos{width:132px;height:132px;border-radius:50%;border:none;cursor:pointer;background:radial-gradient(circle at 38% 32%,#ff6b60,#ff3b30 55%,#d81f13);
+  color:#fff;font-size:30px;font-weight:900;letter-spacing:1px;box-shadow:0 10px 28px rgba(255,59,48,.5),inset 0 -5px 14px rgba(0,0,0,.22);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .1s;position:relative;flex-shrink:0;}
+.sos small{font-size:11px;font-weight:700;letter-spacing:1px;opacity:.9;}
+.sos::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:3px solid rgba(255,59,48,.5);animation:sospulse 1.6s ease-out infinite;}
+@keyframes sospulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.22);opacity:0}}
+.sos:active{transform:scale(.94);}
+.sos.sent{background:radial-gradient(circle at 38% 32%,#4cd471,#34c759 55%,#28a048);}.sos.sent::after{display:none;}
+.sos-hint{font-size:11px;color:var(--ink2);text-align:center;}
+
+/* Quick actions */
+.quick{display:flex;gap:10px;width:100%;}
+.qbtn{flex:1;background:var(--win);border:none;border-radius:14px;padding:11px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;box-shadow:0 2px 7px rgba(0,0,0,.08);font-family:inherit;transition:transform .1s;}
+.qbtn:active{transform:scale(.95);}
+.qbtn .ic{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;}
+.qbtn.al .ic{background:var(--red);}.qbtn.ph .ic{background:var(--orange);}
+.qbtn.al.on .ic{animation:recpulse .6s infinite;}
+.qbtn span{font-size:12px;font-weight:700;color:var(--ink);}
+@keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,59,48,.5)}50%{box-shadow:0 0 0 9px rgba(255,59,48,0)}}
+
+/* Feed */
+.feed{flex:1;overflow-y:auto;padding:12px 14px 6px;display:flex;flex-direction:column;gap:8px;background:#f5f6fa;}
+.mrow{display:flex;max-width:85%;}
+.mrow.me{align-self:flex-end;flex-direction:row-reverse;}
+.bub{padding:8px 12px;border-radius:15px;background:var(--other);color:var(--ink);font-size:14px;line-height:1.35;word-break:break-word;}
+.me .bub{background:var(--me);color:#fff;}
+.snd{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:2px;}.me .snd{display:none;}
+.mt{font-size:10px;color:var(--ink2);margin-top:3px;}.me .mt{color:rgba(255,255,255,.7);text-align:right;}
+.bub.sos{background:var(--red)!important;color:#fff!important;font-weight:800;min-width:230px;}
+.sos-map{width:100%;height:150px;border:none;border-radius:10px;margin-top:7px;background:#dfe4ea;}
+.sos-wait{font-size:11px;margin-top:4px;opacity:.85;}
+.sos-geo{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.sos-nav,.sos-view{flex:0 0 auto;text-decoration:none;font-size:12px;font-weight:800;padding:6px 11px;border-radius:9px;}
+.sos-nav{background:#fff;color:#d81f13;}
+.sos-view{background:rgba(255,255,255,.22);color:#fff;}
+.sos-acc{margin-left:auto;font-size:10px;opacity:.8;}
+.play{width:32px;height:32px;border-radius:50%;border:none;background:var(--blue);color:#fff;font-size:14px;cursor:pointer;}
+.me .play{background:rgba(255,255,255,.25);}
+.voice{display:flex;align-items:center;gap:9px;min-width:130px;}
+.ph-img{max-width:180px;max-height:200px;border-radius:10px;display:block;cursor:pointer;}
+.feed-empty{text-align:center;color:var(--ink2);font-size:12.5px;padding:30px 10px;}
+
+/* Reply bar */
+.reply{flex-shrink:0;padding:9px 12px calc(9px + env(safe-area-inset-bottom));background:#fbfbfd;border-top:.5px solid var(--line);display:flex;align-items:center;gap:8px;}
+.reply input{flex:1;padding:10px 14px;border:1px solid rgba(0,0,0,.12);border-radius:20px;font-size:15px;font-family:inherit;background:#fff;}
+.reply .rb{width:42px;height:42px;border-radius:50%;border:none;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;}
+.reply .mic{background:rgba(0,0,0,.06);color:#3a3a3c;touch-action:none;}
+.reply .mic.rec{background:var(--red);color:#fff;animation:recpulse 1s infinite;}
+.reply .sndb{background:var(--blue);}
+.recbar{flex-shrink:0;display:none;align-items:center;gap:9px;padding:7px 14px;color:var(--red);font-weight:700;font-size:12.5px;background:#fff5f5;border-top:.5px solid var(--line);}
+.recbar.on{display:flex;}
+.recdot{width:9px;height:9px;border-radius:50%;background:var(--red);animation:recpulse 1s infinite;}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);background:#1d1d1f;color:#fff;padding:9px 16px;border-radius:13px;font-size:13px;font-weight:600;font-family:var(--font);opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:88vw;text-align:center;}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Rename modal */
+.nm{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;}
+.nm.on{display:flex;}
+.nm-card{background:var(--bg);border-radius:18px;padding:26px 22px;width:min(330px,90vw);text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.4);}
+.nm-card h3{font-size:17px;margin-bottom:5px;}.nm-card p{font-size:12.5px;color:var(--ink2);margin-bottom:16px;}
+.nm-card input{width:100%;padding:11px 14px;border:1px solid rgba(0,0,0,.14);border-radius:12px;font-size:15px;text-align:center;font-family:inherit;margin-bottom:12px;}
+.nm-card button{width:100%;padding:11px;border:none;border-radius:12px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;cursor:pointer;}
+input[type=file]{display:none;}
+
+/* ── Canaux ── */
+.chanbar{display:flex;gap:6px;align-items:center;padding:8px 12px;background:#f7f8fa;border-bottom:.5px solid var(--line);overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;}
+.chip{flex:0 0 auto;padding:7px 13px;border-radius:100px;border:1px solid var(--line);background:#fff;font-size:12.5px;font-weight:700;color:var(--ink2);cursor:pointer;transition:transform .12s,background .18s,color .18s;white-space:nowrap;}
+.chip:active{transform:scale(.93);}
+.chip.on{background:var(--red);color:#fff;border-color:transparent;box-shadow:0 3px 12px rgba(255,59,48,.35);}
+.chip.add{color:var(--blue);font-weight:800;}
+/* ── Commandes à distance ── */
+.cmdrow{display:flex;gap:6px;padding:8px 12px;background:#fff;border-bottom:.5px solid var(--line);flex-shrink:0;overflow-x:auto;}
+.cmdb{flex:1;min-width:84px;padding:9px;border:none;border-radius:11px;background:#f0f0f4;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer;transition:transform .12s,background .18s;white-space:nowrap;}
+.cmdb:active{transform:scale(.94);background:#e2e2e8;}
+.cmdb.on{background:var(--green);color:#fff;}
+/* ── Overlay alerte reçue ── */
+.rmt{position:fixed;inset:0;z-index:200;background:rgba(255,59,48,.95);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;text-align:center;padding:24px;}
+.rmt.show{display:flex;animation:rmtin .25s ease;}
+@keyframes rmtin{from{opacity:0;transform:scale(1.08);}to{opacity:1;transform:none;}}
+.rmt h2{font-size:30px;font-weight:800;letter-spacing:-.02em;}
+.rmt p{font-size:15px;opacity:.92;}
+.rmt button{padding:15px 34px;border:none;border-radius:100px;background:#fff;color:var(--red);font-size:17px;font-weight:800;cursor:pointer;}
+@keyframes strobe{0%,100%{background:#fff;}50%{background:var(--red);}}
+body.strobe{animation:strobe .18s linear infinite;}
+/* ── Desktop : 2 colonnes ── */
+@media (min-width:900px){
+  body{padding:20px;}
+  .win{width:min(1180px,100%);max-height:880px;display:grid;
+       grid-template-columns:400px 1fr;grid-template-rows:auto auto 1fr auto;
+       grid-template-areas:"bar bar" "who chan" "left feed" "left reply";}
+  .bar{grid-area:bar;} .who{grid-area:who;} .chanbar{grid-area:chan;}
+  .left-col{grid-area:left;display:flex;flex-direction:column;border-right:.5px solid var(--line);background:#f7f8fa;overflow-y:auto;}
+  .feed{grid-area:feed;} .reply{grid-area:reply;}
+  .top{padding:22px 18px;}
+  .sos{width:190px !important;height:190px !important;}
+  .recbar{grid-area:reply;}
+}
+@media (max-width:899px){ .left-col{display:contents;} }
+
+/* ── Plein écran sur smartphone : aucune marge perdue ── */
+@media (max-width:899px){
+  html,body{height:100%;margin:0;padding:0;overflow:hidden;}
+  body{display:block !important;background:var(--bg) !important;}
+  .win{
+    width:100% !important; max-width:none !important;
+    height:100dvh !important; max-height:none !important;
+    border-radius:0 !important; box-shadow:none !important;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+}
+/* ── Fil de discussion : messages espacés et cliquables ── */
+.feed{ gap:14px !important; padding:14px 14px 18px !important; }
+.bub{ max-width:86%; }
+.msg,.row,.line{ margin-bottom:2px; }
+.bub.sos{ padding:12px 14px 14px !important; overflow:visible; }
+/* Les alertes doivent respirer : elles se chevauchaient dans le fil */
+.feed > *{ margin-bottom:4px; }
+.bub.sos{ margin:6px 0 !important; }
+.sos-wait{ margin-top:9px; font-size:12px; opacity:.9; }
+/* La carte ne doit plus déborder de la bulle */
+.bub .map,.bub iframe,.sos-map,.bub img{
+  max-width:100% !important; border-radius:12px !important; display:block; margin-top:8px;
+}
+.bub iframe{ height:150px !important; border:0; }
+/* Actions rapides sous une alerte SOS */
+.sos-map-box{position:relative;z-index:0;overflow:hidden;border-radius:10px;margin-top:9px;
+  height:118px;isolation:isolate;}
+.sos-map-box iframe,.sos-map-box .map,.sos-map-box img{
+  width:100% !important;height:118px !important;border:0;display:block;}
+/* Grille 2x2 : les 4 actions sont toujours visibles, juste sous le titre */
+.sos-act{display:grid !important;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px;
+  position:relative;z-index:5;}
+.sos-act button{width:100%;min-width:0;}
+.sos-act button{
+  flex:1 1 auto;min-width:88px;padding:10px 8px;border:none;border-radius:11px;
+  background:rgba(255,255,255,.22);color:#fff;font:800 12.5px system-ui;cursor:pointer;
+  transition:transform .15s,background .2s;-webkit-tap-highlight-color:transparent;
+}
+.sos-act button:active{transform:scale(.93);background:rgba(255,255,255,.34);}
+</style>
+</head>
+<body>
+<div class="win">
+  <div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="ttl">🆘 SOS — PIC Gillot</div></div>
+  <div class="who"><span class="dot" id="cdot"></span>Vous : <b id="who-name">SOS</b><button onclick="askName()">Changer</button></div>
+
+  <div class="chanbar" id="chanbar"></div>
+  <div class="left-col">
+  <div class="cmdrow">
+    <button class="cmdb" id="cmd-ring" onclick="sendCmd('ring')">📢 Faire sonner</button>
+    <button class="cmdb" id="cmd-flash" onclick="sendCmd('strobe')">💡 Flash</button>
+    <button class="cmdb" id="cmd-loc" onclick="sendCmd('locate')">📍 Localiser</button>
+    <button class="cmdb" id="cmd-rec" onclick="sendCmd('rec')">🎙 Écouter</button>
+    <button class="cmdb" id="cmd-stop" onclick="sendCmd('stop')">⏹ Stop</button>
+    <button class="cmdb" id="shake-btn" onclick="toggleShake()">📳 Secousse</button>
+  </div>
+  <div class="top">
+    <button class="sos" id="sos-btn"><span>SOS</span><small id="sos-lbl">MAINTENIR</small></button>
+    <div class="sos-hint">Maintiens 1,5 s → alerte + sirène sur tous les appareils.</div>
+    <div class="quick">
+      <button class="qbtn al" id="al-btn" onclick="toggleAlarm()"><div class="ic">🔔</div><span id="al-lbl">Alarme</span></button>
+      <button class="qbtn ph" onclick="document.getElementById('photo-in').click()"><div class="ic">📷</div><span>Photo</span></button>
+    </div>
+  </div>
+
+  </div>
+  <div class="feed" id="feed"><div class="feed-empty">Chargement…</div></div>
+
+  <div class="recbar" id="recbar"><span class="recdot"></span><span>Enregistrement… <span id="rec-t">0:00</span></span><span style="margin-left:auto;color:var(--ink2);font-weight:500">relâche pour envoyer</span></div>
+  <div class="reply">
+    <input type="text" id="txt-in" placeholder="Répondre à l'équipe…" onkeydown="if(event.key==='Enter')sendText()">
+    <button class="rb mic" id="mic-btn" title="Maintenir pour parler">🎙</button>
+    <button class="rb sndb" onclick="sendText()">➤</button>
+  </div>
+  <input type="file" id="photo-in" accept="image/*" capture="environment" onchange="sendPhoto(this)">
+</div>
+
+<div class="rmt" id="rmt">
+  <h2>🚨 ALERTE</h2>
+  <p id="rmt-txt">Un membre de l'équipe demande de l'aide.</p>
+  <button onclick="remoteStop()">Arrêter</button>
+</div>
+<div class="toast" id="toast"></div>
+<div class="nm" id="nm"><div class="nm-card"><h3>Ton nom (facultatif)</h3><p>Pour que l'équipe sache qui envoie.</p><input type="text" id="nm-in" placeholder="Ex : Cédric · Piste 2" maxlength="24"><button onclick="saveName()">Valider</button></div></div>
+
+<script>try{console.info('[0lympe] SOS build 2026-09-05-CMDID');}catch(e){}
+'use strict';
+/* ═══ SOS — PIC Gillot Import — autonome. Aucune connexion à saisir : prêt immédiatement. ═══ */
+var CFG = { url:'https://eedvljmmvsxrcwhclfpg.supabase.co',
+  anonKey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlZHZsam1tdnN4cmN3aGNsZnBnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0OTgzMDcsImV4cCI6MjEwMDA3NDMwN30.Tmf3pchljBcjHpg5NzyJFA_gQPuYiKZqfwTjEYG5krA',
+  email:'gillot@0lympe.local', pass:'gillot974' };
+var NAME_KEY='olympe_sos_sender';
+var sb=null, _sender='SOS', _ready=false, _msgs=[], _byId={}, _ac=null, _rec={active:false};
+var _chan='general', _chans=[{name:'general',label:'Général'}], _shake=false, _shakeH=null, _lastShake=0, _gps=null, _strobeT=null;
+var CH_KEY='olympe_sos_chan';
+
+function $(id){return document.getElementById(id);}
+function uuid(){return (crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16);}));}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+var _tt=null; function toast(t){var e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(_tt);_tt=setTimeout(function(){e.classList.remove('on');},2800);}
+document.addEventListener('click',function(e){
+  var c=e.target.closest&&e.target.closest('[data-ch]');
+  if(c){ switchChan(c.getAttribute('data-ch')); return; }
+  if(e.target&&e.target.id==='ch-add') addChan();
+});
+document.addEventListener('contextmenu',function(e){
+  var c=e.target.closest&&e.target.closest('[data-ch]');
+  if(c){ e.preventDefault(); delChan(c.getAttribute('data-ch')); }
+});
+function cdot(cls){var e=$('cdot');e.className='dot'+(cls?' '+cls:'');}
+
+/* ── Connexion (arrière-plan, non bloquante) ── */
+function connect(){
+  try{ sb=window.supabase.createClient(CFG.url,CFG.anonKey,{auth:{persistSession:true}}); }catch(e){ toast('Erreur SDK'); return; }
+  sb.auth.signInWithPassword({email:CFG.email,password:CFG.pass}).then(function(r){
+    if(r.error){ cdot('err'); toast('Connexion refusée'); return; }
+    _ready=true; cdot('ok'); loadChans(); subscribe();
+  }).catch(function(){ cdot('err'); });
+}
+function loadFeed(){
+  sb.from('messages').select('*').eq('channel',_chan).order('created_at',{ascending:true}).limit(40).then(function(r){
+    if(r.error) return; (r.data||[]).forEach(function(m){ if(!_byId[m.id]){_byId[m.id]=m;_msgs.push(m);} }); renderFeed();
+  });
+}
+function subscribe(){
+  try{ sb.channel('sos-feed')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},function(p){ onMsg(p.new); })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages'},function(p){ onMsg(p.new,true); })
+    .subscribe(function(st){
+      // Sans Realtime actif sur la table 'messages', aucune commande n'arrive :
+      // on le signale clairement au lieu de laisser croire que tout fonctionne.
+      window._rtState=st;
+      if(st==='SUBSCRIBED'){ cdot('ok'); }
+      else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'){
+        cdot('err');
+        toast('⚠ Temps réel indisponible — les commandes ne seront pas reçues');
+      }
+      try{ console.info('[SOS] realtime:', st); }catch(e){}
+    }); }catch(e){ try{ console.error('[SOS] subscribe',e); }catch(e2){} }
+}
+// Test rapide de bout en bout, appelable depuis la console : window.sosTest()
+window.sosTest=function(){
+  var out={realtime:window._rtState||'inconnu', pret:_ready, appareil:_devId(), pseudo:_sender, canal:_chan};
+  try{ console.table(out); }catch(e){ try{ console.log(out); }catch(e2){} }
+  toast('Realtime : '+out.realtime);
+  return out;
+};
+function onMsg(m,upd){
+  if(!m||!m.id) return;
+  // URGENCE : les commandes traversent tous les canaux. Une alerte de sécurité
+  // ne doit jamais être ignorée parce qu'un poste écoute un autre canal.
+  if(m.kind==='cmd'){
+    var from=String(m.sender||''), moi=_sender+'#'+_devId();
+    if(from!==moi) handleCmd(m);          // tout appareil AUTRE que celui-ci exécute
+    return;
+  }
+  if((m.channel||'general')!==_chan) return;             // messages : canal courant
+  if(_byId[m.id]){ for(var i=0;i<_msgs.length;i++) if(_msgs[i].id===m.id){_msgs[i]=m;break;} }
+  else { _byId[m.id]=m; _msgs.push(m); _msgs.sort(function(a,b){return String(a.created_at).localeCompare(String(b.created_at));}); }
+  renderFeed();
+  if((m.kind==='photo'||m.kind==='voice')&&(!m.audio||String(m.audio).length<80)&&sb){ sb.from('messages').select('*').eq('id',m.id).maybeSingle().then(function(r){ if(r&&r.data&&r.data.audio){ _byId[r.data.id]=r.data; for(var i=0;i<_msgs.length;i++)if(_msgs[i].id===r.data.id){_msgs[i]=r.data;break;} renderFeed(); } }); }
+  if(!upd && m.sender!==_sender){
+    if(m.kind==='sos'){ sirenBurst(); toast('🚨 SOS de '+(m.sender||'équipe')); }
+    else if(m.kind==='voice'){ try{ new Audio(m.audio).play(); }catch(e){} }
+    else beep();
+  }
+}
+
+/* ══ CANAUX ══ */
+function loadChans(){
+  if(!sb) return;
+  sb.from('sos_channels').select('*').order('created_at').then(function(r){
+    if(r.error||!r.data){ buildChans(); return; }
+    _chans=r.data.length?r.data:_chans;
+    var saved=localStorage.getItem(CH_KEY);
+    if(saved && _chans.some(function(c){return c.name===saved;})) _chan=saved;
+    buildChans(); loadFeed();
+  });
+}
+function buildChans(){
+  var b=$('chanbar'); if(!b) return;
+  b.innerHTML=_chans.map(function(c){
+    return '<button class="chip'+(c.name===_chan?' on':'')+'" data-ch="'+esc(c.name)+'">'+esc(c.label||c.name)+'</button>';
+  }).join('')+'<button class="chip add" id="ch-add">+ Canal</button>';
+}
+function switchChan(n){
+  if(n===_chan) return;
+  _chan=n; localStorage.setItem(CH_KEY,n);
+  _msgs=[]; _byId={}; renderFeed(); buildChans(); loadFeed();
+  toast('Canal : '+chanLabel(n));
+}
+function chanLabel(n){ for(var i=0;i<_chans.length;i++) if(_chans[i].name===n) return _chans[i].label||n; return n; }
+function addChan(){
+  var lbl=prompt('Nom du canal (ex. « Quai import ») :'); if(!lbl) return;
+  var name=lbl.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,24);
+  if(!name){ toast('Nom invalide'); return; }
+  sb.from('sos_channels').insert({name:name,label:lbl.trim(),created_by:_sender}).then(function(r){
+    if(r.error){ toast('Échec : '+r.error.message); return; }
+    toast('Canal créé'); loadChans();
+  });
+}
+function delChan(n){
+  if(n==='general'){ toast('Canal Général non supprimable'); return; }
+  if(!confirm('Supprimer le canal « '+chanLabel(n)+' » ?\nLes messages resteront en base.')) return;
+  sb.from('sos_channels').delete().eq('name',n).then(function(r){
+    if(r.error){ toast('Échec : '+r.error.message); return; }
+    if(_chan===n) _chan='general';
+    toast('Canal supprimé'); loadChans();
+  });
+}
+
+/* ══ COMMANDES À DISTANCE (tout le monde — sécurité avant tout) ══ */
+// Identifiant unique de CE poste : deux appareils peuvent porter le même pseudo,
+// on ne peut donc pas se fier au nom pour savoir qui a émis la commande.
+function _devId(){
+  var k='olympe_sos_devid', v=null;
+  try{ v=localStorage.getItem(k); }catch(e){}
+  if(!v){ v=(window.crypto&&crypto.randomUUID?crypto.randomUUID():'d'+Date.now()+Math.random().toString(16).slice(2)).slice(0,12);
+    try{ localStorage.setItem(k,v); }catch(e){} }
+  return v;
+}
+function sendCmd(action){
+  if(!sb||!_ready){ toast('Hors ligne — commande non envoyée'); return; }
+  sb.from('messages').insert({id:uuid(),sender:_sender+'#'+_devId(),kind:'cmd',body:action,channel:_chan}).then(function(r){
+    if(r.error){
+      // La colonne 'channel' n'existe peut-être pas encore en base : 2e essai sans elle
+      sb.from('messages').insert({id:uuid(),sender:_sender+'#'+_devId(),kind:'cmd',body:action}).then(function(r2){
+        toast(r2.error?('Échec : '+r2.error.message):'✅ Commande envoyée');
+      });
+      return; }
+    var L={ring:'📢 Sonnerie envoyée',strobe:'💡 Flash envoyé',stop:'⏹ Arrêt envoyé',
+            locate:'📍 Demande de position envoyée',rec:'🎙 Écoute demandée (10 s)'};
+    toast(L[action]||'Commande envoyée');
+  });
+}
+function handleCmd(m){
+  var a=m.body;
+  m=Object.assign({},m,{sender:String(m.sender||'équipe').split('#')[0]});
+  if(a==='ring'){ showRemote('🚨 ALERTE','Demande de '+(m.sender||'équipe')); sirenBurst(); startAlarm&&startAlarm(); }
+  else if(a==='strobe'){ showRemote('💡 SIGNAL','Signal visuel de '+(m.sender||'équipe')); screenStrobe(); }
+  else if(a==='stop'){ remoteStop(); }
+  else if(a==='locate'){ remoteLocate(m); }
+  else if(a==='rec'){ remoteRecord(m); }
+}
+/* ── Position à la demande : ce poste renvoie sa position même sans action
+      de son porteur (cas d'une personne inconsciente). ── */
+function remoteLocate(m){
+  toast('📍 Position demandée par '+(m.sender||'équipe'));
+  if(!navigator.geolocation){ send({kind:'text',body:'⚠️ Géolocalisation indisponible sur ce poste'}); return; }
+  navigator.geolocation.getCurrentPosition(function(p){
+    var c=p.coords;
+    send({kind:'geo',body:JSON.stringify({lat:c.latitude,lng:c.longitude,acc:Math.round(c.accuracy||0),
+      auto:true,at:new Date().toISOString()})},'📍 Position transmise');
+    try{ navigator.vibrate&&navigator.vibrate(120); }catch(e){}
+  },function(err){
+    send({kind:'text',body:'⚠️ Position indisponible ('+(err&&err.message||'refus')+')'});
+  },{enableHighAccuracy:true,timeout:12000,maximumAge:0});
+}
+/* ── Enregistrement vocal déclenché à distance (10 s) : permet d'entendre
+      l'environnement de la personne pour la localiser / évaluer l'état. ── */
+function remoteRecord(m){
+  toast('🎙 Enregistrement demandé par '+(m.sender||'équipe'));
+  if(!navigator.mediaDevices||!window.MediaRecorder){
+    send({kind:'text',body:'⚠️ Micro indisponible sur ce poste'}); return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    var mr=new MediaRecorder(stream,{mimeType:pickMime()}), chunks=[];
+    mr.ondataavailable=function(e){ if(e.data&&e.data.size) chunks.push(e.data); };
+    mr.onstop=function(){
+      try{ stream.getTracks().forEach(function(t){t.stop();}); }catch(e){}
+      var blob=new Blob(chunks,{type:mr.mimeType});
+      var fr=new FileReader();
+      fr.onload=function(){ send({kind:'voice',audio:fr.result,body:'🎙 Écoute à distance (10 s)'},'🎙 Audio transmis'); };
+      fr.readAsDataURL(blob);
+    };
+    mr.start(); setTimeout(function(){ try{ mr.stop(); }catch(e){} },10000);
+  }).catch(function(){ send({kind:'text',body:'⚠️ Micro refusé sur ce poste'}); });
+}
+function showRemote(t,txt){
+  var o=$('rmt'); if(!o) return;
+  o.querySelector('h2').textContent=t; $('rmt-txt').textContent=txt; o.classList.add('show');
+  try{ navigator.vibrate&&navigator.vibrate([300,120,300,120,600]); }catch(e){}
+}
+function screenStrobe(){
+  document.body.classList.add('strobe');
+  clearTimeout(_strobeT); _strobeT=setTimeout(function(){document.body.classList.remove('strobe');},6000);
+}
+function remoteStop(){
+  var o=$('rmt'); if(o) o.classList.remove('show');
+  document.body.classList.remove('strobe'); clearTimeout(_strobeT);
+  try{ stopAlarm&&stopAlarm(); }catch(e){}
+  try{ navigator.vibrate&&navigator.vibrate(0); }catch(e){}
+}
+
+/* ══ DÉTECTION DE SECOUSSE (SOS mains libres) ══ */
+function toggleShake(){ _shake?disableShake():enableShake(); }
+function enableShake(){
+  function go(){
+    _shakeH=function(e){
+      var a=e.accelerationIncludingGravity; if(!a) return;
+      var f=Math.abs(a.x||0)+Math.abs(a.y||0)+Math.abs(a.z||0);
+      if(f>34){ var now=Date.now(); if(now-_lastShake>2500){ _lastShake=now; toast('📳 Secousse → SOS'); try{fireSOS();}catch(e2){} } }
+    };
+    window.addEventListener('devicemotion',_shakeH);
+    _shake=true; updShake(); toast('📳 Détection activée');
+  }
+  if(typeof DeviceMotionEvent!=='undefined' && DeviceMotionEvent.requestPermission){
+    DeviceMotionEvent.requestPermission().then(function(r){ if(r==='granted') go(); else toast('Permission refusée'); }).catch(function(){toast('Non disponible');});
+  } else if(typeof DeviceMotionEvent!=='undefined') go(); else toast('Capteur non disponible');
+}
+function disableShake(){ if(_shakeH) window.removeEventListener('devicemotion',_shakeH); _shakeH=null; _shake=false; updShake(); toast('📳 Détection désactivée'); }
+function updShake(){ var b=$('shake-btn'); if(b){ b.classList.toggle('on',_shake); b.textContent=_shake?'📳 Secousse ON':'📳 Secousse'; } }
+
+/* ── Rendu du fil ── */
+function fmtT(iso){try{return new Date(iso).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+function renderFeed(){
+  var f=$('feed'); if(!f) return;
+  if(!_msgs.length){ f.innerHTML='<div class="feed-empty">Aucun message. Écris, parle 🎙, ou déclenche le SOS.</div>'; return; }
+  var near=(f.scrollHeight-f.scrollTop-f.clientHeight)<90;
+  f.innerHTML=_msgs.slice(-40).map(function(m){
+    var me=(m.sender===_sender); var inner;
+    if(m.deleted) inner='<div class="bub" style="opacity:.6;font-style:italic">🚫 supprimé</div>';
+    else if(m.kind==='sos'){ var g=parseGeo(m.body); inner='<div class="bub sos">🚨 ALERTE SOS'
+        +'<div class="sos-act">'
+        +'<button onclick="sendCmd(\'ring\')">📢 Sonner</button>'
+        +'<button onclick="sendCmd(\'strobe\')">💡 Flash</button>'
+        +'<button onclick="sendCmd(\'locate\')">📍 Localiser</button>'
+        +'<button onclick="sendCmd(\'rec\')">🎙 Écouter</button>'
+        +'</div>'
+        +(g?'<div class="sos-map-box">'+mapHtml(g)+'</div>':'<div class="sos-wait">📍 localisation…</div>')
+        +'<div class="mt">'+esc(m.sender||'')+' · '+fmtT(m.created_at)+'</div></div>'; }
+    else if(m.kind==='voice') inner='<div class="bub">'+(me?'':'<div class="snd">'+esc(m.sender)+'</div>')+'<div class="voice"><button class="play" onclick="playV(this,\''+esc(m.id)+'\')">▶</button><span style="font-size:12px">🎙 vocal</span></div><div class="mt">'+fmtT(m.created_at)+'</div></div>';
+    else if(m.kind==='photo') inner='<div class="bub">'+(me?'':'<div class="snd">'+esc(m.sender)+'</div>')+'<img class="ph-img" src="'+esc(m.audio||'')+'" onclick="try{window.open(this.src)}catch(e){}"><div class="mt">'+fmtT(m.created_at)+'</div></div>';
+    else inner='<div class="bub">'+(me?'':'<div class="snd">'+esc(m.sender)+'</div>')+esc(m.body||'').replace(/\n/g,'<br>')+'<div class="mt">'+fmtT(m.created_at)+'</div></div>';
+    return '<div class="mrow'+(me?' me':'')+'">'+inner+'</div>';
+  }).join('');
+  if(near) f.scrollTop=f.scrollHeight;
+}
+function playV(btn,id){ var m=_byId[id]; if(!m||!m.audio) return; try{ var a=new Audio(m.audio); btn.textContent='⏸'; a.play(); a.onended=function(){btn.textContent='▶';}; }catch(e){} }
+
+/* ── Envoi ── */
+function send(row,ok){
+  row.id=row.id||uuid(); row.sender=_sender; row.deleted=false; row.created_at=new Date().toISOString(); row.channel=_chan;
+  _byId[row.id]=row; _msgs.push(row); renderFeed();
+  if(!sb||!_ready){ toast('Connexion…'); return; }
+  sb.from('messages').insert(row).then(function(r){ if(r.error) toast('Échec envoi'); else if(ok) toast(ok); });
+}
+function sendText(){ var v=$('txt-in').value.trim(); if(!v) return; send({kind:'text',body:v}); $('txt-in').value=''; }
+function sendPhoto(input){
+  var f=input.files&&input.files[0]; if(!f) return; toast('Photo…');
+  var img=new Image(),url=URL.createObjectURL(f);
+  img.onload=function(){ var mx=1000,w=img.width,h=img.height; if(w>mx||h>mx){ if(w>h){h=Math.round(h*mx/w);w=mx;}else{w=Math.round(w*mx/h);h=mx;} }
+    var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);
+    send({kind:'photo',audio:c.toDataURL('image/jpeg',0.75),body:''},'Photo envoyée ✓'); };
+  img.onerror=function(){toast('Photo illisible');}; img.src=url; input.value='';
+}
+
+/* ── SOS (appui long) ── */
+var _st=null,_sh=false;
+function sosStart(){ _sh=true; var start=Date.now(); $('sos-lbl').textContent='...';
+  _st=setInterval(function(){ var p=(Date.now()-start)/1500; $('sos-lbl').textContent=p>=1?'ENVOI':Math.ceil((1500-(Date.now()-start))/1000)+'s'; if(p>=1){clearInterval(_st); if(_sh) fireSOS();} },100); }
+function sosCancel(){ _sh=false; clearInterval(_st); if(!$('sos-btn').classList.contains('sent')) $('sos-lbl').textContent='MAINTENIR'; }
+function fireSOS(){ _sh=false;
+  var sosId=uuid();
+  send({id:sosId,kind:'sos',body:''},'🚨 Alerte envoyée !'); sirenBurst();
+  var b=$('sos-btn'); b.classList.add('sent'); $('sos-lbl').textContent='ENVOYÉ ✓';
+  setTimeout(function(){ b.classList.remove('sent'); $('sos-lbl').textContent='MAINTENIR'; },4000);
+  locateAndAttach(sosId);
+}
+/* ── géolocalisation : joint la position à l'alerte ── */
+var _track=null;
+function locateAndAttach(sosId){
+  if(!navigator.geolocation){ toast('📍 GPS indisponible'); return; }
+  toast('📍 Localisation…');
+  function push(pos){
+    var geo=JSON.stringify({lat:+pos.coords.latitude.toFixed(6),lng:+pos.coords.longitude.toFixed(6),acc:Math.round(pos.coords.accuracy||0),t:Date.now()});
+    var m=_byId[sosId]; if(m){ m.body=geo; renderFeed(); }
+    if(sb&&_ready) sb.from('messages').update({body:geo}).eq('id',sosId).then(function(){});
+  }
+  navigator.geolocation.getCurrentPosition(function(p){ push(p); toast('📍 Position partagée en direct'); }, function(){ toast('📍 Position indisponible'); }, {enableHighAccuracy:true,timeout:12000,maximumAge:0});
+  try{ stopTrack(); var last=0;
+    _track=navigator.geolocation.watchPosition(function(p){ var now=Date.now(); if(now-last<8000) return; last=now; push(p); }, function(){}, {enableHighAccuracy:true,maximumAge:5000,timeout:20000});
+    setTimeout(stopTrack, 300000);
+  }catch(e){}
+}
+function stopTrack(){ if(_track!=null){ try{navigator.geolocation.clearWatch(_track);}catch(e){} _track=null; } }
+function parseGeo(body){ try{ var o=JSON.parse(body); if(o&&typeof o.lat==='number'&&typeof o.lng==='number') return o; }catch(e){} return null; }
+function mapHtml(g){
+  var dW=0.006,dH=0.004;
+  var bbox=(g.lng-dW)+','+(g.lat-dH)+','+(g.lng+dW)+','+(g.lat+dH);
+  var osm='https://www.openstreetmap.org/export/embed.html?bbox='+encodeURIComponent(bbox)+'&layer=mapnik&marker='+g.lat+','+g.lng;
+  var nav='https://www.google.com/maps/dir/?api=1&destination='+g.lat+','+g.lng+'&travelmode=driving';
+  var view='https://www.google.com/maps/search/?api=1&query='+g.lat+','+g.lng;
+  return '<iframe class="sos-map" src="'+osm+'" loading="lazy" referrerpolicy="no-referrer"></iframe>'
+    +'<div class="sos-geo"><a class="sos-nav" href="'+nav+'" target="_blank" rel="noopener">🧭 Itinéraire</a>'
+    +'<a class="sos-view" href="'+view+'" target="_blank" rel="noopener">📍 Voir</a>'
+    +(g.acc?'<span class="sos-acc">±'+g.acc+' m</span>':'')+'</div>';
+}
+
+/* ── Sons ── */
+function ctx(){ try{ var C=window.AudioContext||window.webkitAudioContext; _ac=_ac||new C(); if(_ac.state==='suspended')_ac.resume(); return _ac; }catch(e){ return null; } }
+function beep(){ var a=ctx(); if(!a) return; [0,.17].forEach(function(t,i){ var o=a.createOscillator(),g=a.createGain(); o.type='sine'; o.frequency.value=i?900:680; o.connect(g); g.connect(a.destination); var s=a.currentTime+t; g.gain.setValueAtTime(.0001,s); g.gain.exponentialRampToValueAtTime(.28,s+.01); g.gain.exponentialRampToValueAtTime(.0001,s+.14); o.start(s); o.stop(s+.15); }); }
+function sirenBurst(){ var a=ctx(); if(a){ for(var i=0;i<8;i++){ var o=a.createOscillator(),g=a.createGain(); o.type='square'; o.frequency.value=i%2?1180:820; o.connect(g); g.connect(a.destination); var s=a.currentTime+i*.33; g.gain.setValueAtTime(.0001,s); g.gain.exponentialRampToValueAtTime(.4,s+.02); g.gain.exponentialRampToValueAtTime(.0001,s+.31); o.start(s); o.stop(s+.32); } } try{if(navigator.vibrate)navigator.vibrate([500,150,500,150,500,150,700]);}catch(e){} }
+
+/* ── Alarme locale (sirène continue, à fond) ── */
+var _alarm=null,_alVib=null,_alOn=false;
+function toggleAlarm(){ _alOn?stopAlarm():startAlarm(); }
+function startAlarm(){
+  var a=ctx(); if(a){ try{
+    var osc=a.createOscillator(), gain=a.createGain(), lfo=a.createOscillator(), lfoG=a.createGain();
+    osc.type='sawtooth'; osc.frequency.value=800; lfo.type='sine'; lfo.frequency.value=3.5; lfoG.gain.value=420;
+    lfo.connect(lfoG); lfoG.connect(osc.frequency); osc.connect(gain); gain.gain.value=0.6; gain.connect(a.destination);
+    osc.start(); lfo.start(); _alarm={osc:osc,lfo:lfo,gain:gain};
+  }catch(e){} }
+  _alVib=setInterval(function(){ try{if(navigator.vibrate)navigator.vibrate([600,250]);}catch(e){} },850);
+  _alOn=true; $('al-btn').classList.add('on'); $('al-lbl').textContent='STOP'; toast('🔔 Alarme activée');
+}
+function stopAlarm(){ try{ if(_alarm){ _alarm.osc.stop(); _alarm.lfo.stop(); _alarm=null; } }catch(e){} clearInterval(_alVib); try{if(navigator.vibrate)navigator.vibrate(0);}catch(e){} _alOn=false; $('al-btn').classList.remove('on'); $('al-lbl').textContent='Alarme'; }
+
+/* ── Vocal (push-to-talk) ── */
+function pickMime(){ var o=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus']; if(!window.MediaRecorder||!MediaRecorder.isTypeSupported)return ''; for(var i=0;i<o.length;i++)if(MediaRecorder.isTypeSupported(o[i]))return o[i]; return ''; }
+function vocStart(){ if(_rec.active) return; if(!navigator.mediaDevices||!window.MediaRecorder){toast('Vocal non supporté');return;}
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    var mr=new MediaRecorder(stream,pickMime()?{mimeType:pickMime()}:undefined),chunks=[];
+    mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data);};
+    mr.onstop=function(){ stream.getTracks().forEach(function(t){t.stop();}); var blob=new Blob(chunks,{type:mr.mimeType||'audio/webm'}); var dur=(Date.now()-_rec.start)/1000; recUI(false); if(dur>=.4&&blob.size>0){ var fr=new FileReader(); fr.onload=function(){ send({kind:'voice',audio:fr.result,duration:Math.round(dur*10)/10},'Vocal envoyé ✓'); }; fr.readAsDataURL(blob); } };
+    _rec={active:true,mr:mr,start:Date.now(),stream:stream}; mr.start(); recUI(true);
+    _rec.timer=setInterval(function(){ var s=Math.floor((Date.now()-_rec.start)/1000); $('rec-t').textContent=Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); },200);
+    _rec.max=setTimeout(vocStop,30000);
+  }).catch(function(){ toast('Micro refusé'); recUI(false); });
+}
+function vocStop(){ if(!_rec.active)return; clearInterval(_rec.timer); clearTimeout(_rec.max); _rec.active=false; try{_rec.mr.stop();}catch(e){recUI(false);} }
+function recUI(on){ $('mic-btn').classList.toggle('rec',on); $('recbar').classList.toggle('on',on); if(on)$('rec-t').textContent='0:00'; }
+
+/* ── Pseudo (facultatif) ── */
+function loadName(){ try{ var v=localStorage.getItem(NAME_KEY); if(v)_sender=v; }catch(e){} $('who-name').textContent=_sender; }
+function askName(){ $('nm').classList.add('on'); var i=$('nm-in'); i.value=(_sender==='SOS'?'':_sender); setTimeout(function(){i.focus();},60); }
+function saveName(){ var v=$('nm-in').value.trim().slice(0,24)||'SOS'; _sender=v; try{localStorage.setItem(NAME_KEY,v);}catch(e){} $('who-name').textContent=v; $('nm').classList.remove('on'); renderFeed(); }
+
+/* ── Autorisations (notif + micro + caméra) au 1er tap, une seule fois après install ── */
+function requestAllPerms(){
+  try{ if(window.Notification && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
+  try{ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){ navigator.mediaDevices.getUserMedia({audio:true,video:true}).then(function(s){ s.getTracks().forEach(function(t){t.stop();}); }).catch(function(){ try{ navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){ s.getTracks().forEach(function(t){t.stop();}); }).catch(function(){}); }catch(e){} }); }
+  }catch(e){}
+  try{ if(navigator.geolocation) navigator.geolocation.getCurrentPosition(function(){},function(){},{timeout:8000}); }catch(e){}
+  ctx();
+}
+function maybeAskPerms(){ try{ if(localStorage.getItem('olympe_sos_perms')) return; }catch(e){} var h=function(){ try{localStorage.setItem('olympe_sos_perms','1');}catch(e){} requestAllPerms(); }; document.addEventListener('pointerdown', h, {once:true}); }
+
+/* ── Câblage ── */
+window.addEventListener('DOMContentLoaded',function(){
+  loadName(); connect(); maybeAskPerms();
+  var s=$('sos-btn');
+  s.addEventListener('mousedown',function(e){e.preventDefault();ctx();sosStart();});
+  s.addEventListener('mouseup',sosCancel); s.addEventListener('mouseleave',sosCancel);
+  s.addEventListener('touchstart',function(e){e.preventDefault();ctx();sosStart();},{passive:false});
+  s.addEventListener('touchend',function(e){e.preventDefault();sosCancel();},{passive:false});
+  var m=$('mic-btn');
+  m.addEventListener('mousedown',function(e){e.preventDefault();vocStart();});
+  m.addEventListener('mouseup',vocStop); m.addEventListener('mouseleave',function(){if(_rec.active)vocStop();});
+  m.addEventListener('touchstart',function(e){e.preventDefault();vocStart();},{passive:false});
+  m.addEventListener('touchend',function(e){e.preventDefault();vocStop();},{passive:false});
+  $('nm-in').addEventListener('keydown',function(e){if(e.key==='Enter')saveName();});
+});
+</script>
+
+<button id="pwa-install" onclick="pwaInstall()" style="display:none;position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:200;border:none;border-radius:22px;padding:11px 20px;background:#0071e3;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;box-shadow:0 8px 24px rgba(0,0,0,.28);cursor:pointer;max-width:92vw;">📲 Installer l'app</button>
+<script>(function(){var ip=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();ip=e;var b=document.getElementById("pwa-install");if(b)b.style.display="block";});window.pwaInstall=function(){if(ip){ip.prompt();ip.userChoice.then(function(){ip=null;var b=document.getElementById("pwa-install");if(b)b.style.display="none";});}};window.addEventListener("appinstalled",function(){var b=document.getElementById("pwa-install");if(b)b.style.display="none";});var iOS=/iphone|ipad|ipod/i.test(navigator.userAgent);var sa=(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||window.navigator.standalone;if(iOS&&!sa){var b=document.getElementById("pwa-install");if(b){b.textContent="📲 Installer : Partager → Sur l'écran d'accueil";b.style.display="block";b.onclick=function(){b.style.display="none";};}}})();</script>
+</body>
+</html>
