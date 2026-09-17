@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Olympe — Informations, RGPD, Guide &amp; Process</title>
+<!-- =========================================================================
+     olympe-infos.html  ·  build infos 2026-09-17-INFOS2-CLAIR
+     Fichier autonome : aucune dépendance, aucun CDN, fonctionne hors ligne.
+     Contient : À propos · RGPD · Ce qu'Olympe enregistre · Fiche technique
+                Guide d'utilisation · Process de chaque application.
+     Ouverture ciblée par ancre :
+       olympe-infos.html#rgpd
+       olympe-infos.html#technique
+       olympe-infos.html#guide
+       olympe-infos.html#process/maritime      (process d'une app)
+     Paramètre ?from=<idApp> : affiche le bouton « Retour à l'app ».
+     ========================================================================= -->
+<style>
+/* ── Palette relevée sur le mode jour du hub (olympe-hub-theme) ────────── */
+:root{
+  --lpb:#0E4194;        /* bleu La Poste            */
+  --lpbf:#092C68;       /* bleu foncé               */
+  --lpj:#FDDD09;        /* jaune La Poste           */
+  --lpc:#00A8A8;        /* cyan                     */
+  --lpv:#009841;        /* vert                     */
+  --lpr:#E51932;        /* rouge                    */
+
+  --champ:
+    radial-gradient(120% 55% at 100% 0%, rgba(253,221,9,.34), transparent 62%),
+    radial-gradient(85% 45% at 0% 6%, rgba(0,168,168,.20), transparent 60%),
+    linear-gradient(170deg,#FBFCFF 0%,#F1F6FD 50%,#E9F0FB 100%);
+
+  --carte:#FFFFFF;
+  --bord:rgba(14,65,148,.14);
+  --bord-fort:rgba(14,65,148,.26);
+  --ombre:0 8px 24px rgba(14,65,148,.10);
+  --ombre-h:0 16px 34px rgba(14,65,148,.18);
+
+  --txt:#0F2A5C;
+  --txt-doux:rgba(14,65,148,.78);
+  --txt-faible:rgba(14,65,148,.55);
+
+  --rayon:14px; --nav-w:248px;
+  --f:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--f); color:var(--txt);
+  background:#F1F6FD; font-size:15px; line-height:1.62; min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+/* champ coloré : posé en fixed pour ne pas repeindre au défilement */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--champ)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── Bandeau : reste bleu La Poste, c'est la signature de marque ───────── */
+.ohead{
+  position:sticky; top:0; z-index:40;
+  background:linear-gradient(135deg,var(--lpb),#0a3180);
+  border-bottom:3px solid var(--lpj);
+  padding:10px 16px; display:flex; align-items:center; gap:12px;
+  box-shadow:0 6px 22px rgba(14,65,148,.22);
+}
+.ohead .logo{
+  width:38px;height:38px;flex:0 0 38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--lpj),#FFA500);
+  color:#003189;font-weight:900;font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.18);
+}
+.ohead .ti{flex:1;min-width:0}
+.ohead h1{margin:0;font-size:15px;font-weight:900;letter-spacing:.6px;color:#fff}
+.ohead .sub{font-size:10.5px;color:rgba(255,255,255,.68);letter-spacing:1.1px;text-transform:uppercase}
+.btn{
+  font-family:var(--f); font-size:12px; font-weight:800; letter-spacing:.4px;
+  padding:8px 13px; border-radius:9px; cursor:pointer; white-space:nowrap;
+  border:1.5px solid rgba(255,255,255,.34); background:rgba(255,255,255,.16); color:#fff;
+  display:inline-flex; align-items:center; gap:6px; transition:.18s;
+}
+.btn:hover{background:rgba(255,255,255,.28)}
+.btn:focus-visible{outline:3px solid var(--lpj);outline-offset:2px}
+.btn-jaune{background:var(--lpj);border-color:var(--lpj);color:#062045;
+  box-shadow:2px 2px 0 rgba(14,65,148,.20)}
+.btn-jaune:hover{background:#ffe84d}
+#btnRetour{display:none}
+/* dans le corps de page (barre process), les boutons repassent en clair */
+.pbar .btn{border-color:var(--bord-fort);background:#fff;color:var(--lpb)}
+.pbar .btn:hover{background:#F2F6FD}
+.pbar .btn-jaune{background:var(--lpj);border-color:var(--lpj);color:#062045}
+.pbar .btn-jaune:hover{background:#ffe84d}
+a.btn{text-decoration:none}
+
+/* ── Ossature ─────────────────────────────────────────────────────────── */
+.wrap{position:relative;z-index:1;display:flex;align-items:flex-start;gap:0}
+nav.onav{
+  width:var(--nav-w); flex:0 0 var(--nav-w); position:sticky; top:62px;
+  max-height:calc(100vh - 62px); overflow-y:auto; padding:16px 12px 40px;
+  border-right:1px solid var(--bord);
+}
+nav.onav .grp{font-size:10px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--lpb);opacity:.65;margin:16px 8px 7px}
+nav.onav a{
+  display:flex;align-items:center;gap:9px;padding:8px 10px;margin-bottom:3px;
+  border-radius:9px;color:var(--txt-doux);text-decoration:none;font-size:13px;font-weight:600;
+  border-left:3px solid transparent; transition:.16s;
+}
+nav.onav a:hover{background:#fff;color:var(--lpb);box-shadow:var(--ombre)}
+nav.onav a.on{background:#fff;color:var(--lpb);font-weight:800;
+  border-left-color:var(--lpj);box-shadow:var(--ombre)}
+nav.onav a .pt{width:7px;height:7px;border-radius:50%;flex:0 0 7px;background:var(--lpj)}
+
+main{flex:1;min-width:0;padding:22px 22px 80px;max-width:1080px}
+
+.otabs{display:none;gap:6px;overflow-x:auto;padding:9px 12px;position:sticky;top:60px;z-index:30;
+  background:rgba(247,250,255,.97);border-bottom:1px solid var(--bord);
+  -webkit-overflow-scrolling:touch}
+.otabs::-webkit-scrollbar{display:none}
+.otabs a{flex:0 0 auto;padding:7px 13px;border-radius:999px;font-size:12px;font-weight:800;
+  text-decoration:none;color:var(--txt-doux);background:#fff;border:1px solid var(--bord)}
+.otabs a.on{background:var(--lpj);color:#062045;border-color:var(--lpj);
+  box-shadow:2px 2px 0 rgba(14,65,148,.16)}
+
+/* ── Contenu ──────────────────────────────────────────────────────────── */
+section.vue{display:none;animation:ap .26s ease both}
+section.vue.on{display:block}
+@keyframes ap{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h2.t{font-size:22px;font-weight:900;margin:0 0 4px;letter-spacing:.3px;color:var(--lpb)}
+.t-sub{font-size:12.5px;color:var(--txt-faible);margin-bottom:20px;letter-spacing:.5px}
+h3{font-size:15px;font-weight:900;color:var(--lpb);margin:26px 0 10px;
+  display:flex;align-items:center;gap:8px;padding-bottom:6px;
+  border-bottom:2px solid var(--lpj)}
+h4{font-size:13.5px;font-weight:800;margin:16px 0 6px;color:var(--lpbf)}
+p{margin:0 0 11px}
+ul,ol{margin:0 0 12px;padding-left:20px}
+li{margin-bottom:5px}
+b,strong{color:var(--lpbf);font-weight:800}
+i,em{color:var(--lpb)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;
+  background:#F2F6FD;border:1px solid var(--bord);border-radius:5px;padding:1px 5px;
+  color:var(--lpbf);word-break:break-word}
+
+.carte{background:var(--carte);border:1px solid var(--bord);border-radius:var(--rayon);
+  padding:15px 17px;margin-bottom:12px;box-shadow:var(--ombre)}
+.carte.acc{border-left:4px solid var(--lpj)}
+.enc{border-radius:var(--rayon);padding:14px 16px;margin:14px 0;
+  border:1px solid var(--bord);border-left:4px solid var(--lpj);
+  background:#FFFCEB;box-shadow:var(--ombre)}
+.enc.ok{border-left-color:var(--lpv);background:#EFFBF3}
+.enc.no{border-left-color:var(--lpr);background:#FFF1F3}
+.enc.inf{border-left-color:var(--lpc);background:#EEFAFA}
+.enc .ttl{font-weight:900;font-size:13px;margin-bottom:5px;color:var(--lpbf)}
+.enc p:last-child,.enc ul:last-child,.enc ol:last-child{margin-bottom:0}
+
+.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:14px}
+
+table{width:100%;border-collapse:collapse;margin:10px 0 16px;font-size:12.6px;
+  background:#fff;border:1px solid var(--bord);border-radius:10px;overflow:hidden;
+  display:block;overflow-x:auto;box-shadow:var(--ombre)}
+thead tr{background:linear-gradient(135deg,var(--lpb),#0a3180)}
+th{color:var(--lpj);font-weight:900;text-align:left;padding:9px 11px;
+  font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;white-space:nowrap}
+td{padding:9px 11px;border-top:1px solid var(--bord);color:var(--txt-doux);vertical-align:top}
+tbody tr:nth-child(even){background:#F7FAFF}
+td b{color:var(--lpbf)}
+
+/* fiches app */
+.appcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.appcard{display:flex;gap:11px;align-items:flex-start;text-decoration:none;
+  background:#fff;border:1px solid var(--bord);border-radius:var(--rayon);
+  padding:13px 14px;border-top:3px solid var(--ac,var(--lpj));transition:.18s;
+  color:inherit;box-shadow:var(--ombre)}
+.appcard:hover{transform:translateY(-2px);box-shadow:var(--ombre-h)}
+.appcard .em{font-size:22px;line-height:1}
+.appcard .n{font-weight:900;font-size:13.5px;color:var(--lpb)}
+.appcard .d{font-size:11.5px;color:var(--txt-faible);line-height:1.45}
+
+.pbar{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:0 0 16px;
+  padding:12px 14px;border-radius:var(--rayon);background:#fff;
+  border:1px solid var(--bord);border-left:5px solid var(--ac,var(--lpj));
+  box-shadow:var(--ombre)}
+.pbar .em{font-size:26px}
+.pbar .nm{font-weight:900;font-size:16px;flex:1;min-width:130px;color:var(--lpb)}
+.pbar .nm small{display:block;font-weight:600;font-size:11px;color:var(--txt-faible);letter-spacing:.4px}
+
+ol.etapes{counter-reset:e;list-style:none;padding:0;margin:0 0 14px}
+ol.etapes li{counter-increment:e;position:relative;padding:11px 14px 11px 46px;margin-bottom:8px;
+  background:#fff;border:1px solid var(--bord);border-radius:11px;font-size:13.4px;
+  box-shadow:var(--ombre)}
+ol.etapes li::before{content:counter(e);position:absolute;left:11px;top:10px;
+  width:24px;height:24px;border-radius:7px;
+  background:var(--ac,var(--lpj));color:var(--ac-fg,#062045);
+  font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center}
+
+.pied{margin-top:36px;padding-top:16px;border-top:1px solid var(--bord);
+  font-size:10.5px;color:var(--txt-faible);letter-spacing:.8px;text-align:center}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media screen and (max-width:900px){
+  nav.onav{display:none}
+  .otabs{display:flex}
+  main{padding:16px 13px 70px}
+  h2.t{font-size:19px}
+  .ohead .sub{display:none}
+}
+/* ── Impression ───────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff}
+  body::before,.ohead,nav.onav,.otabs,.pbar .btn,#btnRetour{display:none!important}
+  main{max-width:none;padding:0}
+  section.vue{display:block!important;page-break-after:always}
+  .carte,.enc,ol.etapes li,table,.appcard,.pbar{box-shadow:none;border:1px solid #bbb}
+  thead tr{background:#0E4194!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  a{color:#000;text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<header class="ohead">
+  <div class="logo">LP</div>
+  <div class="ti">
+    <h1>Olympe — Informations &amp; Process</h1>
+    <div class="sub">PIC Gillot Import · Équipe Zévi Marron</div>
+  </div>
+  <button class="btn btn-jaune" id="btnRetour" type="button">↩ Retour à l'app</button>
+  <button class="btn" type="button" onclick="window.print()">🖨</button>
+</header>
+
+<div class="otabs" id="tabs"></div>
+
+<div class="wrap">
+  <nav class="onav" id="nav"></nav>
+  <main id="main"></main>
+</div>
+
+<script>
+/* =========================================================================
+   1. DONNÉES — tout le contenu éditorial vit ici, une seule source de vérité
+   ========================================================================= */
+
+/* --- Process des applications ------------------------------------------ */
+/* id : doit correspondre à l'id d'iframe du hub (iframe-<id>)             */
+var APPS = [
+{
+  id:'maritime', nom:'Maritime Mayotte', emoji:'⚓', ac:'#00A8A8',
+  res:'Suivi des conteneurs maritimes à destination de Mayotte.',
+  but:'Tracer les dépêches embarquées par voie maritime : nombre de sacs, poids, dépêche, date de clôture. Sert de preuve de ce qui est parti quand la liasse papier manque.',
+  quand:'À chaque préparation de conteneur, avant fermeture et plombage.',
+  etapes:[
+    'Vérifier en haut à gauche que la date affichée est bien celle du jour de traitement.',
+    'Flasher ou saisir les dépêches une par une dans la zone de saisie. Le poids est lu automatiquement sur les 4 derniers chiffres du code.',
+    'Contrôler les indicateurs : nombre de sacs et poids total doivent correspondre au comptage physique.',
+    'Corriger une ligne fausse en la supprimant puis en re-flashant — ne jamais écraser une valeur à la main.',
+    'Enregistrer la session. Elle part alors vers Supabase et devient visible des autres postes.',
+    'Reporter le total sur le bordereau papier, puis plomber le conteneur.'
+  ],
+  regles:[
+    'Un colis douteux reste en <code>?</code> : le système ne devine jamais un type.',
+    'Une session enregistrée se retrouve dans l\u2019onglet <b>Historique</b> du hub, jamais ailleurs.',
+    'Le total général affiché en couleur est un repère métier : il ne se repeint pas, c\u2019est voulu.'
+  ],
+  pieges:[
+    'Deux agents sur la même dépêche = doublon. Le contrôle de doublons signale mais ne supprime pas : c\u2019est à l\u2019agent de trancher.',
+    'Session supprimée avant le correctif de septembre : il faut la supprimer une seconde fois pour qu\u2019elle parte réellement.'
+  ]
+},
+{
+  id:'etiquettage', nom:'Étiquettage', emoji:'🏷️', ac:'#E51932',
+  res:'Génération des étiquettes RESCON et AAREXP.',
+  but:'Produire des étiquettes conformes, imprimables et relisables par les douchettes de la chaîne.',
+  quand:'Sur demande du chef d\u2019équipe, ou dès qu\u2019une étiquette d\u2019origine est illisible ou absente.',
+  etapes:[
+    'Choisir le type d\u2019étiquette : RESCON (carte jaune) ou AAREXP.',
+    'Renseigner les champs demandés — destination, dépêche, quantité.',
+    'Vérifier l\u2019aperçu : le code-barres doit être net, sans coupure sur les bords.',
+    'Lancer l\u2019impression. Format A4, une page par lot.',
+    'Faire un essai de lecture à la douchette avant de coller sur le sac.'
+  ],
+  regles:[
+    'La carte RESCON reste jaune, l\u2019indicateur « Total général » garde sa couleur : ce sont des repères métier.',
+    'Une étiquette non relue à la douchette ne part pas.'
+  ],
+  pieges:[
+    '<b>Douane</b> et <b>PPI Roissy</b> existent dans le générateur de codes-barres mais ne sont pas dans les 14 produits de la grille Camion : ces étiquettes seront refusées au flashage. Arbitrage en cours.',
+    'Imprimante en mode brouillon : le code-barres passe à l\u2019œil mais pas à la douchette.'
+  ]
+},
+{
+  id:'cabine', nom:'Pointage Cabine Rouge', emoji:'📌', ac:'#009841',
+  res:'Suivi et inscription des dépêches, bordereau CN35.',
+  but:'Tenir le pointage cabine et éditer le bordereau CN35 conforme au modèle papier.',
+  quand:'À chaque arrivée de vol, au fil de la réception.',
+  etapes:[
+    'Ouvrir l\u2019onglet de la dépêche concernée dans la barre interne de la carte.',
+    'Flasher les sacs. Chaque ligne arrive par la gauche avec un flash vert : c\u2019est la confirmation de prise en compte.',
+    'Renseigner l\u2019en-tête du CN35 : date, bureau expéditeur, destinataire, n° scellé.',
+    'Contrôler les totaux face au comptage physique.',
+    'Imprimer le bordereau — une seule page A4, trois cadres de signature en bas.',
+    'Faire signer, classer, puis enregistrer la session dans Olympe.'
+  ],
+  regles:[
+    'L\u2019impression est mise en page pour coller au bordereau manuscrit : ne pas « corriger » l\u2019ordre des champs à l\u2019écran, c\u2019est la feuille d\u2019impression qui les replace.',
+    'Les panneaux par dépêche sont volontairement masqués au papier : ils font doublon avec le tableau récapitulatif.'
+  ],
+  pieges:[
+    'La barre d\u2019onglets interne porte le même nom de classe que la navigation des autres apps : ne jamais y appliquer un style global.',
+    'Impression en une colonne = feuille d\u2019impression non chargée. Recharger l\u2019app avant de réessayer.'
+  ]
+},
+{
+  id:'sac', nom:'Sac CP84', emoji:'🎒', ac:'#0B3C97',
+  res:'Comptage sacs PRIO / ECO, poids, réexpédition, bordereaux.',
+  but:'Compter les sacs CP84 par catégorie, suivre les poids, gérer la réexpédition des sacs vides.',
+  quand:'À chaque vacation de comptage, et à chaque clôture de réexpédition.',
+  etapes:[
+    'Vérifier la date de session en haut.',
+    'Flasher les sacs. PRIO en bleu, ECO en cyan — les compteurs montent en direct.',
+    'Brancher une seconde douchette si un collègue travaille sur la même palette : la seconde zone de saisie s\u2019ouvre d\u2019elle-même.',
+    'Contrôler poids et compteurs avant enregistrement.',
+    'Enregistrer la session.',
+    'Pour la réexpédition : onglet Expédition, filtre Du/Au, puis « Clôturer la réexpédition ».'
+  ],
+  regles:[
+    'Poids du sac vide : <b>0,15 kg</b>, appliqué automatiquement.',
+    'La réexpédition est <b>non destructive</b> : elle ne touche jamais l\u2019historique de comptage.',
+    'Les compteurs PRIO/ECO de l\u2019historique sont pré-calculés à l\u2019enregistrement, pas recomptés à l\u2019affichage.'
+  ],
+  pieges:[
+    'Une session importée depuis une autre app sans compteurs affiche des totaux à zéro alors que le détail est bon — le transfert les recalcule.',
+    'Deux zones de scan ouvertes sans raison = risque d\u2019attribuer un sac à la mauvaise session. Replier la seconde zone quand on est seul.'
+  ]
+},
+{
+  id:'ppi', nom:'Relevé PPI', emoji:'📦', ac:'#0B3C97',
+  res:'Relevé OO / OS / CP84 / Singapour.',
+  but:'Relever les colis par catégorie sur palette, avec poids par catégorie et total de session.',
+  quand:'À chaque palette traitée.',
+  etapes:[
+    'Ouvrir l\u2019app. La clé de session est générée automatiquement avec un suffixe aléatoire — deux postes ne peuvent plus se télescoper.',
+    'Flasher les colis. Chaque compteur (OO, OS, CP84, Singapour) affiche son poids cumulé juste en dessous.',
+    'Pour deux agents en parallèle : ouvrir la seconde session PPI. Port 1 → session A, port 2 → session B.',
+    'Vérifier le bandeau de poids total de la session.',
+    'Enregistrer.'
+  ],
+  regles:[
+    'Deux relevés parallèles = deux sessions distinctes, jamais une fusion. Supabase réconcilie par clé primaire.',
+    'Un type indéterminable reste <code>?</code>.'
+  ],
+  pieges:[
+    'Ne jamais déplacer une fenêtre PPI dans la page : la saisie en cours serait perdue. Utiliser la bascule A/B.',
+    'Le brouillon de la session B est isolé de celui de A — si les deux affichent la même palette, recharger.'
+  ]
+},
+{
+  id:'hermes', nom:'Hermès', emoji:'✈️', ac:'#009841',
+  res:'Suivi ULD et MRD, rotations, brief des vols, poids.',
+  but:'Porter le flux : réceptions, brief des vols, suivi ULD/MRD et rotations camion.',
+  quand:'En continu sur la vacation, au rythme des vols.',
+  etapes:[
+    'Choisir la journée dans le calendrier.',
+    'Saisir le brief du vol : ULD attendus, natures, poids.',
+    'Renseigner les rotations au fur et à mesure des retours de piste.',
+    'Contrôler les totaux du jour.',
+    'Basculer sur l\u2019onglet Camion pour le départ/arrivée si la journée le demande.'
+  ],
+  regles:[
+    'Hermès est la <b>base</b> du flux camion, pas une copie : ce qui est flashé dans Camion apparaît ici, au Dashboard et dans Analytics.',
+    'Une journée dont il reste du brief ne doit jamais être déclarée vide.'
+  ],
+  pieges:[
+    '<b>Historiques ULD et MRD non synchronisés</b> : ils restent locaux au poste tant que les deux clés ne sont pas ajoutées à la liste de synchronisation. Correctif au carnet de route.',
+    '<code>CTOCPR</code> est encore lu comme un contenant <code>CP</code> dans l\u2019onglet Camion d\u2019Hermès (corrigé côté onglet Camion du hub).'
+  ]
+},
+{
+  id:'camion', nom:'Camion', emoji:'🚚', ac:'#009841',
+  res:'Départs, arrivées, chargement et calendrier camion.',
+  but:'Suivre le contenu réel des camions : ce qui entre, ce qui sort, ce qui revient vide.',
+  quand:'À chaque départ et à chaque arrivée de camion.',
+  etapes:[
+    'Écran principal = Départ. Flasher le contenant, le produit est résolu automatiquement.',
+    'Pour une arrivée : ouvrir la bulle Arrivée. La barre des trajets et la zone de saisie y sont déplacées, jamais dupliquées.',
+    'Vérifier les KPI : seul ce qui est flashé compte. PRIO bleu, ECO vert, bloc « Entré dans le camion » en jaune/vert.',
+    'Contrôler le calendrier lundi→samedi, calqué sur le tableau blanc.',
+    'Clôturer la journée.'
+  ],
+  regles:[
+    'Modification et suppression d\u2019historique réservées au profil <b>administrateur</b> (profil choisi au code PIN, pas au compte partagé).',
+    'Suppression d\u2019une journée en deux temps, confirmation explicite.'
+  ],
+  pieges:[
+    'Un code produit saisi dans le champ contenant est refusé par un garde — c\u2019est normal, changer de champ.'
+  ]
+},
+{
+  id:'mrd', nom:'MRD', emoji:'📋', ac:'#009841',
+  res:'Relevés MRD et saisie ULD → MRD.',
+  but:'Relever les MRD de la journée, plusieurs sessions horodatées par jour.',
+  quand:'À chaque vacation MRD.',
+  etapes:[
+    'Sélectionner la date — la saisie antidatée est possible via le calendrier.',
+    'Saisir ou flasher les entrées.',
+    'Vérifier les totaux de la session.',
+    'Enregistrer : chaque entrée devient une ligne distincte côté serveur.'
+  ],
+  regles:['Une journée regroupe plusieurs sessions horodatées : supprimer une journée supprime toutes ses sessions.'],
+  pieges:['Le relevé MRD utilise un découpage par entrée : une suppression partielle mal déclarée peut faire revenir des lignes.']
+},
+{
+  id:'anomalie', nom:'Anomalies', emoji:'⚠️', ac:'#FFCD00',
+  res:'Colis en anomalie et incidents de manutention.',
+  but:'Consigner tout colis en anomalie : éventré, sans étiquette, mouillé, contenu suspect.',
+  quand:'Immédiatement au constat, jamais en fin de vacation de mémoire.',
+  etapes:[
+    'Ouvrir l\u2019app, créer une entrée.',
+    'Flasher ou saisir le code du colis.',
+    'Choisir la nature de l\u2019anomalie et ajouter une description factuelle.',
+    'Ajouter une photo si le constat le justifie.',
+    'Enregistrer, puis prévenir le responsable ROP.'
+  ],
+  regles:[
+    'Description <b>factuelle</b> : ce qui est vu, pas ce qui est supposé. Aucun nom d\u2019agent dans le libellé.',
+    'Une anomalie enregistrée ne se modifie pas pour « arranger » un total.'
+  ],
+  pieges:['Photo HEIC : aucun navigateur ne la décode. Basculer l\u2019appareil photo en JPEG.']
+},
+{
+  id:'vgp', nom:'Registre VGP', emoji:'🔧', ac:'#FFCD00',
+  res:'Vérifications générales périodiques du matériel.',
+  but:'Tenir le registre des vérifications périodiques : transpalettes, gerbeurs, matériel de piste.',
+  quand:'À chaque vérification et à chaque anomalie constatée sur un engin.',
+  etapes:[
+    'Sélectionner l\u2019engin dans la liste.',
+    'Renseigner la date de contrôle et l\u2019état constaté.',
+    'Signaler tout défaut : un engin défectueux se consigne avant d\u2019être retiré du service.',
+    'Enregistrer l\u2019entrée.',
+    'Imprimer le registre pour affichage si le responsable le demande.'
+  ],
+  regles:[
+    'Le registre VGP est un document opposable : il se tient au fil de l\u2019eau, pas en rattrapage.',
+    'Un engin consigné défectueux ne se remet pas en service depuis Olympe — c\u2019est une décision hiérarchique.'
+  ],
+  pieges:['Ne pas confondre VGP (vérification réglementaire de l\u2019engin) et Anomalies (colis).']
+},
+{
+  id:'maurice', nom:'Maurice', emoji:'🇲🇺', ac:'#00A8A8',
+  res:'Suivi des flux à destination de Maurice.',
+  but:'Suivre les dépêches Maurice, comptage et poids par destination.',
+  quand:'À chaque préparation de départ Maurice.',
+  etapes:['Vérifier la date de session.','Flasher les dépêches.','Contrôler compteurs et poids.','Enregistrer.'],
+  regles:['Même grammaire que Maritime et Mayotte : une session par vacation, un historique commun.'],
+  pieges:['Session ouverte la veille laissée ouverte : vérifier la date avant de flasher.']
+},
+{
+  id:'mayotte', nom:'Mayotte', emoji:'🌺', ac:'#00A8A8',
+  res:'Suivi des flux aériens à destination de Mayotte.',
+  but:'Suivre les dépêches Mayotte par voie aérienne — à ne pas confondre avec Maritime Mayotte.',
+  quand:'À chaque préparation de départ aérien Mayotte.',
+  etapes:['Vérifier la date de session.','Flasher les dépêches.','Contrôler compteurs et poids.','Enregistrer.'],
+  regles:['<b>Mayotte</b> = aérien. <b>Maritime Mayotte</b> = conteneur. Deux historiques distincts.'],
+  pieges:['Saisir un conteneur maritime ici fausse les deux suivis. En cas d\u2019erreur, utiliser le transfert de session depuis l\u2019onglet Historique.']
+},
+{
+  id:'chronopost', nom:'Chronopost', emoji:'⏱️', ac:'#00A8A8',
+  res:'Suivi spécifique des flux Chronopost.',
+  but:'Tracer les envois Chronopost, produit à délai garanti.',
+  quand:'À chaque réception ou départ Chronopost.',
+  etapes:['Vérifier la date.','Flasher les envois.','Contrôler les totaux.','Enregistrer sans attendre la fin de vacation — le délai est garanti, la traçabilité doit suivre.'],
+  regles:['Produit à délai garanti : toute rupture de traçabilité se voit côté client.'],
+  pieges:['Un envoi Chronopost saisi dans un autre historique disparaît des tableaux de bord Chronopost.']
+},
+{
+  id:'consommable', nom:'Consommables', emoji:'📦', ac:'#FFCD00',
+  res:'Suivi des consommables du service.',
+  but:'Savoir ce qu\u2019il reste en stock — sacs, étiquettes, films, plombs — et anticiper les commandes.',
+  quand:'À la prise de poste, et à chaque réapprovisionnement.',
+  etapes:['Ouvrir la liste des consommables.','Mettre à jour les quantités constatées.','Signaler tout niveau bas.','Enregistrer.'],
+  regles:['Une quantité se constate, elle ne s\u2019estime pas.'],
+  pieges:['Deux agents qui saisissent au même moment : le dernier enregistrement l\u2019emporte. Se répartir les rayons.']
+},
+{
+  id:'lab', nom:'Lab', emoji:'🧪', ac:'#FFCD00',
+  res:'Bac à essais, idées et polyvalence de l\u2019équipe.',
+  but:'Déposer une idée d\u2019amélioration, voter, suivre la polyvalence de l\u2019équipe.',
+  quand:'Quand une idée passe par la tête — c\u2019est fait pour ça.',
+  etapes:['Ouvrir l\u2019onglet Idées.','Déposer l\u2019idée en une phrase claire.','Voter pour les idées des collègues : deux votes font passer une idée en « votée ».','Suivre l\u2019avancement.'],
+  regles:['Le Lab n\u2019est pas un canal de réclamation : les sujets RH passent par la voie hiérarchique.'],
+  pieges:[]
+}
+];
+
+/* --- Rubriques documentaires ------------------------------------------- */
+var RUBRIQUES = [
+{
+  id:'apropos', titre:'À propos d\u2019Olympe', emoji:'ℹ️',
+  sous:'Ce qu\u2019est Olympe, pourquoi ce nom, qui le fait tourner',
+  html:
+  '<h3>🏛️ L\u2019esprit Olympe &amp; Hermès</h3>'+
+  '<div class="carte acc"><h4>Pourquoi « Olympe » ?</h4><p>Le Mont Olympe est le lieu d\u2019où tout est supervisé. À Gillot, Olympe est notre tour de contrôle : l\u2019outil qui centralise, pilote et sécurise les données de production de l\u2019équipe.</p></div>'+
+  '<div class="carte acc"><h4>Qui est Hermès ?</h4><p>Hermès est le messager des dieux. Dans Olympe, c\u2019est le module de flux : il transporte l\u2019information, gère les réceptions, le brief des vols et le suivi des camions.</p></div>'+
+  '<h3>🍃 L\u2019équipe Zévi Marron</h3>'+
+  '<div class="carte acc"><h4>Un hommage à La Réunion</h4><p>Le <i>Zévi Marron</i> est le prunier sauvage qui pousse à l\u2019état naturel dans nos forêts réunionnaises. Comme lui, l\u2019équipe fait preuve de résilience — cette capacité à tenir et à s\u2019adapter, même dans les conditions les plus rudes de la piste.</p></div>'+
+  '<h3>👥 L\u2019équipe</h3>'+
+  '<div class="enc inf"><div class="ttl">Pourquoi aucun nom n\u2019est affiché ici</div>'+
+  '<p>La composition nominative de l\u2019équipe a été retirée de cette page. Afficher des noms, des grades et des types de contrat dans une application, c\u2019est un traitement de données personnelles : il demande une base légale, une information des personnes et une durée de conservation.</p>'+
+  '<p>L\u2019équipe est composée d\u2019un responsable ROP, de son binôme, d\u2019agents en CDI, d\u2019un CDD senior et d\u2019intérimaires en rotation. Les identités nécessaires au fonctionnement (planning, historique) restent dans l\u2019application, accessibles aux seuls comptes habilités — elles ne sont pas publiées sur une page d\u2019accueil.</p></div>'+
+  '<h3>📌 Nature du projet</h3>'+
+  '<div class="carte"><p>Olympe est un outil développé <b>en interne par l\u2019équipe</b>, sans budget d\u2019infrastructure ni licence. Il est en service quotidien sur postes fixes, tablettes et téléphones.</p>'+
+  '<p>Il n\u2019a pas à ce jour fait l\u2019objet d\u2019un audit de la DSI. Le dossier — fiche de traitement, note d\u2019information aux agents, audit de sécurité — est constitué et sera porté au service compétent. Tant que cet examen n\u2019a pas eu lieu, Olympe reste un outil d\u2019équipe et ne se substitue à aucun système officiel du Groupe.</p></div>'
+},
+{
+  id:'rgpd', titre:'RGPD &amp; cadre légal', emoji:'⚖️',
+  sous:'Vos droits, ce que dit la loi, ce qu\u2019Olympe s\u2019interdit',
+  html:
+  '<div class="enc"><div class="ttl">En une phrase</div><p>Olympe manipule des données qui vous concernent. La loi encadre ce que l\u2019outil a le droit de faire, et vous donne des droits que personne ne peut vous retirer. Cette page dit lesquels, sans enjoliver.</p></div>'+
+
+  '<h3>📚 Les textes qui s\u2019appliquent</h3>'+
+  '<table><thead><tr><th>Texte</th><th>Ce qu\u2019il impose</th></tr></thead><tbody>'+
+  '<tr><td><b>RGPD</b> (règlement UE 2016/679)</td><td>Finalité déterminée, minimisation des données, durée de conservation limitée, sécurité, droits des personnes.</td></tr>'+
+  '<tr><td><b>Loi Informatique et Libertés</b> (1978 modifiée)</td><td>Déclinaison française, compétence de la CNIL.</td></tr>'+
+  '<tr><td><b>Code du travail, art. L.1121-1</b></td><td>Aucune restriction aux libertés qui ne soit justifiée par la tâche et proportionnée au but.</td></tr>'+
+  '<tr><td><b>Code du travail, art. L.1222-4</b></td><td>Aucune donnée ne peut être collectée par un dispositif <b>non porté à votre connaissance</b>.</td></tr>'+
+  '<tr><td><b>Code du travail, art. L.2312-38</b></td><td>Information et consultation du CSE <b>avant</b> la mise en place de tout moyen de contrôle de l\u2019activité.</td></tr>'+
+  '<tr><td><b>Code civil, art. 9</b></td><td>Droit au respect de la vie privée — y compris sur le lieu et le temps de travail.</td></tr>'+
+  '</tbody></table>'+
+
+  '<h3>🚫 Ce que la CNIL interdit, et qu\u2019Olympe ne fait pas</h3>'+
+  '<div class="enc no"><ul>'+
+  '<li><b>Aucune surveillance permanente.</b> Pas de suivi continu de l\u2019activité, pas de comptage de cadence par agent, pas de mesure de temps de pause.</li>'+
+  '<li><b>Aucune captation sonore permanente.</b> La CNIL considère l\u2019écoute continue au travail comme une atteinte excessive à la vie privée. Olympe ne dispose d\u2019aucun micro toujours ouvert.</li>'+
+  '<li><b>Aucune géolocalisation en continu.</b> La géolocalisation permanente est interdite, et les trajets domicile-travail ne peuvent jamais être tracés.</li>'+
+  '<li><b>Aucune évaluation individuelle.</b> Les données de production ne sont pas exploitées pour noter, classer ou sanctionner un agent.</li>'+
+  '</ul></div>'+
+
+  '<h3>🛡️ Les garanties inscrites dans l\u2019architecture</h3>'+
+  '<p>Une garantie écrite se rompt. Une garantie technique tient toute seule. Les quatre suivantes sont tenues par le serveur, pas par une promesse :</p>'+
+  '<div class="carte acc"><h4>1. Comptes partagés = pas de suivi individuel</h4><p>L\u2019équipe travaille sous un compte applicatif commun. La base de données ne sait pas quel agent est derrière la session. <b>Olympe est structurellement incapable de suivre un agent en particulier.</b></p></div>'+
+  '<div class="carte acc"><h4>2. Géolocalisation coupée par défaut</h4><p>Un réglage en base, <b>faux par défaut</b>, conditionne l\u2019enregistrement de toute position. Tant qu\u2019il est faux, PostgreSQL <b>jette</b> les coordonnées reçues. Un poste modifié n\u2019y change rien : le verrou n\u2019est pas dans le navigateur.</p></div>'+
+  '<div class="carte acc"><h4>3. Écoute conditionnée et journalisée</h4><p>La fonction d\u2019écoute du module SOS exige à la fois le réglage actif <b>et</b> une alerte ouverte depuis moins de quinze minutes sur le même canal. Chaque bascule du réglage est journalisée avec l\u2019avant et l\u2019après — la question « depuis quand est-ce actif ? » a toujours une réponse.</p></div>'+
+  '<div class="carte acc"><h4>4. La carte ne suit pas les agents</h4><p>La carte de supervision n\u2019affiche que les <b>appareils non autorisés</b>. Elle sert à repérer un poste inconnu, pas à situer une personne.</p></div>'+
+
+  '<h3>🆘 Le cas particulier du bouton SOS</h3>'+
+  '<div class="enc"><p>Le module SOS est un dispositif de <b>protection du travailleur isolé</b>. Sa finalité est de retrouver un agent ayant perdu connaissance sur un site de plusieurs hectares, de nuit.</p>'+
+  '<p>Dans ce cadre seulement, et seulement pendant une alerte ouverte, deux fonctions peuvent s\u2019activer sans action du porteur du téléphone :</p>'+
+  '<ul><li><b>Localiser</b> — le poste renvoie sa position.</li>'+
+  '<li><b>Écouter</b> — un enregistrement de 10 secondes est transmis dans le fil d\u2019alerte.</li></ul>'+
+  '<p>Hors alerte, les deux sont refusées par le serveur. C\u2019est écrit dans la base, pas dans l\u2019interface. Vous devez le savoir : c\u2019est précisément l\u2019objet de cette page.</p></div>'+
+
+  '<h3>🔐 Vos droits, et comment les exercer</h3>'+
+  '<table><thead><tr><th>Droit</th><th>Ce que ça veut dire</th></tr></thead><tbody>'+
+  '<tr><td><b>Information</b></td><td>Savoir ce qui est collecté, pourquoi, par qui, pour combien de temps. C\u2019est l\u2019objet de cette page et de l\u2019onglet « Ce qu\u2019Olympe enregistre ».</td></tr>'+
+  '<tr><td><b>Accès</b></td><td>Obtenir copie des données vous concernant.</td></tr>'+
+  '<tr><td><b>Rectification</b></td><td>Faire corriger une donnée inexacte.</td></tr>'+
+  '<tr><td><b>Effacement</b></td><td>Faire supprimer une donnée, dans les limites des obligations de conservation du service.</td></tr>'+
+  '<tr><td><b>Opposition</b></td><td>Vous opposer à un traitement fondé sur l\u2019intérêt légitime, pour des raisons tenant à votre situation.</td></tr>'+
+  '<tr><td><b>Limitation</b></td><td>Demander le gel d\u2019un traitement contesté, le temps de la vérification.</td></tr>'+
+  '<tr><td><b>Réclamation</b></td><td>Saisir la CNIL, gratuitement, en ligne — à tout moment et sans avoir à passer par l\u2019employeur.</td></tr>'+
+  '</tbody></table>'+
+  '<div class="enc ok"><div class="ttl">Comment faire</div><p>Adressez votre demande au responsable ROP de l\u2019équipe, ou directement au délégué à la protection des données (DPO) de La Poste. Une réponse est due <b>dans le mois</b>. Passé ce délai, vous pouvez saisir la CNIL.</p></div>'+
+
+  '<h3>⚠️ Les limites qu\u2019il faut connaître</h3>'+
+  '<div class="enc no"><p>Dire ce qui marche est facile. Voici ce qui ne va pas, écrit noir sur blanc :</p><ul>'+
+  '<li><b>Un message privé est masqué, pas chiffré.</b> L\u2019interface ne l\u2019affiche qu\u2019au destinataire, mais techniquement il circule en clair. C\u2019est de la discrétion entre collègues, <b>pas de la confidentialité</b>. N\u2019y écrivez rien que vous ne diriez pas à voix haute.</li>'+
+  '<li><b>Tout compte connecté peut lire et effacer un message.</b> Conséquence directe du compte partagé.</li>'+
+  '<li><b>La case MAL du planning est une donnée de santé.</b> Catégorie particulière au sens de l\u2019art. 9 du RGPD, soumise à un régime renforcé. Point ouvert au dossier DPO.</li>'+
+  '<li><b>L\u2019hébergement est hors du périmètre du Groupe.</b> C\u2019est le principal sujet de souveraineté, et il est porté au dossier.</li>'+
+  '<li><b>Les durées de conservation sont proposées, pas arbitrées.</b> Elles doivent être validées par le DPO.</li>'+
+  '<li><b>Le journal d\u2019audit n\u2019a pas de valeur probante</b> puisque les comptes sont partagés. Il ne peut fonder aucune procédure individuelle — et c\u2019est une protection autant qu\u2019une limite.</li>'+
+  '</ul></div>'+
+  '<div class="pied">Cette page ne remplace pas la note d\u2019information officielle affichée au service ni l\u2019avis du DPO. En cas de contradiction, ce sont ces derniers qui font foi.</div>'
+},
+{
+  id:'donnees', titre:'Ce qu\u2019Olympe enregistre', emoji:'🗄️',
+  sous:'Agents, flux, mots de passe, comptes — sans rien omettre',
+  html:
+  '<div class="enc"><div class="ttl">Règle de lecture</div><p>Chaque ligne dit : quelle donnée, pourquoi, qui la voit, combien de temps. Ce qui n\u2019est pas listé n\u2019est pas collecté.</p></div>'+
+
+  '<h3>👤 Données sur les agents</h3>'+
+  '<table><thead><tr><th>Donnée</th><th>Pourquoi</th><th>Conservation</th></tr></thead><tbody>'+
+  '<tr><td><b>Prénom et initiales</b></td><td>Identifier qui a saisi une session, afficher le planning d\u2019équipe.</td><td>Durée de présence dans l\u2019équipe</td></tr>'+
+  '<tr><td><b>Type de profil</b> (agent / intérimaire / admin)</td><td>Déterminer les droits d\u2019édition.</td><td>Idem</td></tr>'+
+  '<tr><td><b>Code PIN à 4 chiffres</b></td><td>Choisir son profil à l\u2019ouverture.</td><td>Idem — <b>jamais stocké en clair</b></td></tr>'+
+  '<tr><td><b>Planning et cycle de repos</b></td><td>Calculer les repos, afficher congés et absences.</td><td>Année en cours + archive</td></tr>'+
+  '<tr><td><b>Messages d\u2019équipe</b></td><td>Communication de service.</td><td>Proposé : 12 mois — <i>à arbitrer par le DPO</i></td></tr>'+
+  '<tr><td><b>Appareil utilisé</b> (nom, autorisation)</td><td>N\u2019autoriser que les postes connus.</td><td>Tant que l\u2019appareil est déclaré</td></tr>'+
+  '<tr><td><b>Position GPS</b></td><td>Retrouver un agent en alerte SOS.</td><td><b>Non collectée</b> tant que le réglage serveur est à faux</td></tr>'+
+  '<tr><td><b>Enregistrement audio 10 s</b></td><td>Évaluer une situation d\u2019urgence.</td><td><b>Uniquement pendant une alerte SOS ouverte</b></td></tr>'+
+  '</tbody></table>'+
+  '<div class="enc inf"><p><b>Ce qui n\u2019est pas collecté :</b> aucune cadence individuelle, aucun temps de pause, aucun historique de navigation, aucune donnée hors du temps de travail, aucune donnée de santé autre que la case d\u2019absence du planning, aucune photo de personne à des fins d\u2019identification.</p></div>'+
+
+  '<h3>📦 Données de flux (le cœur du métier)</h3>'+
+  '<p>C\u2019est l\u2019essentiel du volume, et ça ne concerne aucune personne :</p>'+
+  '<table><thead><tr><th>Donnée</th><th>Contenu</th></tr></thead><tbody>'+
+  '<tr><td><b>Code-barres</b></td><td>Code brut du colis ou du sac, tel que lu par la douchette.</td></tr>'+
+  '<tr><td><b>Dépêche</b></td><td>Numéro de dépêche extrait du code.</td></tr>'+
+  '<tr><td><b>Pays d\u2019origine</b></td><td>Résolu depuis le code, table de ports.</td></tr>'+
+  '<tr><td><b>Poids</b></td><td>Lu sur les 4 derniers chiffres du code, en dixièmes de kg.</td></tr>'+
+  '<tr><td><b>Type</b></td><td>PRIO, ECO, OO, OS, CP84 — ou <code>?</code> si indéterminable.</td></tr>'+
+  '<tr><td><b>Horodatage et auteur</b></td><td>Écrits <b>par le serveur</b>, jamais par le poste. Un poste modifié ne peut pas antidater.</td></tr>'+
+  '<tr><td><b>Sessions, rotations, ULD, camions</b></td><td>Données d\u2019exploitation, cumulatives.</td></tr>'+
+  '</tbody></table>'+
+  '<div class="enc"><p><b>Historiques cumulatifs, aucune suppression automatique.</b> Une donnée n\u2019est jamais effacée par le système ; une suppression volontaire est déclarée explicitement et tracée.</p></div>'+
+
+  '<h3>🔑 Mots de passe et comptes</h3>'+
+  '<div class="enc ok"><div class="ttl">Aucun mot de passe n\u2019est stocké en clair dans la base</div>'+
+  '<ul><li><b>Mots de passe de compte</b> — gérés par le service d\u2019authentification, chiffrés, jamais lisibles par l\u2019application ni par l\u2019administrateur.</li>'+
+  '<li><b>Code PIN de profil</b> — 4 chiffres, haché en SHA-256 avec un sel unique par profil. Un code oublié se <b>réinitialise</b>, il ne se retrouve pas.</li>'+
+  '<li><b>Poste de secours hors ligne</b> — hachage PBKDF2-SHA256, sel aléatoire de 16 octets, 210 000 itérations.</li>'+
+  '<li><b>Verrouillage anti-force-brute</b> — temporisation de 15 minutes après plusieurs échecs, chaque échec journalisé.</li></ul></div>'+
+  '<h4>Les comptes existants</h4>'+
+  '<table><thead><tr><th>Compte</th><th>Portée</th></tr></thead><tbody>'+
+  '<tr><td><b>Compte agents</b> (partagé)</td><td>Saisie et consultation. C\u2019est le compte du quotidien.</td></tr>'+
+  '<tr><td><b>Compte administration</b></td><td>Gestion des profils, des appareils, des sauvegardes.</td></tr>'+
+  '<tr><td><b>Compte SOS</b></td><td>Le plus pauvre du système : il peut insérer une alerte et lire le fil. Ni modifier, ni supprimer.</td></tr>'+
+  '<tr><td><b>Compte supervision</b></td><td>Console d\u2019administration, mot de passe saisi à la main, jamais inscrit dans le code.</td></tr>'+
+  '</tbody></table>'+
+  '<div class="enc no"><div class="ttl">Transparence sur un point faible connu</div>'+
+  '<p>Le compte SOS porte son identifiant dans le code de la page d\u2019alerte, pour permettre un déclenchement <b>instantané, sans saisie, en situation d\u2019urgence</b>. C\u2019est un choix assumé — et c\u2019est exactement pour cette raison que ce compte ne peut presque rien faire.</p></div>'+
+
+  '<h3>🔒 Où vivent les données</h3>'+
+  '<table><thead><tr><th>Couche</th><th>Rôle</th></tr></thead><tbody>'+
+  '<tr><td><b>Sur le poste</b> (IndexedDB)</td><td>Permet de continuer à saisir sans réseau. Survit à la fermeture du navigateur.</td></tr>'+
+  '<tr><td><b>Base partagée</b> (PostgreSQL)</td><td>Référence commune entre les postes. Accès filtré ligne à ligne, aucun accès sans compte valide.</td></tr>'+
+  '<tr><td><b>Poste de secours</b></td><td>Autonome, sans réseau, utilisé en cas de coupure.</td></tr>'+
+  '</tbody></table>'+
+  '<div class="enc inf"><p><b>Le poste client n\u2019est jamais considéré comme fiable.</b> Droits, horodatage et auteur des écritures sont décidés par le serveur. Modifier le code d\u2019une page dans son navigateur ne donne aucun droit supplémentaire : la base refuse l\u2019appel.</p></div>'
+},
+{
+  id:'technique', titre:'Fiche technique', emoji:'🛠️',
+  sous:'Toutes les applications d\u2019Olympe et leur fonctionnement',
+  html:'<!--TECH-->'
+},
+{
+  id:'guide', titre:'Guide d\u2019utilisation', emoji:'📖',
+  sous:'Prise en main, gestes du quotidien, que faire quand ça coince',
+  html:
+  '<h3>🚀 Prise en main en 5 minutes</h3>'+
+  '<ol class="etapes">'+
+  '<li><b>Se connecter.</b> Choisir son profil sur l\u2019écran d\u2019accueil, saisir son code PIN à 4 chiffres. Le profil détermine ce que vous pouvez modifier.</li>'+
+  '<li><b>Le hub.</b> L\u2019écran d\u2019accueil liste toutes les applications, chacune avec son liseré de couleur. Un appui ouvre l\u2019app en plein écran.</li>'+
+  '<li><b>Revenir.</b> Le bouton d\u2019accueil, en haut à droite de chaque app, ramène au hub. La saisie en cours n\u2019est pas perdue.</li>'+
+  '<li><b>Le bouton 📚 Process.</b> En haut à gauche de chaque app : il ouvre la marche à suivre de cette app précise. En cas de doute, c\u2019est là qu\u2019il faut aller.</li>'+
+  '<li><b>Enregistrer.</b> Rien n\u2019est définitif tant que la session n\u2019est pas enregistrée. Prenez le réflexe d\u2019enregistrer avant de quitter.</li>'+
+  '</ol>'+
+
+  '<h3>📱 Sur téléphone et tablette</h3>'+
+  '<div class="carte"><ul>'+
+  '<li>Olympe s\u2019installe comme une application : menu du navigateur → <b>Ajouter à l\u2019écran d\u2019accueil</b>.</li>'+
+  '<li>L\u2019installation est <b>obligatoire sur iPhone</b> pour recevoir les notifications quand l\u2019app est fermée.</li>'+
+  '<li>Les deux douchettes simultanées ne fonctionnent <b>que sur poste de bureau</b> : l\u2019interface série n\u2019existe pas sur Android. Sur tablette, une seule douchette.</li>'+
+  '</ul></div>'+
+
+  '<h3>🔫 Douchettes</h3>'+
+  '<div class="carte"><h4>Mode rafale (lecture continue, sans gâchette)</h4>'+
+  '<p>Flasher le code <code>~PAPSPN.</code> de la fiche de poste. Pour revenir au déclenchement manuel : <code>~PAPHHF.</code></p>'+
+  '<div class="enc no"><p><b>Gardez le code de retour imprimé au poste.</b> Une douchette basculée en mode série sur un poste sans pilote ne tape plus rien du tout.</p></div></div>'+
+  '<div class="carte"><h4>Deux douchettes sur un même poste</h4>'+
+  '<ol class="etapes"><li>Installer le pilote HSM USB Serial, <b>douchette débranchée</b>.</li>'+
+  '<li>Rebrancher, puis flasher <code>~TRMUSB130.</code></li>'+
+  '<li>Vérifier qu\u2019un port COM apparaît dans le gestionnaire de périphériques.</li>'+
+  '<li>Dans l\u2019app : « Brancher une douchette ». La seconde zone de saisie s\u2019ouvre d\u2019elle-même.</li></ol></div>'+
+
+  '<h3>📂 Les onglets transverses du hub</h3>'+
+  '<table><thead><tr><th>Onglet</th><th>À quoi ça sert</th></tr></thead><tbody>'+
+  '<tr><td><b>Historique</b></td><td>Retrouver, imprimer, transférer ou supprimer une session — toutes applications confondues. Contient l\u2019outil « Chercher les doublons ».</td></tr>'+
+  '<tr><td><b>Analytics</b></td><td>Tableaux de bord, répartition par pays, exports, impression par période.</td></tr>'+
+  '<tr><td><b>Messenger</b></td><td>Messagerie d\u2019équipe, vocal, conversations privées, mentions.</td></tr>'+
+  '<tr><td><b>Espace agent</b></td><td>Planning personnel, agenda, congés, post-it, vue équipe.</td></tr>'+
+  '<tr><td><b>Règles &amp; Processus</b></td><td>Consignes et procédures internes, registre d\u2019émargement.</td></tr>'+
+  '<tr><td><b>Papirus</b></td><td>Bibliothèque PDF de l\u2019équipe.</td></tr>'+
+  '</tbody></table>'+
+
+  '<h3>🔧 Quand ça coince</h3>'+
+  '<table><thead><tr><th>Symptôme</th><th>Première chose à faire</th></tr></thead><tbody>'+
+  '<tr><td>Une session supprimée est revenue</td><td>La supprimer une seconde fois. Les sessions effacées avant le correctif de septembre reviennent une fois, pas deux.</td></tr>'+
+  '<tr><td>« Aucun appareil compatible détecté »</td><td>Ce n\u2019est pas une permission du navigateur : la douchette est encore en mode clavier, ou le pilote manque. Voir plus haut.</td></tr>'+
+  '<tr><td>Une photo ne se charge pas</td><td>Format HEIC : aucun navigateur ne le décode. Basculer l\u2019appareil photo en JPEG.</td></tr>'+
+  '<tr><td>Totaux CP84 à zéro après un transfert</td><td>Normal si la session vient d\u2019une autre app sans compteurs — le détail est bon, le transfert les recalcule.</td></tr>'+
+  '<tr><td>Un historique Hermès manque sur un autre poste</td><td>Les historiques ULD et MRD ne se synchronisent pas encore entre postes. Correctif au carnet de route.</td></tr>'+
+  '<tr><td>L\u2019app ne se met pas à jour</td><td>Ouvrir en navigation privée et lire le repère de version. C\u2019est le seul moyen fiable de distinguer un cache d\u2019un vrai déploiement.</td></tr>'+
+  '<tr><td>Plus de réseau</td><td>Continuer à saisir : tout est stocké sur le poste et remonte à la reconnexion. En cas de coupure longue, utiliser le poste de secours hors ligne.</td></tr>'+
+  '</tbody></table>'+
+
+  '<h3>✅ Les cinq réflexes</h3>'+
+  '<div class="enc ok"><ol>'+
+  '<li><b>Vérifier la date</b> de session avant de flasher.</li>'+
+  '<li><b>Enregistrer</b> avant de quitter une app.</li>'+
+  '<li><b>Consigner une anomalie tout de suite</b>, pas de mémoire en fin de vacation.</li>'+
+  '<li><b>Ne jamais deviner</b> un type de colis : <code>?</code> est une réponse valable, une supposition non.</li>'+
+  '<li><b>En cas de doute, ouvrir 📚 Process</b> — c\u2019est fait pour ça.</li>'+
+  '</ol></div>'
+}
+];
+
+/* =========================================================================
+   2. MOTEUR — rendu, navigation par ancre, retour à l'app
+   ========================================================================= */
+(function(){
+  'use strict';
+
+
+  /* Couleur de texte lisible sur un fond d'accent donné.
+     Sur fond clair, un badge bleu marine exige du blanc et un badge jaune
+     exige du bleu foncé : on tranche sur la luminance perçue (ITU-R BT.601). */
+  function fgDe(hex){
+    var h = String(hex || '').replace('#','');
+    if(h.length === 3){ h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; }
+    if(h.length !== 6) return '#062045';
+    var r = parseInt(h.slice(0,2),16), v = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+    var lum = (r*299 + v*587 + b*114) / 1000;       /* 0 = noir, 255 = blanc */
+    return lum > 150 ? '#062045' : '#FFFFFF';
+  }
+
+  var $ = function(s,r){ return (r||document).querySelector(s); };
+  var main = $('#main'), nav = $('#nav'), tabs = $('#tabs'), btnRetour = $('#btnRetour');
+
+  /* --- utilitaires sûrs ------------------------------------------------ */
+  function esc(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  /* les textes de données contiennent du balisage volontaire (<b>, <code>) :
+     on les insère tels quels, ils ne viennent d'aucune saisie utilisateur. */
+  function li(arr){
+    if(!arr || !arr.length) return '';
+    return '<ul>' + arr.map(function(x){ return '<li>'+x+'</li>'; }).join('') + '</ul>';
+  }
+
+  /* --- fiche technique : générée depuis APPS --------------------------- */
+  function htmlTechnique(){
+    var h = '<div class="enc"><div class="ttl">Périmètre</div><p>Olympe couvre l\u2019ensemble des flux d\u2019import de la PIC Gillot : saisie terrain, historisation, pilotage, communication d\u2019équipe, planning et supervision.</p></div>';
+
+    h += '<h3>🧩 Les applications métier</h3><table><thead><tr><th>Application</th><th>Fonction</th></tr></thead><tbody>';
+    APPS.forEach(function(a){
+      h += '<tr><td><b>'+a.emoji+' '+esc(a.nom)+'</b></td><td>'+esc(a.res)+'</td></tr>';
+    });
+    h += '</tbody></table>';
+
+    h += '<h3>🔁 Les modules transverses</h3><table><thead><tr><th>Module</th><th>Fonction</th></tr></thead><tbody>'+
+      '<tr><td><b>Historique</b></td><td>Consultation, recherche, pagination, transfert de session entre applications, recherche de doublons.</td></tr>'+
+      '<tr><td><b>Analytics</b></td><td>Tableaux de bord, répartition par pays, exports, impression par période.</td></tr>'+
+      '<tr><td><b>Messenger</b></td><td>Messagerie temps réel, messages vocaux, conversations privées, mentions, urgences.</td></tr>'+
+      '<tr><td><b>La Cène</b></td><td>Réseau interne : publications, photos, albums, commentaires.</td></tr>'+
+      '<tr><td><b>Espace agent</b></td><td>Planning, agenda, congés, post-it, vue équipe.</td></tr>'+
+      '<tr><td><b>Règles &amp; Processus</b></td><td>Consignes internes, registre d\u2019émargement.</td></tr>'+
+      '<tr><td><b>Papirus</b></td><td>Bibliothèque PDF de l\u2019équipe, lecteur intégré.</td></tr>'+
+      '<tr><td><b>Budget</b></td><td>Budget et cagnottes de l\u2019équipe, synchronisation temps réel.</td></tr>'+
+      '<tr><td><b>SOS</b></td><td>Alerte et sécurité des agents. Voir l\u2019onglet RGPD.</td></tr>'+
+      '<tr><td><b>Tour de contrôle</b></td><td>Console d\u2019administration : appareils, profils, sauvegardes, audit.</td></tr>'+
+      '</tbody></table>';
+
+    h += '<h3>⚙️ Comment c\u2019est construit</h3><table><thead><tr><th>Élément</th><th>Choix retenu</th></tr></thead><tbody>'+
+      '<tr><td><b>Interface</b></td><td>Un fichier unique qui embarque toutes les applications. Choix dicté par le terrain : coupure réseau, coupure courant, navigation sans friction.</td></tr>'+
+      '<tr><td><b>Base de données</b></td><td>PostgreSQL géré. Authentification, filtrage ligne à ligne, temps réel.</td></tr>'+
+      '<tr><td><b>Stockage local</b></td><td>IndexedDB sur le poste, synchronisation différée par file d\u2019attente.</td></tr>'+
+      '<tr><td><b>Codes-barres</b></td><td>Un moteur de lecture unique, partagé par toutes les applications.</td></tr>'+
+      '<tr><td><b>Mode hors ligne</b></td><td>Poste de secours autonome, sans réseau, resynchronisé ensuite.</td></tr>'+
+      '<tr><td><b>Installation</b></td><td>Application installable sur mobile et poste fixe.</td></tr>'+
+      '</tbody></table>';
+
+    h += '<h3>🧭 Les sept principes de conception</h3><table><thead><tr><th>Principe</th><th>Application concrète</th></tr></thead><tbody>'+
+      '<tr><td><b>Le serveur tranche</b></td><td>Droits, horodatage et auteur décidés par la base, jamais par le poste.</td></tr>'+
+      '<tr><td><b>Ne jamais perdre</b></td><td>Historiques cumulatifs, aucune suppression automatique, sauvegarde exportable.</td></tr>'+
+      '<tr><td><b>Mais pouvoir supprimer</b></td><td>Une suppression voulue est déclarée explicitement et aboutit réellement.</td></tr>'+
+      '<tr><td><b>Continuité</b></td><td>Un poste de secours fonctionne sans réseau.</td></tr>'+
+      '<tr><td><b>Modification chirurgicale</b></td><td>Le fichier principal n\u2019est jamais réécrit : uniquement des injections ciblées vérifiées.</td></tr>'+
+      '<tr><td><b>Prudence sur les données</b></td><td>En cas d\u2019ambiguïté, une valeur inconnue explicite plutôt qu\u2019une supposition.</td></tr>'+
+      '<tr><td><b>Un échec doit se voir</b></td><td>Aucun échec silencieux sur un chemin d\u2019écriture.</td></tr>'+
+      '</tbody></table>';
+
+    h += '<h3>📚 Process détaillé, application par application</h3>'+
+      '<p>Chaque fiche donne le but, le moment, les étapes, les règles et les pièges connus.</p>'+
+      '<div class="appcards">';
+    APPS.forEach(function(a){
+      h += '<a class="appcard" href="#process/'+a.id+'" style="--ac:'+a.ac+';--ac-fg:'+fgDe(a.ac)+'">'+
+           '<div class="em">'+a.emoji+'</div><div><div class="n">'+esc(a.nom)+'</div>'+
+           '<div class="d">'+esc(a.res)+'</div></div></a>';
+    });
+    h += '</div>';
+    return h;
+  }
+
+  /* --- fiche process d'une app ----------------------------------------- */
+  function htmlProcess(a){
+    var h = '<div class="pbar" style="--ac:'+a.ac+';--ac-fg:'+fgDe(a.ac)+'">'+
+      '<div class="em">'+a.emoji+'</div>'+
+      '<div class="nm">'+esc(a.nom)+'<small>Process · marche à suivre</small></div>'+
+      '<button class="btn btn-jaune" type="button" data-app="'+esc(a.id)+'" onclick="OlympeInfos.retour(this.dataset.app)">↩ Retour à l\u2019app</button>'+
+      '<button class="btn" type="button" onclick="window.print()">🖨 Imprimer</button>'+
+      '</div>';
+
+    h += '<div class="enc inf"><div class="ttl">À quoi sert cette application</div><p>'+a.but+'</p>'+
+         '<p><b>Quand l\u2019utiliser :</b> '+a.quand+'</p></div>';
+
+    h += '<h3>🧭 Marche à suivre</h3><ol class="etapes" style="--ac:'+a.ac+';--ac-fg:'+fgDe(a.ac)+'">';
+    a.etapes.forEach(function(e){ h += '<li>'+e+'</li>'; });
+    h += '</ol>';
+
+    if(a.regles && a.regles.length){
+      h += '<h3>📏 Règles à respecter</h3><div class="enc ok">'+li(a.regles)+'</div>';
+    }
+    if(a.pieges && a.pieges.length){
+      h += '<h3>⚠️ Pièges connus</h3><div class="enc no">'+li(a.pieges)+'</div>';
+    }
+
+    h += '<div class="enc"><div class="ttl">Réflexe universel</div><p>Vérifier la date de session · enregistrer avant de quitter · ne jamais deviner un type de colis · consigner une anomalie tout de suite.</p></div>';
+
+    h += '<div style="margin-top:18px;display:flex;gap:9px;flex-wrap:wrap">'+
+         '<button class="btn btn-jaune" type="button" data-app="'+esc(a.id)+'" onclick="OlympeInfos.retour(this.dataset.app)">↩ Retour à l\u2019app</button>'+
+         '<a class="btn" href="#technique">📋 Toutes les applications</a>'+
+         '<a class="btn" href="#guide">📖 Guide général</a></div>';
+    return h;
+  }
+
+  /* --- construction du DOM --------------------------------------------- */
+  function vue(id, titre, sous, corps){
+    var s = document.createElement('section');
+    s.className = 'vue'; s.id = 'vue-' + id;
+    s.innerHTML = '<h2 class="t">'+titre+'</h2><div class="t-sub">'+sous+'</div>'+corps;
+    return s;
+  }
+
+  function construire(){
+    var navHtml = '<div class="grp">Documentation</div>';
+    var tabHtml = '';
+
+    RUBRIQUES.forEach(function(r){
+      var corps = (r.html === '<!--TECH-->') ? htmlTechnique() : r.html;
+      main.appendChild(vue(r.id, r.emoji+' '+r.titre, r.sous, corps));
+      navHtml += '<a href="#'+r.id+'" data-v="'+r.id+'"><span>'+r.emoji+'</span>'+r.titre+'</a>';
+      tabHtml += '<a href="#'+r.id+'" data-v="'+r.id+'">'+r.emoji+' '+r.titre.replace('&amp;','&')+'</a>';
+    });
+
+    navHtml += '<div class="grp">📚 Process des apps</div>';
+    APPS.forEach(function(a){
+      main.appendChild(vue('process/'+a.id, a.emoji+' '+a.nom, 'Process · '+a.res, htmlProcess(a)));
+      navHtml += '<a href="#process/'+a.id+'" data-v="process/'+a.id+'">'+
+                 '<span class="pt" style="background:'+a.ac+'"></span>'+a.nom+'</a>';
+      tabHtml += '<a href="#process/'+a.id+'" data-v="process/'+a.id+'">'+a.emoji+' '+a.nom+'</a>';
+    });
+
+    nav.innerHTML = navHtml;
+    tabs.innerHTML = tabHtml;
+  }
+
+  /* --- routage par ancre ------------------------------------------------ */
+  function routeur(){
+    var id = (location.hash || '').replace(/^#/, '') || 'apropos';
+    var cible = document.getElementById('vue-' + id);
+    if(!cible){ id = 'apropos'; cible = document.getElementById('vue-apropos'); }
+    if(!cible) return;
+
+    Array.prototype.forEach.call(document.querySelectorAll('section.vue'), function(s){
+      s.classList.remove('on');
+    });
+    cible.classList.add('on');
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-v]'), function(a){
+      a.classList.toggle('on', a.getAttribute('data-v') === id);
+    });
+
+    // remonter en haut + recentrer l'onglet actif sur mobile
+    window.scrollTo(0, 0);
+    var actif = tabs.querySelector('a.on');
+    if(actif && actif.scrollIntoView){
+      try{ actif.scrollIntoView({block:'nearest', inline:'center'}); }catch(e){}
+    }
+    document.title = cible.querySelector('.t').textContent + ' — Olympe';
+  }
+
+  /* --- retour à l'application ------------------------------------------ */
+  // 3 stratégies, de la plus propre à la plus rustique :
+  //   1. le hub parent expose OlympeProcess.fermer()  → overlay refermé
+  //   2. postMessage au parent                        → le hub décide
+  //   3. history.back() / fermeture d'onglet          → page ouverte seule
+  function retour(appId){
+    var cible = appId || paramFrom();
+    try{
+      if(window.parent && window.parent !== window){
+        if(window.parent.OlympeProcess && typeof window.parent.OlympeProcess.fermer === 'function'){
+          window.parent.OlympeProcess.fermer(cible);
+          return;
+        }
+        window.parent.postMessage({ type:'OLYMPE_PROCESS_RETOUR', app: cible || null }, '*');
+        return;
+      }
+    }catch(e){ /* origine différente : on tombe dans le cas autonome */ }
+
+    if(window.opener && !window.opener.closed){ window.close(); return; }
+    if(history.length > 1){ history.back(); return; }
+    location.href = 'index2.html';
+  }
+
+  function paramFrom(){
+    var m = /[?&]from=([A-Za-z0-9_-]+)/.exec(location.search);
+    return m ? m[1] : null;
+  }
+
+  /* --- init ------------------------------------------------------------- */
+  function init(){
+    construire();
+    window.addEventListener('hashchange', routeur);
+    routeur();
+
+    // bouton « Retour à l'app » du bandeau : visible si on vient d'une app
+    var from = paramFrom();
+    var embarque = false;
+    try{ embarque = (window.parent && window.parent !== window); }catch(e){ embarque = true; }
+    if(from || embarque){
+      btnRetour.style.display = 'inline-flex';
+      btnRetour.addEventListener('click', function(){ retour(from); });
+    }
+    // si on arrive avec ?from=xxx sans ancre, ouvrir directement le process
+    if(from && !location.hash && document.getElementById('vue-process/'+from)){
+      location.hash = 'process/' + from;
+    }
+
+    // Échap = retour
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && btnRetour.style.display !== 'none') retour(from);
+    });
+  }
+
+  window.OlympeInfos = { retour: retour, apps: APPS };
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+})();
+</script>
+</body>
+</html>
