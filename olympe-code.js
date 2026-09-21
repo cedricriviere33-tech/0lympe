@@ -60,8 +60,21 @@
   /* ── Découpage : dépêche, poids ───────────────────────────────────────
      Les codes longs (≥20) portent la dépêche en positions 16-20.
      Les codes courts n'ont pas ce champ : on prend le préfixe.            */
+  /* Le référentiel métier (olympe-ref.js) sait lire un code produit ou ULD :
+     produit, contenant, type d'ULD, compagnie. On le consulte quand il est
+     chargé, et on garde le découpage historique dans tous les cas — les deux
+     lectures se complètent, aucune ne remplace l'autre. */
+  function metier(raw) {
+    try {
+      var R = G.OlympeRef || (G.parent && G.parent.OlympeRef);
+      if (R && typeof R.lire === 'function') return R.lire(raw);
+    } catch (e) {}
+    return null;
+  }
+
   function parse(code) {
     var raw = nettoie(code);
+    var m = metier(raw);
     var depeche = raw.length >= 20 ? raw.slice(16, 20) : (raw.slice(0, 4) || '????');
     var digits = raw.replace(/[^0-9]/g, '');
     var poids = digits.length >= 4 ? parseInt(digits.slice(-4), 10) / 10 : null;
@@ -73,6 +86,12 @@
       pays:     pays(raw),
       poids:    poids,
       type:     type(raw),
+      /* Ce que le référentiel a reconnu, quand il a reconnu quelque chose. */
+      produit:   m && m.produit ? m.produit : null,
+      contenant: m && m.contenant ? m.contenant : null,
+      uld:       m && m.uld ? m.uld : null,
+      compagnie: m && m.compagnie ? m.compagnie : null,
+      nature:    m ? m.type : null,
       valide:   raw.length >= 4,
       scanneA:  new Date().toISOString()
     };
@@ -157,18 +176,31 @@
   /* ── Recherche transverse ─────────────────────────────────────────────
      Retrouve un colis dans TOUS les historiques : réponse immédiate à
      « où est passé ce colis ? » sans ouvrir chaque application.            */
-  var SCOPES = ['olympe_histo_ppi', 'olympe_histo_sac', 'olympe_histo_cabine',
+  /* ── Où chercher, et sous quel nom ────────────────────────────────────
+     Ces deux tables étaient recopiées ici. Elles vivent maintenant dans
+     olympe-scopes.js : un historique ajouté là-bas devient fouillable ici
+     sans qu'on y touche. Le repli sert au cas où ce fichier serait chargé
+     seul, par exemple depuis une page de test. */
+  function REF() { try { return G.OlympeScopes || (G.parent && G.parent.OlympeScopes) || null; } catch (e) { return null; } }
+
+  var SCOPES_REPLI = ['olympe_histo_ppi', 'olympe_histo_sac', 'olympe_histo_cabine',
     'olympe_histo_maritime', 'olympe_histo_anomalie', 'olympe_histo_mrd',
     'olympe_histo_vgp', 'olympe_histo_maurice', 'olympe_histo_mayotte',
     'olympe_histo_chronopost'];
 
-  var NOMS = {
-    olympe_histo_ppi: 'Relevé PPI', olympe_histo_sac: 'Sac CP84',
-    olympe_histo_cabine: 'Cabine', olympe_histo_maritime: 'Maritime',
-    olympe_histo_anomalie: 'Anomalies', olympe_histo_mrd: 'MRD',
-    olympe_histo_vgp: 'VGP', olympe_histo_maurice: 'Maurice',
-    olympe_histo_mayotte: 'Mayotte', olympe_histo_chronopost: 'Chronopost'
-  };
+  function scopes() {
+    var r = REF();
+    if (r && typeof r.scopesHistoriques === 'function') {
+      var l = r.scopesHistoriques();
+      if (l && l.length) return l;
+    }
+    return SCOPES_REPLI;
+  }
+  function nomDe(scope) {
+    var r = REF();
+    if (r && typeof r.libelle === 'function') return r.libelle(scope);
+    return scope;
+  }
 
   function lire(k) {
     try { return JSON.parse((G.OlympeDB || localStorage).getItem(k) || '{}'); }
@@ -178,7 +210,7 @@
   function chercher(code) {
     var k = nettoie(code), res = [];
     if (!k) return res;
-    SCOPES.forEach(function (scope) {
+    scopes().forEach(function (scope) {
       var raw = lire(scope);
       Object.keys(raw).forEach(function (sessionKey) {
         var sess = raw[sessionKey];
@@ -187,7 +219,7 @@
         list.forEach(function (it) {
           if (cle(it) === k) {
             res.push({
-              application: NOMS[scope] || scope,
+              application: nomDe(scope),
               scope: scope,
               session: sessionKey,
               date: (sess && sess.date) || String(sessionKey).slice(0, 10),
@@ -201,7 +233,7 @@
   }
 
   G.OlympeCode = {
-    version: '1.0',
+    version: '1.1',
     nettoie: nettoie,
     parse: parse,
     type: type,
@@ -212,9 +244,10 @@
     doublonsEntrePalettes: doublonsEntrePalettes,
     stats: stats,
     chercher: chercher,
-    scopes: SCOPES,
-    noms: NOMS
+    scopes: scopes,
+    nomDe: nomDe,
+    metier: metier
   };
 
-  try { console.info('[0lympe] OlympeCode 1.0 — reconnaissance centralisée'); } catch (e) {}
+  try { console.info('[0lympe] OlympeCode 1.1 — adossé au référentiel métier'); } catch (e) {}
 })(typeof window !== 'undefined' ? window : this);
